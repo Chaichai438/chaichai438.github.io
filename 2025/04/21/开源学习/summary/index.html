@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html 
+	lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+<link rel="stylesheet" href="/css/layout.css">
+
+		
+		<title> 如何学习开源代码？ -  Hexo</title>
+		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
+		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
+		
+<link rel="stylesheet" href="/lib/mdui/mdui.min.css">
+
+		
+<script src="/lib/mdui/mdui.min.js"></script>
+
+		<!-- lazyload -->
+		
+<script src="/lib/lazysizes.js"></script>
+
+		<!-- smooth-scrolling -->
+		
+<script src="/lib/smooth-scrolling.js"></script>
+
+		<!-- highlight -->
+		
+<link rel="stylesheet" href="/lib/highlight/atom-one-dark.min.css">
+
+		
+<script src="/lib/highlight/highlight.min.js"></script>
+
+		<!-- 预置 kiraicon -->
+		
+<link rel="stylesheet" href="/lib/iconfont/iconfont.css">
+
+		
+		<link
+			rel="shortcut icon"
+			href="https://chaichai438.github.io/assets/Pictures/fruitcake.png"
+			type="image/png"
+		/>
+		
+<link rel="stylesheet" href="/deps/css/APlayer.min.css">
+
+		
+		
+<script src="/deps/js/APlayer.min.js"></script>
+<script src="/deps/js/Meting.min.js"></script>
+
+	<meta name="generator" content="Hexo 7.3.0"></head>
+
+	<body>
+		<div
+			class="kira-background"
+			style="background-image: url('https://chaichai438.github.io/assets/Pictures/backgroud.png')"
+		></div>
+		<div class="kira-header">
+    <a
+        class="kira-drawer-button mdui-ripple"
+        title="导航栏"
+        onclick="document.querySelector('.kira-sidebar-modal').classList.add('show');document.querySelector('.kira-sidebar#sidebar').classList.add('show');"
+    >
+        <i class="kirafont icon-menu"></i>
+    </a>
+    <a href="/" title="Hexo">
+        <img
+			src="https://chaichai438.github.io/assets/Pictures/avatar.jpg"
+			alt="Chaichai"
+		/>
+    </a>
+</div>
+		<div class="kira-body">
+			<div class="kira-sidebar" id="sidebar">
+	<div class="kira-avatar mdui-ripple">
+		<a href="https://chaichai438.github.io/assets/Pictures/avatar.jpg" title="Chaichai">
+			<img
+				src="https://chaichai438.github.io/assets/Pictures/avatar.jpg"
+				alt="Chaichai"
+			/>
+		</a>
+	</div>
+	<div class="kira-count">
+		<div><span>文章</span>2</div>
+		<div><span>标签</span>1</div>
+		<div><span>分类</span>1</div>
+	</div>
+	<div class="kira-list">
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/"
+			title="回到首页"
+		>
+			<i
+				class="kirafont
+					
+						icon-home
+					"
+			></i>
+			<div class="kira-list-item-content">
+				回到首页
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/archive.html"
+			title="文章归档"
+		>
+			<i
+				class="kirafont
+					
+						icon-container
+					"
+			></i>
+			<div class="kira-list-item-content">
+				文章归档
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/about.html"
+			title="关于本人"
+		>
+			<i
+				class="kirafont
+					
+						icon-user
+					"
+			></i>
+			<div class="kira-list-item-content">
+				关于本人
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/friends.html"
+			title="我的朋友"
+		>
+			<i
+				class="kirafont
+					
+						icon-team
+					"
+			></i>
+			<div class="kira-list-item-content">
+				我的朋友
+			</div>
+		</a>
+		
+	</div>
+	<aside id="kira-sidebar">
+		
+			<div class="kira-widget-wrap">
+	<div class="kira-widget kira-social">
+		
+			<a
+				class="mdui-ripple"
+				href="tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=1939327800&website=www.oicqzone.com"
+				target="_blank"
+				mdui-tooltip="{content: 'QQ'}"
+				style="color: rgb(49, 174, 255); background-color: rgba(49, 174, 255, .1);"
+			>
+				<i
+					class="kirafont
+					
+						icon-QQ
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://space.bilibili.com/316538505"
+				target="_blank"
+				mdui-tooltip="{content: '哔哩哔哩'}"
+				style="color: rgb(231, 106, 141); background-color: rgba(231, 106, 141, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-bilibili
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://github.com/chaichai438/"
+				target="_blank"
+				mdui-tooltip="{content: 'GitHub'}"
+				style="color: rgb(25, 23, 23); background-color: rgba(25, 23, 23, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-github
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://gitee.com/<你的gitee id>"
+				target="_blank"
+				mdui-tooltip="{content: 'Gitee'}"
+				style="color: rgb(165, 15, 15); background-color: rgba(165, 15, 15, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-gitee
+					"
+				></i>
+			</a>
+		
+	</div>
+</div>
+
+		
+			
+  <div class="kira-widget-wrap">
+    <h3 class="kira-widget-title">分类</h3>
+    <div class="kira-widget">
+      <ul class="category-list">
+        
+        
+
+        
+          <li class="category-list-item">
+            <a class="category-list-link" href="/categories/学习方法/">
+              学习方法
+            </a>
+            <span class="category-list-count">1</span>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+		
+			
+	<div class="kira-widget-wrap">
+		<div id="randomtagcloud" class="kira-widget tagcloud kira-rainbow">
+			<a href="/tags/%E5%BC%80%E6%BA%90%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">开源学习</a>
+		</div>
+		
+	</div>
+
+
+		
+			
+	<div class="kira-widget-wrap">
+		<h3 class="kira-widget-title">
+			Archive
+		</h3>
+		<div class="kira-widget">
+			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/">2025</a><span class="archive-list-count">2</span></li></ul>
+		</div>
+	</div>
+
+
+		
+	</aside>
+	<div class="kira-copyright">
+		&copy; 2025
+		<a href="/">Chaichai</a>
+		Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> &
+		<a href="https://github.com/ch1ny/kira-hexo/" target="_blank">Kira-Hexo</a>
+		<br />
+		
+		
+	</div>
+</div>
+<div
+	class="kira-sidebar-modal"
+	id="sidebar-modal"
+	onclick="(function(self) {
+		self.classList.remove('show');
+		document.querySelector('.kira-sidebar.show#sidebar').classList.remove('show');
+	})(this)"
+></div>
+			<div class="kira-content">
+				<div id="kira-top-header"></div>
+				<div class="kira-main-content">
+					
+<link rel="stylesheet" href="/css/kira-image.css">
+
+
+<script src="/js/kira-image.js"></script>
+
+<div class="kira-image">
+    <div class="kira-image-modal">
+        <div class="kira-image-header">
+            <div class="kira-image-counter"></div>
+            <div class="kira-image-title"></div>
+            <div class="kira-image-operation">
+                <div class="kira-image-operation-button" id="kira-image-operation-button-zoom">
+                    <i class="kirafont icon-zoom-in"></i>
+                </div>
+                <div class="kira-image-operation-button" id="kira-image-operation-button-close">
+                    <i class="kirafont icon-close"></i>
+                </div>
+            </div>
+        </div>
+        <div class="kira-image-container">
+            <div class="kira-image-prev-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-left"></i>
+                </div>
+            </div>
+            <div class="kira-image-list">
+                <div class="kira-image-prev">
+                    <img />
+                </div>
+                <div class="kira-image-now">
+                    <img />
+                </div>
+                <div class="kira-image-next">
+                    <img />
+                </div>
+            </div>
+            <div class="kira-image-next-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+	
+<link rel="stylesheet" href="/css/kira-code-copy.css">
+
+	
+<script src="/js/kira-code-copy.js"></script>
+
+
+<div class="kira-post">
+	<article>
+		
+		<div
+			class="kira-post-cover"
+			style="padding-bottom: '56.25%'"
+		>
+			<img
+				data-src="https://chaichai438.github.io/assets/Pictures/backgroud.png"
+				data-sizes="auto"
+				alt="如何学习开源代码？"
+				class="lazyload kira-post-cover-image disabled-kira-image"
+			/>
+			<h1>如何学习开源代码？</h1>
+		</div>
+		
+		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
+			<a><i class="kirafont icon-calendar-fill"></i>2025年04月21日</a>
+			<a><i class="kirafont icon-edit-fill"></i>1.6k 字</a>
+			<a><i class="kirafont icon-time-circle-fill"></i>大概 7 分钟</a>
+		</div>
+		<html><head></head><body><h2><span id="%E5%85%B3%E4%BA%8E%E5%A6%82%E4%BD%95%E5%AD%A6%E4%B9%A0%E5%BC%80%E6%BA%90%E4%BB%A3%E7%A0%81">关于如何学习开源代码？</span></h2><p>对此我简单的以为学习开源代码就是把代码看懂，但是一旦面对工程量庞大的代码，一下子就没有任何的头绪了，而且并没有任何学长教我们，查AI似乎也不太有效果，我就去请教了下老师。经过一下午的学习，我对开源代码学习又有了一个新的认识。</p>
+<h2><span id="%E5%A6%82%E4%BD%95%E5%BC%80%E5%A7%8B">如何开始？</span></h2><p>我们用这份开源项目来做个例子(也是我正在看的)<br>对于一份正经的开源项目，一定会有一份完善的README文件。例如，通过这份README文档，我们可以获得以下信息</p>
+<ul>
+<li>硬件配置</li>
+<li>环境部署</li>
+<li>调节参数</li>
+<li>环境配置</li>
+<li>文件结构<br>通过这些信息，我们可以大概了解整个程序所需要的配置以及它能实现的功能。如果遇到什么陌生的东西(对于我来说例如线程延时、Eigen、Cere…)，这个时候我们就要自去通过各种手段去查阅相关资料去了解，这比无脑的去看还是强太多了。</li>
+</ul>
+<h2><span id="next">Next</span></h2><p>首先，我们需要明白什么叫做程序。程序，就是数据结构+算法+逻辑。我认为，如果我们想看懂某个项目的代码，首先就需要明确整个项目的逻辑，也就是整个代码的主程序入口(bash)。只有梳理好整个代码的逻辑，我们才能做到代码在心中杂而不乱。<br>接下来我们来看看代码的文件结构</p>
+<h2><span id="%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84">文件结构</span></h2><figure class="highlight txt"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br></pre></td><td class="code"><pre><code class="hljs txt">.<br>├── auto_start.sh    //自启动脚本    <br>├── CMakeLists.txt                  <br>├── README.md                       <br>└── src                              <br>    ├── armor_detector                 // 自瞄   <br>    │&nbsp;&nbsp; ├── CMakeLists.txt                       <br>    │&nbsp;&nbsp; ├── include                              <br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── ArmorFinder.h                    <br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── DetectAccelerator.h               <br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── Detector.h                        <br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── EnemyType.h                        <br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── LightBarFinder.h                   <br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── NumberClassifier.h<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; └── TargetBumper.h<br>    │&nbsp;&nbsp; └── src<br>    │&nbsp;&nbsp;     ├── ArmorFinder.cpp         // 灯条匹配装甲板<br>    │&nbsp;&nbsp;     ├── DetectAccelerator.cpp   // ROI提取<br>    │&nbsp;&nbsp;     ├── Detector.cpp            // 自瞄子线程<br>    │&nbsp;&nbsp;     ├── LightBarFinder.cpp      // 预处理 &amp; 筛选灯条<br>    │&nbsp;&nbsp;     ├── NumberClassifier.cpp    // HOG + SVM 数字分类<br>    │&nbsp;&nbsp;     └── TargetBumper.cpp        // 优先级判断<br>    ├── AutoAim.cpp                     // 主程序，生成子线程<br>    ├── AutoAim.h<br>    ├── buff                            // 能量机关<br>    │&nbsp;&nbsp; ├── CMakeLists.txt<br>    │&nbsp;&nbsp; ├── include<br>    │&nbsp;&nbsp; │   ├── AdaptiveEKF.hpp<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── buffAngleKalman.h<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── buffArmorNode.h<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── buffClassifier.h<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── buffCompensation.h<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── buffCurver.h<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── buffDetector.h<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── buffEKF.h<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── buffKalman.h<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; └── buffPredictor.h<br>    │&nbsp;&nbsp; └── src<br>    │&nbsp;&nbsp;     ├── buffAngleKalman.cpp<br>    │&nbsp;&nbsp;     ├── buffClassifier.cpp          // 能量机关SVM分类器<br>    │&nbsp;&nbsp;     ├── buffCompensation.cpp        // 能量机关补偿计算<br>    │&nbsp;&nbsp;     ├── buffCurver.cpp              // 正弦曲线拟合<br>    │&nbsp;&nbsp;     ├── buffDetector.cpp            // 能量机关识别器<br>    │&nbsp;&nbsp;     ├── buffEKF.cpp                 // 能量机关EKF角度滤波，已弃用<br>    │&nbsp;&nbsp;     ├── buffKalman.cpp              // 能量机关KF角度滤波，已弃用<br>    │&nbsp;&nbsp;     └── buffPredictor.cpp           // 能量机关预测器<br>    ├── driver<br>    │&nbsp;&nbsp; ├── CMakeLists.txt<br>    │&nbsp;&nbsp; ├── include<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── DxImageProc.h<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── GxCamera.h<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── GxIAPI.h<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── SerialPort.h<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; └── VideoCapture.h<br>    │&nbsp;&nbsp; └── src<br>    │&nbsp;&nbsp;     ├── GxCamera.cpp                // 大恒相机软件驱动<br>    │&nbsp;&nbsp;     ├── SerialPort.cpp              // 串口通信线程<br>    │&nbsp;&nbsp;     └── VideoCapture.cpp            // 采集图像线程<br>    ├── lcm                  // LCM通信模块，用以发送信息给自己电脑debug使用，需要配合QT小程序使用<br>    │&nbsp;&nbsp; ├── CMakeLists.txt<br>    │&nbsp;&nbsp; ├── example_t.lcm<br>    │&nbsp;&nbsp; ├── exlcm<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; └── example_t.hpp<br>    │&nbsp;&nbsp; ├── info.hpp<br>    │&nbsp;&nbsp; ├── lcm_module.cpp<br>    │&nbsp;&nbsp; └── lcm_module.h<br>    ├── pose_estimate        // 位姿估计<br>    │&nbsp;&nbsp; ├── CMakeLists.txt<br>    │&nbsp;&nbsp; ├── include<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── AdaptiveEKF.hpp<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── CTModel.h<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── ExtendedKalman.hpp<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── NormalEKF.h<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── NormalKalman.h<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── PitchYawFilter.h<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── PoseSolver.h<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── Predictor.h<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; ├── SecondFilter.h<br>    │&nbsp;&nbsp; │&nbsp;&nbsp; └── STF.hpp                        //强跟踪滤波器有关文件<br>    │&nbsp;&nbsp; └── src<br>    │&nbsp;&nbsp;     ├── CTModel.cpp                   // CT运动模型估计小陀螺的旋转，已弃用<br>    │&nbsp;&nbsp;     ├── NormalEKF.cpp                 // EKF滤波进行状态估计(参考上交)<br>    │&nbsp;&nbsp;     ├── NormalKalman.cpp              // CV模型进行状态估计，已被EKF代替<br>    │&nbsp;&nbsp;     ├── PitchYawFilter.cpp<br>    │&nbsp;&nbsp;     ├── PoseSolver.cpp<br>    │&nbsp;&nbsp;     ├── Predictor.cpp<br>    │&nbsp;&nbsp;     └── SecondFilter.cpp               // 卡尔曼滤波进行低通滤波<br>    └── utils<br>        ├── CMakeLists.txt<br>        ├── destroy             // 部分以后可能有参考价值的弃用代码<br>        │&nbsp;&nbsp; ├── AdaptiveEKF.hpp<br>        │&nbsp;&nbsp; ├── CAModel.cpp                     // CA运动模型<br>        │&nbsp;&nbsp; ├── CAModel.h<br>        │&nbsp;&nbsp; ├── CTModel.cpp                     // CT旋转估计模型<br>        │&nbsp;&nbsp; ├── CTModel.h<br>        │&nbsp;&nbsp; ├── README.md<br>        │&nbsp;&nbsp; ├── SingerExtendedFilter.cpp        // Singer模型(EKF)<br>        │&nbsp;&nbsp; ├── SingerExtendedFilter.h<br>        │&nbsp;&nbsp; ├── SingerFilter.cpp                // Singer模型(KF)<br>        │&nbsp;&nbsp; └── SingerFilter.h<br>        ├── include<br>        │&nbsp;&nbsp; ├── Config.h<br>        │&nbsp;&nbsp; ├── LockFreeQueue.hpp                // 无锁循环队列<br>        │&nbsp;&nbsp; ├── Log.h<br>        │&nbsp;&nbsp; ├── Params.h<br>        │&nbsp;&nbsp; └── Timer.h<br>        ├── src <br>        │&nbsp;&nbsp; ├── Config.cpp                       // 配置文件读取<br>        │&nbsp;&nbsp; ├── Log.cpp                          // 日志<br>        │&nbsp;&nbsp; ├── Params.cpp                       // 参数定义<br>        │&nbsp;&nbsp; └── Timer.cpp                        // 计时器，用来计算帧率; 或作为计数器，用来分频<br>        └── tools<br>            ├── buff_model.xml                   // 能量机关SVM模型<br>            ├── init.json                        // 配置文件<br>            └── svm_numbers.xml                  // 数字分类SVM模型<br></code></pre></td></tr></tbody></table></figure>
+
+<p>大致分为了自瞄、能量机关、驱动、位姿估计、LCM通信等五个模块，其中我们很容易的去找到它的主程序文件AutoAim.cpp,我们直接打开。</p>
+<p>[<img data-fancybox="gallery" data-sizes="auto" data-src="/home/chaichai/%E5%9B%BE%E7%89%87" alt="demo" class="lazyload">]</p>
+<p>最良心的是每个代码都有一定的注释，一定程度上为学习者提供了便利。这样以来，我们就可以正式的、愉快的开始看代码(看代码是逃不掉的，但是这样看代码一定能把逻辑捋顺)。通过VSCode的快捷功能(Ctrl+鼠标左键)，遇到新定义的结构体和类时可以快速索引。我们学习的不仅仅是算法，对于我们这样的编程小白来说，代码的结构和编写方式也很重要。总的来说，我们围绕着三个方面来进行学习。(老师给我总结的，我要好好谢谢老师)<br>-WHAT(代码层面，对编程语言的掌握要熟练)<br>所编写的这个是什么，是结构体？还是类？我代码编写所用到的知识是什么？我要知道我看的是什么？如果其中有自己的知识盲点，我们就需要下去搜集相关的信息去了解学习，一步一步推进。<br>-HOW(算法层面)<br>我们这个代码某个结构体或类，是如何实现的？这一部是需要我们去研究模仿的一步，它涉及到代码的设计。<br>-WHY(理解层面，对数据结构的掌握熟练)<br>这个代码为什么要这样编写？有什么作用？</p>
+</body></html>
+	</article>
+
+	 
+    <div class="kira-post-copyright">
+        <strong>Author：</strong>Chaichai<br>
+        <strong>Link：</strong><a href="https://chaichai438.github.io/2025/04/21/%E5%BC%80%E6%BA%90%E5%AD%A6%E4%B9%A0/summary/" title="https:&#x2F;&#x2F;chaichai438.github.io&#x2F;2025&#x2F;04&#x2F;21&#x2F;开源学习&#x2F;summary&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;chaichai438.github.io&#x2F;2025&#x2F;04&#x2F;21&#x2F;开源学习&#x2F;summary&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+  
+	<div class="kira-post-nav">
+		<nav class="post-nav">
+			  
+			<!-- 先找到与当前文字相同的目录 -->
+			   
+			<!-- 在找到当前文章所在的 index -->
+			          
+		</nav>
+	</div>
+	
+	<div class="kira-post-meta kira-rainbow">
+		
+			<a class="kirafont icon-container-fill -link" href="/categories/%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/">学习方法</a>
+		
+		
+			<a class="kirafont icon-tag-fill -none-link" href="/tags/%E5%BC%80%E6%BA%90%E5%AD%A6%E4%B9%A0/" rel="tag">开源学习</a>
+		
+	</div>
+	
+	<div class="kira-post-footer">
+		
+
+		
+	<div class="giscus"></div>
+  
+    <script src="https://giscus.app/client.js"
+      data-repo="chaichai438/chaichai438_discussion"
+      data-repo-id="R_kgDOOdATfw"
+      data-category="Announcements"
+      data-category-id="DIC_kwDOOdATf84CpThn"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="light"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async  
+    ></script>
+  
+
+	</div>
+	
+</div>
+
+				</div>
+			</div>
+			<div class="kira-right-column">
+	<a onclick="document.querySelector('#kira-top-header').scrollIntoView({behavior: 'smooth'});" class="kira-backtotop" aria-label="回到顶部" title="回到顶部">
+		<button class="mdui-fab mdui-ripple">
+			<i class="kirafont icon-caret-up"></i>
+		</button>
+	</a>
+</div>
+
+		</div>
+	</body>
+</html>
