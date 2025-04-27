@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html 
+	lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+<link rel="stylesheet" href="/css/layout.css">
+
+		
+		<title> 今日学习笔记 -  Hexo</title>
+		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
+		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
+		
+<link rel="stylesheet" href="/lib/mdui/mdui.min.css">
+
+		
+<script src="/lib/mdui/mdui.min.js"></script>
+
+		<!-- lazyload -->
+		
+<script src="/lib/lazysizes.js"></script>
+
+		<!-- smooth-scrolling -->
+		
+<script src="/lib/smooth-scrolling.js"></script>
+
+		<!-- highlight -->
+		
+<link rel="stylesheet" href="/lib/highlight/atom-one-dark.min.css">
+
+		
+<script src="/lib/highlight/highlight.min.js"></script>
+
+		<!-- 预置 kiraicon -->
+		
+<link rel="stylesheet" href="/lib/iconfont/iconfont.css">
+
+		
+		<link
+			rel="shortcut icon"
+			href="https://chaichai438.github.io/assets/Pictures/fruitcake.png"
+			type="image/png"
+		/>
+		
+<link rel="stylesheet" href="/deps/css/APlayer.min.css">
+
+		
+		
+<script src="/deps/js/APlayer.min.js"></script>
+<script src="/deps/js/Meting.min.js"></script>
+
+	<meta name="generator" content="Hexo 7.3.0"></head>
+
+	<body>
+		<div
+			class="kira-background"
+			style="background-image: url('https://chaichai438.github.io/assets/Pictures/backgroud.png')"
+		></div>
+		<div class="kira-header">
+    <a
+        class="kira-drawer-button mdui-ripple"
+        title="导航栏"
+        onclick="document.querySelector('.kira-sidebar-modal').classList.add('show');document.querySelector('.kira-sidebar#sidebar').classList.add('show');"
+    >
+        <i class="kirafont icon-menu"></i>
+    </a>
+    <a href="/" title="Hexo">
+        <img
+			src="https://chaichai438.github.io/assets/Pictures/avatar.jpg"
+			alt="Chaichai"
+		/>
+    </a>
+</div>
+		<div class="kira-body">
+			<div class="kira-sidebar" id="sidebar">
+	<div class="kira-avatar mdui-ripple">
+		<a href="https://chaichai438.github.io/assets/Pictures/avatar.jpg" title="Chaichai">
+			<img
+				src="https://chaichai438.github.io/assets/Pictures/avatar.jpg"
+				alt="Chaichai"
+			/>
+		</a>
+	</div>
+	<div class="kira-count">
+		<div><span>文章</span>3</div>
+		<div><span>标签</span>2</div>
+		<div><span>分类</span>2</div>
+	</div>
+	<div class="kira-list">
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/"
+			title="回到首页"
+		>
+			<i
+				class="kirafont
+					
+						icon-home
+					"
+			></i>
+			<div class="kira-list-item-content">
+				回到首页
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/archive.html"
+			title="文章归档"
+		>
+			<i
+				class="kirafont
+					
+						icon-container
+					"
+			></i>
+			<div class="kira-list-item-content">
+				文章归档
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/about.html"
+			title="关于本人"
+		>
+			<i
+				class="kirafont
+					
+						icon-user
+					"
+			></i>
+			<div class="kira-list-item-content">
+				关于本人
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/friends.html"
+			title="我的朋友"
+		>
+			<i
+				class="kirafont
+					
+						icon-team
+					"
+			></i>
+			<div class="kira-list-item-content">
+				我的朋友
+			</div>
+		</a>
+		
+	</div>
+	<aside id="kira-sidebar">
+		
+			<div class="kira-widget-wrap">
+	<div class="kira-widget kira-social">
+		
+			<a
+				class="mdui-ripple"
+				href="tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=1939327800&website=www.oicqzone.com"
+				target="_blank"
+				mdui-tooltip="{content: 'QQ'}"
+				style="color: rgb(49, 174, 255); background-color: rgba(49, 174, 255, .1);"
+			>
+				<i
+					class="kirafont
+					
+						icon-QQ
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://space.bilibili.com/316538505"
+				target="_blank"
+				mdui-tooltip="{content: '哔哩哔哩'}"
+				style="color: rgb(231, 106, 141); background-color: rgba(231, 106, 141, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-bilibili
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://github.com/chaichai438/"
+				target="_blank"
+				mdui-tooltip="{content: 'GitHub'}"
+				style="color: rgb(25, 23, 23); background-color: rgba(25, 23, 23, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-github
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://gitee.com/<你的gitee id>"
+				target="_blank"
+				mdui-tooltip="{content: 'Gitee'}"
+				style="color: rgb(165, 15, 15); background-color: rgba(165, 15, 15, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-gitee
+					"
+				></i>
+			</a>
+		
+	</div>
+</div>
+
+		
+			
+  <div class="kira-widget-wrap">
+    <h3 class="kira-widget-title">分类</h3>
+    <div class="kira-widget">
+      <ul class="category-list">
+        
+        
+
+        
+          <li class="category-list-item">
+            <a class="category-list-link" href="/categories/RMer/">
+              RMer
+            </a>
+            <span class="category-list-count">1</span>
+          </li>
+        
+          <li class="category-list-item">
+            <a class="category-list-link" href="/categories/学习方法/">
+              学习方法
+            </a>
+            <span class="category-list-count">1</span>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+		
+			
+	<div class="kira-widget-wrap">
+		<div id="randomtagcloud" class="kira-widget tagcloud kira-rainbow">
+			<a href="/tags/RMer/" style="font-size: 10px;">RMer</a> <a href="/tags/%E5%BC%80%E6%BA%90%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">开源学习</a>
+		</div>
+		
+	</div>
+
+
+		
+			
+	<div class="kira-widget-wrap">
+		<h3 class="kira-widget-title">
+			Archive
+		</h3>
+		<div class="kira-widget">
+			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/">2025</a><span class="archive-list-count">3</span></li></ul>
+		</div>
+	</div>
+
+
+		
+	</aside>
+	<div class="kira-copyright">
+		&copy; 2025
+		<a href="/">Chaichai</a>
+		Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> &
+		<a href="https://github.com/ch1ny/kira-hexo/" target="_blank">Kira-Hexo</a>
+		<br />
+		
+		
+	</div>
+</div>
+<div
+	class="kira-sidebar-modal"
+	id="sidebar-modal"
+	onclick="(function(self) {
+		self.classList.remove('show');
+		document.querySelector('.kira-sidebar.show#sidebar').classList.remove('show');
+	})(this)"
+></div>
+			<div class="kira-content">
+				<div id="kira-top-header"></div>
+				<div class="kira-main-content">
+					
+<link rel="stylesheet" href="/css/kira-image.css">
+
+
+<script src="/js/kira-image.js"></script>
+
+<div class="kira-image">
+    <div class="kira-image-modal">
+        <div class="kira-image-header">
+            <div class="kira-image-counter"></div>
+            <div class="kira-image-title"></div>
+            <div class="kira-image-operation">
+                <div class="kira-image-operation-button" id="kira-image-operation-button-zoom">
+                    <i class="kirafont icon-zoom-in"></i>
+                </div>
+                <div class="kira-image-operation-button" id="kira-image-operation-button-close">
+                    <i class="kirafont icon-close"></i>
+                </div>
+            </div>
+        </div>
+        <div class="kira-image-container">
+            <div class="kira-image-prev-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-left"></i>
+                </div>
+            </div>
+            <div class="kira-image-list">
+                <div class="kira-image-prev">
+                    <img />
+                </div>
+                <div class="kira-image-now">
+                    <img />
+                </div>
+                <div class="kira-image-next">
+                    <img />
+                </div>
+            </div>
+            <div class="kira-image-next-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+	
+<link rel="stylesheet" href="/css/kira-code-copy.css">
+
+	
+<script src="/js/kira-code-copy.js"></script>
+
+
+<div class="kira-post">
+	<article>
+		
+		<div
+			class="kira-post-cover"
+			style="padding-bottom: '56.25%'"
+		>
+			<img
+				data-src="https://chaichai438.github.io/assets/Pictures/backgroud.png"
+				data-sizes="auto"
+				alt="今日学习笔记"
+				class="lazyload kira-post-cover-image disabled-kira-image"
+			/>
+			<h1>今日学习笔记</h1>
+		</div>
+		
+		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
+			<a><i class="kirafont icon-calendar-fill"></i>2025年04月28日</a>
+			<a><i class="kirafont icon-edit-fill"></i>1.7k 字</a>
+			<a><i class="kirafont icon-time-circle-fill"></i>大概 7 分钟</a>
+		</div>
+		<html><head></head><body><h2><span id="%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BC%96%E7%A8%8B%E5%9F%BA%E4%BA%8Ec">多线程编程(基于C++)</span></h2><h2><span id="%E7%9B%AE%E5%BD%95">目录</span></h2><ul>
+<li><a href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%A4%9A%E7%BA%BF%E7%A8%8B">什么是多线程</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B">创建线程</a></li>
+<li><a href="#%E7%BA%BF%E7%A8%8B%E7%AE%A1%E7%90%86">线程管理</a></li>
+<li><a href="#%E7%BA%BF%E7%A8%8B%E7%9A%84%E4%BC%A0%E5%8F%82">线程的传参</a></li>
+<li><a href="#%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%90%8C%E6%AD%A5%E4%B8%8E%E4%BA%92%E6%96%A5">线程的同步与互斥</a></li>
+</ul>
+<h3><span id="%E4%BB%80%E4%B9%88%E6%98%AF%E5%A4%9A%E7%BA%BF%E7%A8%8B">什么是多线程</span></h3><h6><span id="%E9%A6%96%E5%85%88%E6%88%91%E4%BB%AC%E9%9C%80%E8%A6%81%E4%BA%86%E8%A7%A3%E4%BB%80%E4%B9%88%E6%98%AF%E7%BA%BF%E7%A8%8B">首先我们需要了解什么是线程。</span></h6><ul>
+<li>线程（Thread）是操作系统能够进行调度的最小单位，它比进程更小，是进程的一个子集。线程是程序执行的最小单位，用于实现并发执行。</li>
+<li>多线程指的是一个程序中包含两个或者两个以上的线程，多线程的提出是为提高代码的执行效率，这就好比工厂中的流水线，只有一条称为单线程，有多条流水线就称为多线程。</li>
+</ul>
+<h6><span id="%E6%88%91%E8%BF%99%E9%87%8C%E8%BF%98%E6%9C%89%E6%9B%B4%E5%BD%A2%E8%B1%A1%E4%B8%80%E7%82%B9%E7%9A%84%E4%BE%8B%E5%AD%90ai%E7%94%9F%E6%88%90">我这里还有更形象一点的例子。<em>AI生成</em></span></h6><hr>
+<ul>
+<li>线程比喻：餐厅里的服务员</li>
+</ul>
+<p>想象你走进一家餐厅，餐厅就像一个程序，而餐厅里的服务员就像线程。</p>
+<ol>
+<li><strong>餐厅（进程）</strong></li>
+</ol>
+<ul>
+<li><strong>餐厅</strong>是整个程序的运行环境，它有自己的资源，比如厨房（内存）、餐具（文件句柄）、服务员（线程）等。</li>
+<li>餐厅的资源是有限的，但它可以同时为多个顾客服务。</li>
+</ul>
+<ol start="2">
+<li><strong>服务员（线程）</strong></li>
+</ol>
+<ul>
+<li><strong>服务员</strong>是餐厅里的线程，他们负责完成各种任务，比如点菜、送餐、清理桌子等。</li>
+<li>每个服务员可以独立完成任务，但他们共享餐厅的资源（比如厨房和餐具）。</li>
+</ul>
+<ol start="3">
+<li><strong>顾客（任务）</strong></li>
+</ol>
+<ul>
+<li>餐厅里的<strong>顾客</strong>代表程序中的任务。每个顾客有不同的需求，比如点不同的菜或者要求不同的服务。</li>
+<li>一个服务员可以同时服务多个顾客，这就是线程的并发性。</li>
+</ul>
+<h6><span id="%E7%BA%BF%E7%A8%8B%E7%9A%84%E7%89%B9%E7%82%B9%E7%94%A8%E9%A4%90%E5%8E%85%E6%9D%A5%E6%AF%94%E5%96%BB">线程的特点（用餐厅来比喻）</span></h6><p><strong>轻量级</strong></p>
+<ul>
+<li><strong>服务员</strong>的加入和离开（线程的创建和销毁）相对容易，不需要重新装修餐厅（进程的资源）。</li>
+<li>一个服务员（线程）的开销比重新开一家餐厅（进程）小得多。<br><strong>并发性</strong></li>
+<li>多个<strong>服务员</strong>可以同时为不同的顾客服务，就像多个线程可以同时执行不同的任务。</li>
+<li>这样可以提高餐厅的效率，尤其是在顾客很多的时候。<br><strong>共享资源</strong></li>
+<li>所有的<strong>服务员</strong>共享餐厅的厨房、餐具等资源，就像线程共享进程的内存和文件句柄。</li>
+<li>这使得服务员之间可以高效地协作，比如一个服务员可以去厨房取菜，另一个服务员可以去送菜。<br><strong>独立性</strong></li>
+<li>每个<strong>服务员</strong>有自己的任务和职责，比如点菜、送餐等，就像线程有自己的执行栈和局部变量。</li>
+<li>他们可以独立完成任务，但也可以协作完成复杂的任务。<br>线程的生命周期（用餐厅来比喻）<br><strong>新建（New）</strong></li>
+<li>一个新<strong>服务员</strong>被招聘进来，但还没有开始工作。他站在餐厅门口，等待分配任务。<br><strong>就绪（Runnable）</strong></li>
+<li><strong>服务员</strong>已经准备好工作，等待餐厅经理（操作系统）的调度，比如分配一个顾客给他服务。<br><strong>运行（Running）</strong></li>
+<li><strong>服务员</strong>正在为顾客服务，比如点菜、送餐等。<br><strong>阻塞（Blocked）</strong></li>
+<li><strong>服务员</strong>因为某些原因暂时无法继续服务，比如等待厨房准备好菜，或者顾客还没决定点什么菜。<br><strong>终止（Terminated）</strong></li>
+<li><strong>服务员</strong>完成了所有任务，或者被餐厅经理（操作系统）解雇了，不再工作。</li>
+</ul>
+<h5><span id="%E6%80%BB%E7%BB%93">总结</span></h5><p>线程就像餐厅里的服务员，它们是程序（餐厅）中的独立执行单元，可以并发执行任务，共享资源，但又独立完成自己的工作。通过合理安排线程（服务员），可以大大提高程序（餐厅）的效率。</p>
+<h3><span id="%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B">创建线程</span></h3><p>首先需要额外引入这三个库</p>
+<pre><code>#include &lt;thread&gt;
+#include &lt;chrono&gt;
+#include &lt;atomic&gt;
+</code></pre>
+<p>简单解释一下库的作用:<br>(不能很好的理解的话可以去问问deepseek，它能给出更通俗的解释)</p>
+<ul>
+<li>thread<blockquote>
+<p>C++用于线程创建的库</p>
+</blockquote>
+</li>
+<li>chrono<blockquote>
+<p>用于处理时间相关的功能，包括时间点、时间间隔、时钟等</p>
+</blockquote>
+</li>
+<li>atomic<blockquote>
+<p>原子操作是指不可分割的操作。在多线程环境中，当多个线程同时访问和修改一个共享变量时，普通的读写操作可能会导致竞态条件（race condition），从而导致数据不一致。而原子操作可以确保在执行过程中不会被其他线程中断，从而保证操作的完整性。</p>
+</blockquote>
+</li>
+</ul>
+<p>通过类来创建一个线程</p>
+<pre><code>class Mythod
+{
+public:
+    Mythod()
+    {
+        state = 1;
+    }
+    // 运行线程的函数
+    void run()
+    {
+        while (state)
+        {
+            this_thread::sleep_for(chrono::milliseconds(500));
+            cout &lt;&lt; "Hello!" &lt;&lt; endl;
+        }
+    }
+    // 停止线程的函数
+    void stop()
+    {
+        state = 0;
+    }
+
+private:
+    atomic&lt;bool&gt; state;// 原子操作
+};
+</code></pre>
+<p>对于主程序</p>
+<pre><code>int main()
+{
+    Mythod mythod;
+    thread thread(&amp;Mythod::run, ref(mythod));
+
+    this_thread::sleep_for(chrono::seconds(3));
+
+    mythod.stop(); // 调用停止线程的方法
+
+    thread.join(); // 用于等待线程结束
+
+    cout &lt;&lt; "线程任务执行结束" &lt;&lt; endl;
+
+    return 0;
+}
+</code></pre>
+<h3><span id="%E7%BA%BF%E7%A8%8B%E7%AE%A1%E7%90%86">线程管理</span></h3><pre><code>xx.join() // 用于等待线程完成执行。如果不调用 join() 或 detach() 而直接销毁线程对象，会导致程序崩溃。
+xx.detach() // 将线程与主线程分离，线程在后台独立运行，主线程不再等待它。但是它必须在主线程结束之前结束，否则也会导致程序崩溃。
+</code></pre>
+<h3><span id="%E7%BA%BF%E7%A8%8B%E7%9A%84%E4%BC%A0%E5%8F%82">线程的传参</span></h3><h4><span id="%E6%97%A0%E5%8F%82%E6%95%B0">无参数</span></h4><pre><code>&lt;thread_name&gt;(func);
+</code></pre>
+<h4><span id="%E5%80%BC%E4%BC%A0%E9%80%92">值传递</span></h4><pre><code>&lt;thread_name&gt;(func,arg1,arg2,...);
+</code></pre>
+<h4><span id="%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92">引用传递</span></h4><pre><code>&lt;thread_name&gt;(func,std::ref(arg1),...) // 涉及引用就用std::ref()
+</code></pre>
+<h3><span id="%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%90%8C%E6%AD%A5%E4%B8%8E%E4%BA%92%E6%96%A5">线程的同步与互斥</span></h3><p>同步与互斥这两个概念主要用于控制多个线程对共享资源(同一个变量)的访问,以避免数据竞争、死锁等问题</p>
+<h4><span id="%E4%BA%92%E6%96%A5%E9%87%8Fmutex">互斥量(Mutex)</span></h4><p>互斥量是一种同步原语，用于防止多个线程同时访问共享资源。当一个线程需要访问共享资源时，它首先需要锁定（lock）互斥量。如果互斥量已经被其他线程锁定，那么请求锁定的线程将被阻塞，直到互斥量被解锁（unlock）。</p>
+<pre><code>std::mutex mtx;
+mtx.lock();   // 锁定互斥锁
+// 访问共享资源
+mtx.unlock(); // 释放互斥锁
+</code></pre>
+<p><code>std::lock_guard</code> 和 <code>std::unique_lock</code>：自动管理锁的获取和释放。</p>
+<pre><code>std::lock_guard&lt;std::mutex&gt; lock(mtx); // 自动锁定和解锁
+// 访问共享资源
+</code></pre>
+<p>这只是我的一点点肤浅的学习，要更加深入了解多线程编程还得去阅读更多的文档以及去多多实践</p>
+<h3><span id="%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99">参考资料</span></h3><p><a target="_blank" rel="noopener" href="https://www.runoob.com/cplusplus/cpp-multithreading.html">https://www.runoob.com/cplusplus/cpp-multithreading.html</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/yahid/article/details/125921786">https://blog.csdn.net/yahid/article/details/125921786</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/luoweifu/article/details/46835437">https://blog.csdn.net/luoweifu/article/details/46835437</a></p>
+</body></html>
+	</article>
+
+	 
+    <div class="kira-post-copyright">
+        <strong>Author：</strong>Chaichai<br>
+        <strong>Link：</strong><a href="https://chaichai438.github.io/2025/04/28/RM%E5%AD%A6%E4%B9%A0/250426/" title="https:&#x2F;&#x2F;chaichai438.github.io&#x2F;2025&#x2F;04&#x2F;28&#x2F;RM学习&#x2F;250426&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;chaichai438.github.io&#x2F;2025&#x2F;04&#x2F;28&#x2F;RM学习&#x2F;250426&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+  
+	<div class="kira-post-nav">
+		<nav class="post-nav">
+			      
+			<!-- 先找到与当前文字相同的目录 -->
+			   
+			<!-- 在找到当前文章所在的 index -->
+			          
+		</nav>
+	</div>
+	
+	<div class="kira-post-meta kira-rainbow">
+		
+			<a class="kirafont icon-container-fill -link" href="/categories/RMer/">RMer</a>
+		
+		
+			<a class="kirafont icon-tag-fill -none-link" href="/tags/RMer/" rel="tag">RMer</a>
+		
+	</div>
+	
+	<div class="kira-post-footer">
+		
+
+		
+	<div class="giscus"></div>
+  
+    <script src="https://giscus.app/client.js"
+      data-repo="chaichai438/chaichai438_discussion"
+      data-repo-id="R_kgDOOdATfw"
+      data-category="Announcements"
+      data-category-id="DIC_kwDOOdATf84CpThn"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="light"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async  
+    ></script>
+  
+
+	</div>
+	
+</div>
+
+				</div>
+			</div>
+			<div class="kira-right-column">
+	<a onclick="document.querySelector('#kira-top-header').scrollIntoView({behavior: 'smooth'});" class="kira-backtotop" aria-label="回到顶部" title="回到顶部">
+		<button class="mdui-fab mdui-ripple">
+			<i class="kirafont icon-caret-up"></i>
+		</button>
+	</a>
+</div>
+
+		</div>
+	</body>
+</html>
