@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="/css/layout.css">
 
 		
-		<title> Hexo</title>
+		<title> 数据结构和算法(4) -  Hexo</title>
 		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
 		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
 		
@@ -123,7 +123,7 @@
 		</a>
 		
 		<a
-			class="kira-list-item mdui-ripple true"
+			class="kira-list-item mdui-ripple false"
 			href="/about.html"
 			title="关于本人"
 		>
@@ -359,54 +359,172 @@
 <div class="kira-post">
 	<article>
 		
-		<div
-			class="kira-post-cover"
-			style="padding-bottom: '56.25%'"
-		>
+		<div class="kira-post-cover">
 			<img
-				data-src="https://chaichai438.github.io/assets/Pictures/backgroud.png"
+				data-src="https://chaichai438.github.io/assets/Pictures/cover/算法.png"
 				data-sizes="auto"
-				alt=""
+				alt="数据结构和算法(4)"
 				class="lazyload kira-post-cover-image disabled-kira-image"
 			/>
-			<h1></h1>
+			<h1>数据结构和算法(4)</h1>
 		</div>
 		
 		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
-			<a><i class="kirafont icon-calendar-fill"></i>2025年04月21日</a>
-			<a><i class="kirafont icon-edit-fill"></i>90 字</a>
-			<a><i class="kirafont icon-time-circle-fill"></i>大概 1 分钟</a>
+			<a><i class="kirafont icon-calendar-fill"></i>2025年05月11日</a>
+			<a><i class="kirafont icon-edit-fill"></i>1.3k 字</a>
+			<a><i class="kirafont icon-time-circle-fill"></i>大概 5 分钟</a>
 		</div>
-		<html><head></head><body><h2><span id="%F0%9F%8C%9F%E5%88%9D%E6%AC%A1%E8%A7%81%E9%9D%A2">🌟初次见面</span></h2><ul>
-<li>☘️我叫柴柴</li>
-<li>🙃大一生</li>
-<li>🍃就读于四川某不知名民族大学计科学院</li>
-<li>🌶️对AI充满热情</li>
-<li>😰技术半吊子</li>
-<li>🎯空闲的时候喜欢玩游戏、看小说、闲逛</li>
-<li>🌹人好不冷漠</li>
-<li>😆😆😆Hope to make friends with you!</li>
+		<html><head></head><body><blockquote>
+<p>链表、双向队列</p>
+</blockquote>
+<span id="more"></span>
+
+<h3><span id="%E9%93%BE%E8%A1%A8">链表</span></h3><p>链表像数组一样，也用来表示一系列的元素。但是链表的实现和数组不同，在不同的场景他们会有不同的性能表现。<br>我们知道，数组在计算机内存中是连续的(如果不懂的话请自行AI)，而链表是可以分布在内存的各个地方，这种不连续的内存空间，我们称之为<strong>结点</strong>(很重要，后面都会涉及到这个概念)。</p>
+<ul>
+<li>关键：每个结点除了保存着数据，他还保存着链表里下一结点的内存地址。而这份用来指示下一结点的内存地址的额外数据，被称为<strong>链</strong>。</li>
 </ul>
-<h2><span id="%F0%9F%9B%A0-%E6%8A%80%E6%9C%AF%E6%A0%88">🛠 技术栈</span></h2><ul>
-<li><strong>我会使用的语言</strong>：C/C++, Python, Java</li>
-<li><strong>我使用的工具</strong>：Cion, VS Code, Cursor, VS2022</li>
+<h4><span id="%E8%AF%BB%E5%8F%96%E6%8F%92%E5%85%A5%E4%B8%8E%E5%88%A0%E9%99%A4">读取、插入与删除</span></h4><h5><span id="%E8%AF%BB%E5%8F%96">读取</span></h5><p>链表不同于数组，数组在任何情况下的查找效率为O(1)。而链表是由一个个结点组成的，因此在查找某个数据的时候需要一个一个遍历结点，因此在最坏的情况下，链表的查找效率为O(N)，比数组的效率低得多。</p>
+<h5><span id="%E6%8F%92%E5%85%A5">插入</span></h5><p>在某些情况下，链表的插入跟数组相比有着明显的优势。数组中想在0索引处插入数据，则需要将所有数据右移一格。而链表中像这样做，只需要新建一个结点再链接到下一结点即可。而链表若是想在末尾插入数据，却比数组慢得多：链表需要遍历到最后一个结点再新建结点并链接；而数组只需要直接在末尾插入就好。因此我们会发现，链表和数组的最坏情况和最好情况刚好是反着来的。</p>
+<h5><span id="%E5%88%A0%E9%99%A4">删除</span></h5><p>我们可以类比以上的过程。链表的想删除表头的数据其实很容易，想要删除末尾的数据却很麻烦，因为他需要查找到最后一个数据。而数组删除第一个数据很麻烦，删除最后一个数据却很简单。</p>
+<blockquote>
+<p>为了方便理解，我这里有一个可让<a target="_blank" rel="noopener" href="https://visualgo.net/zh/list">数据结构可视化</a>的网站,大家可以去尝试一下以便更好的理解。</p>
+<p>除了在读取方面数组有着明显优势，其他方面大差不差，我们为什么还要用链表呢。存在即合理。</p>
+</blockquote>
+<h4><span id="%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF">应用场景</span></h4><p>1、需要频繁插入/删除（如实现队列、撤销操作）</p>
+<p>2、数据规模不确定（如动态内存管理）<br>例如我们需要整理电子邮箱地址，需要删除列表中无效的电子邮箱。如果使用数组，我们每次删除邮箱地址需要格外花其他步骤来左移之后的数据，而用链表只需要删除数据后改变节点，便可继续检查接下来的数据了。</p>
+<h4><span id="%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8">双向链表</span></h4><p>这是链表结构中非常实用的一种变体。</p>
+<h5><span id="%E7%89%B9%E6%80%A7">特性</span></h5><p>1、每个节点包含两个指针：<br>next：指向后一个节点（和单向链表相同）<br>prev：指向前一个节点（新增的指针）</p>
+<blockquote>
+<p><em>类比</em>：类似于地铁的双向轨道，既可以从A站到B站，也可以从B站返回A站。</p>
+</blockquote>
+<h5><span id="%E4%BC%98%E5%8A%BF">优势：</span></h5><p>1、双向遍历：可以从头到尾或从尾到头访问数据。<br>2、删除操作更高效：已知某个节点时，可直接通过prev指针找到前驱节点，无需从头遍历（单向链表删除节点需要O(n)时间找前驱）。</p>
+<h5><span id="%E4%BB%A3%E4%BB%B7">代价：</span></h5><p>1、每个节点多一个指针，占用更多内存。<br>2、插入/删除时需要维护两个指针，代码稍复杂。</p>
+<h5><span id="%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF">应用场景</span></h5><p>1、浏览器历史记录：<br>前进和后退功能需要双向遍历。<br>2、音乐播放列表：<br>支持上一曲/下一曲切换。<br>3、实现双向队列（Deque）：<br>高效地从头部或尾部插入/删除数据。</p>
+<blockquote>
+<p>说起双向队列，我想更进一步了解,以下由AI生成</p>
+</blockquote>
+<hr>
+<h4><span id="%E5%8F%8C%E7%AB%AF%E9%98%9F%E5%88%97">双端队列</span></h4><p><strong>定义</strong>：允许在<strong>头部和尾部</strong>进行高效插入和删除操作的线性数据结构。<br><strong>特点</strong>：</p>
+<ul>
+<li>可以从两端插入（<code>push_front</code>/<code>push_back</code>）</li>
+<li>可以从两端删除（<code>pop_front</code>/<code>pop_back</code>）</li>
+<li>先进先出（FIFO）或后进先出（LIFO）取决于使用方式</li>
 </ul>
-<p><img data-fancybox="gallery" data-sizes="auto" data-src="https://github-readme-stats.vercel.app/api/top-langs/?username=chaichai438&amp;layout=compact&amp;theme=radical" alt="Most Used Languages" class="lazyload"></p>
+<p><strong>类比</strong>：想象一个地铁站的双向闸机，乘客可以从两端进出（如下图所示）：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">[队尾] ←→ [元素1] ↔ [元素2] ↔ ... ↔ [元素N] ←→ [队头]<br></code></pre></td></tr></tbody></table></figure>
+<h4><span id="%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%AE%9E%E7%8E%B0%E5%8F%8C%E7%AB%AF%E9%98%9F%E5%88%97">为什么用双向链表实现双端队列？</span></h4><ol>
+<li><strong>时间复杂度优势</strong>：<ul>
+<li>所有插入/删除操作均为 <strong>O(1)</strong>（单向链表尾部操作需要O(n)遍历）</li>
+</ul>
+</li>
+<li><strong>操作对称性</strong>：<ul>
+<li>双向链表的<code>prev</code>和<code>next</code>指针天然支持双向操作</li>
+</ul>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>数组实现（循环数组）</th>
+<th>双向链表实现</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>push_front</code></td>
+<td>O(1)（均摊）</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td><code>push_back</code></td>
+<td>O(1)（均摊）</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td><code>pop_front</code></td>
+<td>O(1)</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td><code>pop_back</code></td>
+<td>O(1)</td>
+<td>O(1)</td>
+</tr>
+</tbody></table>
+<h5><span id="%E4%B8%8E%E5%BE%AA%E7%8E%AF%E6%95%B0%E7%BB%84%E5%AE%9E%E7%8E%B0%E7%9A%84%E5%AF%B9%E6%AF%94">与循环数组实现的对比</span></h5><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>双向链表实现</th>
+<th>循环数组实现</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>插入/删除时间复杂度</td>
+<td>O(1)（严格）</td>
+<td>O(1)（均摊，可能扩容）</td>
+</tr>
+<tr>
+<td>内存占用</td>
+<td>动态（无浪费）</td>
+<td>需预分配空间</td>
+</tr>
+<tr>
+<td>缓存友好性</td>
+<td>较差（节点分散）</td>
+<td>好（内存连续）</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>频繁动态扩容</td>
+<td>已知最大容量</td>
+</tr>
+</tbody></table>
 </body></html>
 	</article>
 
 	 
     <div class="kira-post-copyright">
         <strong>Author：</strong>Chaichai<br>
-        <strong>Link：</strong><a href="https://chaichai438.github.io/about.html" title="https:&#x2F;&#x2F;chaichai438.github.io&#x2F;about.html" target="_blank" rel="noopener">https:&#x2F;&#x2F;chaichai438.github.io&#x2F;about.html</a><br>
+        <strong>Link：</strong><a href="https://chaichai438.github.io/2025/05/11/RM%E5%AD%A6%E4%B9%A0/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95(4)/" title="https:&#x2F;&#x2F;chaichai438.github.io&#x2F;2025&#x2F;05&#x2F;11&#x2F;RM学习&#x2F;数据结构与算法(4)&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;chaichai438.github.io&#x2F;2025&#x2F;05&#x2F;11&#x2F;RM学习&#x2F;数据结构与算法(4)&#x2F;</a><br>
         
             <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
         
     </div>
 
   
+	<div class="kira-post-nav">
+		<nav class="post-nav">
+			  
+			<!-- 先找到与当前文字相同的目录 -->
+			               
+			<!-- 在找到当前文章所在的 index -->
+			                
+			<!-- 上一篇文章 -->
+			<div class="old">
+				<span>上一章</span>
+				<a href="/2025/05/09/RM%E5%AD%A6%E4%B9%A0/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95(3)/"> 数据结构和算法(3)</a>
+			</div>
+			                      
+			<!-- 先找到与当前文字相同的目录 -->
+			               
+			<!-- 在找到当前文章所在的 index -->
+			                
+			<!-- 上一篇文章 -->
+			<div class="old">
+				<span>上一章</span>
+				<a href="/2025/05/09/RM%E5%AD%A6%E4%B9%A0/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95(3)/"> 数据结构和算法(3)</a>
+			</div>
+			          
+		</nav>
+	</div>
+	
 	<div class="kira-post-meta kira-rainbow">
 		
+			<a class="kirafont icon-container-fill -link" href="/categories/RMer/">RMer</a><a class="kirafont icon-container-fill -link" href="/categories/RMer/%E7%AE%97%E6%B3%95%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86/">算法必备知识</a>
+		
+		
+			<a class="kirafont icon-tag-fill -none-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a>
 		
 	</div>
 	
