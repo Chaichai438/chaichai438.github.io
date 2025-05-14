@@ -443,25 +443,9 @@ C —— D
 </code></pre>
 <p>广度优先搜索（Breadth-First Search，BFS）是一种用于<strong>遍历</strong>或<strong>搜索图</strong>的算法。它从<strong>根节点</strong>开始，<strong>逐层</strong>访问（由近及远）所有相邻节点，直到找到目标节点或遍历完整个结构。BFS的核心思想是“先广后深”，即先访问离起点最近的节点，再逐步扩展到更远的节点。适用于多种实际场景，如最短路径问题、社交网络分析和网络爬虫等。通过队列实现的逐层遍历策略，BFS能够高效地遍历图中的节点，确保找到从起点到其他节点的最短路径。</p>
 <h5><span id="bfs%E6%AD%A5%E9%AA%A4">BFS步骤</span></h5><ol>
-<li><strong>初始化队列和访问标记</strong></li>
-</ol>
-<ul>
-<li>创建一个空队列queue。</li>
-<li>创建一个空集合visited，用于标记已访问的节点。</li>
-</ul>
-<ol start="2">
-<li><strong>将起点加入队列</strong></li>
-</ol>
-<ul>
-<li>假设起点是A。</li>
-<li>将A加入队列：queue = [A]。</li>
-<li>标记A为已访问：visited = {A}。</li>
-</ul>
-<ol start="3">
-<li><strong>循环处理队列</strong></li>
-</ol>
-<ul>
-<li>队列不为空，继续处理</li>
+<li><strong>初始化队列和访问标记</strong><br>创建一个空队列queue。<br>创建一个空集合visited，用于标记已访问的节点。</li>
+<li><strong>将起点加入队列</strong><br>假设起点是A。<br>将A加入队列：queue = [A]。<br>标记A为已访问：visited = {A}。</li>
+<li><strong>循环处理队列</strong><br>队列不为空，继续处理<ul>
 <li><strong>第1次循环</strong><ul>
 <li>从队列中取出一个节点：current_node = A。</li>
 <li>处理A（例如，打印A）。</li>
@@ -495,7 +479,7 @@ C —— D
 </ul>
 </li>
 </ul>
-<ol start="4">
+</li>
 <li><strong>结束条件</strong></li>
 </ol>
 <ul>
