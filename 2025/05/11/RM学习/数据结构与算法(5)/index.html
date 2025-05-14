@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="/css/layout.css">
 
 		
-		<title> Hexo</title>
+		<title> 数据结构和算法(5) -  Hexo</title>
 		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
 		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
 		
@@ -237,7 +237,7 @@
             <a class="category-list-link" href="/categories/RMer/">
               RMer
             </a>
-            <span class="category-list-count">5</span>
+            <span class="category-list-count">6</span>
           </li>
         
           <li class="category-list-item">
@@ -251,7 +251,7 @@
             <a class="category-list-link" href="/categories/RMer/算法必备知识/">
               算法必备知识
             </a>
-            <span class="category-list-count">5</span>
+            <span class="category-list-count">6</span>
           </li>
         
       </ul>
@@ -359,25 +359,114 @@
 <div class="kira-post">
 	<article>
 		
-		<div
-			class="kira-post-cover"
-			style="padding-bottom: '56.25%'"
-		>
+		<div class="kira-post-cover">
 			<img
-				data-src="https://chaichai438.github.io/assets/Pictures/backgroud.png"
+				data-src="https://chaichai438.github.io/assets/Pictures/cover/算法.png"
 				data-sizes="auto"
-				alt=""
+				alt="数据结构和算法(5)"
 				class="lazyload kira-post-cover-image disabled-kira-image"
 			/>
-			<h1></h1>
+			<h1>数据结构和算法(5)</h1>
 		</div>
 		
 		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
 			<a><i class="kirafont icon-calendar-fill"></i>2025年05月11日</a>
-			<a><i class="kirafont icon-edit-fill"></i>0 字</a>
-			<a><i class="kirafont icon-time-circle-fill"></i>大概 1 分钟</a>
+			<a><i class="kirafont icon-edit-fill"></i>1.6k 字</a>
+			<a><i class="kirafont icon-time-circle-fill"></i>大概 6 分钟</a>
 		</div>
-		<html><head></head><body></body></html>
+		<html><head></head><body><blockquote>
+<p>二叉树、图</p>
+</blockquote>
+<span id="more"></span>
+
+<h3><span id="%E4%BA%8C%E5%8F%89%E6%A0%91">二叉树</span></h3><p><strong>定义</strong>：每个节点最多有两个子节点的树结构，称为左子节点和右子节点。<br><strong>类比</strong>：<br>1、像家族的家谱图，每个人（节点）最多有两个孩子（左孩子和右孩子）。<br>2、像游戏中的技能树，每个技能可能有两个分支。</p>
+<pre><code>例如: 
+          50
+         /  \
+       30   70
+      /  \  /  \
+     20  40 60  80
+</code></pre>
+<p><strong>核心术语</strong>：<br>1、根节点（Root）：树的顶层节点（没有父节点）。<br>2、叶子节点（Leaf）：没有子节点的节点。<br>3、深度（Depth）：根节点到当前节点的边数。<br>4、高度（Height）：当前节点到最远叶子节点的边数。<br>5、子树（Subtree）：以某个节点为根的子树<br><strong>规则</strong>：<br>1、每个节点的子节点数量可为0、1、2。<br>2、如果有两个子节点，则其中一个子节点的值必须小于父节点的值<br>，另一个子节点的值必须大于父节点。</p>
+<h4><span id="%E6%9F%A5%E6%89%BE">查找</span></h4><p>1、查找原理<br>利用BST的性质：<br>左子树所有节点值 &lt; 根节点值<br>右子树所有节点值 &gt; 根节点值</p>
+<p>2、查找流程（迭代实现）步骤：</p>
+<ul>
+<li>从根节点开始。</li>
+<li>若当前节点值等于target_value，返回该节点。</li>
+<li>若target_value &lt; 当前节点值，进入左子树。</li>
+<li>若target_value &gt; 当前节点值，进入右子树。</li>
+<li>若当前节点为空，返回None。</li>
+</ul>
+<p><strong>时间复杂度</strong><br>在平均情况下，每次进行一步判断，我们都把一半的节点排除掉了，与二分查找法相比，有着相同的效率<strong>O(log N)</strong><br>但是如果二叉树不够理想，在极端情况下，变成链表的形式，它的查看效率会退化成O(N)</p>
+<h4><span id="%E6%8F%92%E5%85%A5">插入</span></h4><p>插入时我们需要先查找对应的结点，方便我们将数据插入到合适的位置。主要在于查找，它的效率是O(log N)，而插入只需要一步。即插入的效率为<strong>O(log N)</strong></p>
+<h4><span id="%E5%88%A0%E9%99%A4">删除</span></h4><p>删除是二叉树各种操作中最麻烦的一个。<br>需要遵守以下的<strong>规则</strong>：<br>1、如果要删除的结点没有子节点，直接删除；<br>2、如果要删除的节点上有一个子节点，那么把它删除之后，还要将子节点填到被删除节点的位置；<br>3、如果要删除的结点有两个子节点，则将该节点替换成其<strong>后继节点</strong>。一个节点的后继结点，就是<strong>所有比被删除节点大的子节点中最小的那个</strong>。</p>
+<ul>
+<li>如果后集结点带有右子节点，则在后继结点填补被删除节点以后，用此右子节点代替<strong>后继结点的父节点的左子结点</strong>。</li>
+</ul>
+<h3><span id="%E5%9B%BE">图</span></h3><p>图是一种善于处理关系类型的数据结构，有了它可以很轻松地表示数据之间是如何关联的。例如社交软件上一个人的关系网，</p>
+<h4><span id="%E6%A6%82%E5%BF%B5">概念</span></h4><ol>
+<li><strong>顶点（Vertex）</strong><br>图中的每个元素称为顶点（或节点）。顶点可以表示任何实体，如城市、人、网页等。<br>例如，在一个社交网络图中，每个用户可以是一个顶点。</li>
+<li><strong>边（Edge）</strong><br>边是连接两个顶点的线，表示顶点之间的关系。<br>边可以是有向的（Directed Edge）或无向的（Undirected Edge）。<br><strong>无向边</strong>：边没有方向，表示两个顶点之间的双向关系。例如，城市之间的道路。<br><strong>有向边</strong>：边有方向，表示从一个顶点指向另一个顶点的单向关系。例如，网页之间的链接。</li>
+<li><strong>权重（Weight）</strong><br>边可以有权重（Weight），表示边的“代价”或“距离”。权重可以是正数、负数或零。<br>例如，在交通网络中，边的权重可以表示两个城市之间的距离或旅行时间。</li>
+</ol>
+<h4><span id="%E5%B9%BF%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2">广度优先搜索</span></h4><pre><code>A —— B
+|    |
+C —— D
+</code></pre>
+<p>广度优先搜索（Breadth-First Search，BFS）是一种用于<strong>遍历</strong>或<strong>搜索图</strong>的算法。它从<strong>根节点</strong>开始，<strong>逐层</strong>访问（由近及远）所有相邻节点，直到找到目标节点或遍历完整个结构。BFS的核心思想是“先广后深”，即先访问离起点最近的节点，再逐步扩展到更远的节点。适用于多种实际场景，如最短路径问题、社交网络分析和网络爬虫等。通过队列实现的逐层遍历策略，BFS能够高效地遍历图中的节点，确保找到从起点到其他节点的最短路径。</p>
+<h5><span id="bfs%E6%AD%A5%E9%AA%A4">BFS步骤</span></h5><ol>
+<li><strong>初始化队列和访问标记</strong></li>
+</ol>
+<ul>
+<li>创建一个空队列queue。</li>
+<li>创建一个空集合visited，用于标记已访问的节点。</li>
+</ul>
+<ol start="2">
+<li><strong>将起点加入队列</strong></li>
+</ol>
+<ul>
+<li>假设起点是A。</li>
+<li>将A加入队列：queue = [A]。</li>
+<li>标记A为已访问：visited = {A}。</li>
+</ul>
+<ol start="3">
+<li><strong>循环处理队列</strong></li>
+</ol>
+<ul>
+<li>队列不为空，继续处理。<br><strong>第1次循环</strong></li>
+<li>从队列中取出一个节点：current_node = A。</li>
+<li>处理A（例如，打印A）。</li>
+<li>遍历A的所有邻接节点：B和C。</li>
+<li>B未访问过，将B加入队列：queue = [B]，标记B为已访问：visited = {A, B}。</li>
+<li>C未访问过，将C加入队列：queue = [B, C]，标记C为已访问：visited = {A, B, C}。<br><strong>第2次循环</strong></li>
+<li>从队列中取出一个节点：current_node = B。</li>
+<li>处理B（例如，打印B）。</li>
+<li>遍历B的所有邻接节点：A和D。</li>
+<li>A已访问过，跳过。</li>
+<li>D未访问过，将D加入队列：queue = [C, D]，标记D为已访问：visited = {A, B, C, D}。<br><strong>第3次循环</strong></li>
+<li>从队列中取出一个节点：current_node = C。</li>
+<li>处理C（例如，打印C）。</li>
+<li>遍历C的所有邻接节点：A和D。</li>
+<li>A已访问过，跳过。</li>
+<li>D已访问过，跳过。<br><strong>第4次循环</strong></li>
+<li>从队列中取出一个节点：current_node = D。</li>
+<li>处理D（例如，打印D）。</li>
+<li>遍历D的所有邻接节点：B和C。</li>
+<li>B已访问过，跳过。</li>
+<li>C已访问过，跳过。</li>
+</ul>
+<ol start="4">
+<li><strong>结束条件</strong></li>
+</ol>
+<ul>
+<li>队列为空，BFS结束。</li>
+</ul>
+<h5><span id="%E6%95%88%E7%8E%87">效率</span></h5><ul>
+<li>让顶点出队，将其设置为当前顶点</li>
+<li>访问每个顶点的邻接点</li>
+</ul>
+<p>这么看来每个顶点都有出队的情况，那么有V个顶点就有V次出列，大O记法表示则为O(V)。<br>不仅<strong>顶点</strong>需要处理，<strong>边</strong>也需要处理。每条边对应的两个顶点。有E条边则需要2E步来访问邻接点。大O记法则表示为O(V+E)。</p>
+</body></html>
 	</article>
 
 	 
@@ -392,12 +481,36 @@
   
 	<div class="kira-post-nav">
 		<nav class="post-nav">
-			      
+			  
+			<!-- 先找到与当前文字相同的目录 -->
+			                  
+			<!-- 在找到当前文章所在的 index -->
+			                    
+			<!-- 上一篇文章 -->
+			<div class="old">
+				<span>上一章</span>
+				<a href="/2025/05/11/RM%E5%AD%A6%E4%B9%A0/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95(4)/"> 数据结构和算法(4)</a>
+			</div>
+			                      
+			<!-- 先找到与当前文字相同的目录 -->
+			                  
+			<!-- 在找到当前文章所在的 index -->
+			                    
+			<!-- 上一篇文章 -->
+			<div class="old">
+				<span>上一章</span>
+				<a href="/2025/05/11/RM%E5%AD%A6%E4%B9%A0/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95(4)/"> 数据结构和算法(4)</a>
+			</div>
+			          
 		</nav>
 	</div>
 	
 	<div class="kira-post-meta kira-rainbow">
 		
+			<a class="kirafont icon-container-fill -link" href="/categories/RMer/">RMer</a><a class="kirafont icon-container-fill -link" href="/categories/RMer/%E7%AE%97%E6%B3%95%E5%BF%85%E5%A4%87%E7%9F%A5%E8%AF%86/">算法必备知识</a>
+		
+		
+			<a class="kirafont icon-tag-fill -none-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a>
 		
 	</div>
 	
