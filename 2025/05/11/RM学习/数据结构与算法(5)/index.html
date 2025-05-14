@@ -379,7 +379,8 @@
 </blockquote>
 <span id="more"></span>
 
-<h3><span id="%E4%BA%8C%E5%8F%89%E6%A0%91">二叉树</span></h3><p><strong>定义</strong>：每个节点最多有两个子节点的树结构，称为左子节点和右子节点。<br><strong>类比</strong>：<br>1、像家族的家谱图，每个人（节点）最多有两个孩子（左孩子和右孩子）。<br>2、像游戏中的技能树，每个技能可能有两个分支。</p>
+<h3><span id="%E4%BA%8C%E5%8F%89%E6%A0%91">二叉树</span></h3><p><strong>定义</strong>：<br>每个节点最多有两个子节点的树结构，称为左子节点和右子节点。</p>
+<p><strong>类比</strong>：<br>1、像家族的家谱图，每个人（节点）最多有两个孩子（左孩子和右孩子）。<br>2、像游戏中的技能树，每个技能可能有两个分支。</p>
 <pre><code>例如: 
           50
          /  \
@@ -389,18 +390,21 @@
 </code></pre>
 <p><strong>核心术语</strong>：</p>
 <ol>
-<li>根节点（Root）：树的顶层节点（没有父节点）。</li>
-<li>叶子节点（Leaf）：没有子节点的节点。</li>
-<li>深度（Depth）：根节点到当前节点的边数。</li>
-<li>高度（Height）：当前节点到最远叶子节点的边数。</li>
-<li>子树（Subtree）：以某个节点为根的子树<br><strong>规则</strong>：</li>
+<li><strong>根节点（Root）</strong>：树的顶层节点（没有父节点）。</li>
+<li><strong>叶子节点（Leaf）</strong>：没有子节点的节点。</li>
+<li><strong>深度（Depth）</strong>：根节点到当前节点的边数。</li>
+<li><strong>高度（Height）</strong>：当前节点到最远叶子节点的边数。</li>
+<li><strong>子树（Subtree）</strong>：以某个节点为根的子树</li>
+</ol>
+<p><strong>规则</strong>：</p>
+<ol>
 <li>每个节点的子节点数量可为0、1、2。</li>
 <li>如果有两个子节点，则其中一个子节点的值必须小于父节点的值，另一个子节点的值必须大于父节点。</li>
 </ol>
 <h4><span id="%E6%9F%A5%E6%89%BE">查找</span></h4><ol>
-<li><p>查找原理<br>利用BST的性质：<br>左子树所有节点值 &lt; 根节点值<br>右子树所有节点值 &gt; 根节点值</p>
+<li><p><strong>查找原理</strong><br>利用BST的性质：<br>左子树所有节点值 &lt; 根节点值<br>右子树所有节点值 &gt; 根节点值</p>
 </li>
-<li><p>查找流程（迭代实现）步骤：</p>
+<li><p><strong>查找流程（迭代实现）步骤</strong>：</p>
 </li>
 </ol>
 <ul>
@@ -414,18 +418,24 @@
 <h4><span id="%E6%8F%92%E5%85%A5">插入</span></h4><p>插入时我们需要先查找对应的结点，方便我们将数据插入到合适的位置。主要在于查找，它的效率是O(log N)，而插入只需要一步。即插入的效率为<strong>O(log N)</strong></p>
 <h4><span id="%E5%88%A0%E9%99%A4">删除</span></h4><p>删除是二叉树各种操作中最麻烦的一个。<br>需要遵守以下的<strong>规则</strong>：</p>
 <ol>
-<li>如果要删除的结点没有子节点，直接删除；</li>
-<li>如果要删除的节点上有一个子节点，那么把它删除之后，还要将子节点填到被删除节点的位置；</li>
-<li>如果要删除的结点有两个子节点，则将该节点替换成其<strong>后继节点</strong>。一个节点的后继结点，就是<strong>所有比被删除节点大的子节点中最小的那个</strong>。<ol>
+<li><p>如果要删除的结点没有子节点，直接删除；</p>
+</li>
+<li><p>如果要删除的节点上有一个子节点，那么把它删除之后，还要将子节点填到被删除节点的位置；</p>
+</li>
+<li><p>如果要删除的结点有两个子节点，则将该节点替换成其<strong>后继节点</strong>。一个节点的后继结点，就是<strong>所有比被删除节点大的子节点中最小的那个</strong>。</p>
+<ol>
 <li>如果后集结点带有右子节点，则在后继结点填补被删除节点以后，用此右子节点代替<strong>后继结点的父节点的左子结点</strong>。</li>
 </ol>
 </li>
 </ol>
 <h3><span id="%E5%9B%BE">图</span></h3><p>图是一种善于处理关系类型的数据结构，有了它可以很轻松地表示数据之间是如何关联的。例如社交软件上一个人的关系网，</p>
 <h4><span id="%E6%A6%82%E5%BF%B5">概念</span></h4><ol>
-<li><strong>顶点（Vertex）</strong><br>图中的每个元素称为顶点（或节点）。顶点可以表示任何实体，如城市、人、网页等。<br>例如，在一个社交网络图中，每个用户可以是一个顶点。</li>
-<li><strong>边（Edge）</strong><br>边是连接两个顶点的线，表示顶点之间的关系。<br>边可以是有向的（Directed Edge）或无向的（Undirected Edge）。<br><strong>无向边</strong>：边没有方向，表示两个顶点之间的双向关系。例如，城市之间的道路。<br><strong>有向边</strong>：边有方向，表示从一个顶点指向另一个顶点的单向关系。例如，网页之间的链接。</li>
-<li><strong>权重（Weight）</strong><br>边可以有权重（Weight），表示边的“代价”或“距离”。权重可以是正数、负数或零。<br>例如，在交通网络中，边的权重可以表示两个城市之间的距离或旅行时间。</li>
+<li><p><strong>顶点（Vertex）</strong><br>图中的每个元素称为顶点（或节点）。顶点可以表示任何实体，如城市、人、网页等。<br>例如，在一个社交网络图中，每个用户可以是一个顶点。</p>
+</li>
+<li><p><strong>边（Edge）</strong><br>边是连接两个顶点的线，表示顶点之间的关系。<br>边可以是有向的（Directed Edge）或无向的（Undirected Edge）。<br><strong>无向边</strong>：边没有方向，表示两个顶点之间的双向关系。例如，城市之间的道路。<br><strong>有向边</strong>：边有方向，表示从一个顶点指向另一个顶点的单向关系。例如，网页之间的链接。</p>
+</li>
+<li><p><strong>权重（Weight）</strong><br>边可以有权重（Weight），表示边的“代价”或“距离”。权重可以是正数、负数或零。<br>例如，在交通网络中，边的权重可以表示两个城市之间的距离或旅行时间。</p>
+</li>
 </ol>
 <h4><span id="%E5%B9%BF%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2">广度优先搜索</span></h4><pre><code>A —— B
 |    |
@@ -439,6 +449,7 @@ C —— D
 <li>创建一个空队列queue。</li>
 <li>创建一个空集合visited，用于标记已访问的节点。</li>
 </ul>
+<hr>
 <ol start="2">
 <li><strong>将起点加入队列</strong></li>
 </ol>
@@ -447,6 +458,7 @@ C —— D
 <li>将A加入队列：queue = [A]。</li>
 <li>标记A为已访问：visited = {A}。</li>
 </ul>
+<hr>
 <ol start="3">
 <li><strong>循环处理队列</strong></li>
 </ol>
@@ -485,6 +497,7 @@ C —— D
 <li>B已访问过，跳过。</li>
 <li>C已访问过，跳过。</li>
 </ul>
+<hr>
 <ol start="4">
 <li><strong>结束条件</strong></li>
 </ol>
