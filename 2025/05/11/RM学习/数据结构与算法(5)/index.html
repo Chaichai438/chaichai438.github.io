@@ -433,22 +433,34 @@ C —— D
 <li><strong>循环处理队列</strong></li>
 </ol>
 <ul>
-<li>队列不为空，继续处理。<br><strong>第1次循环</strong></li>
+<li>队列不为空，继续处理。</li>
+</ul>
+<p><strong>第1次循环</strong></p>
+<ul>
 <li>从队列中取出一个节点：current_node = A。</li>
 <li>处理A（例如，打印A）。</li>
 <li>遍历A的所有邻接节点：B和C。</li>
 <li>B未访问过，将B加入队列：queue = [B]，标记B为已访问：visited = {A, B}。</li>
-<li>C未访问过，将C加入队列：queue = [B, C]，标记C为已访问：visited = {A, B, C}。<br><strong>第2次循环</strong></li>
+<li>C未访问过，将C加入队列：queue = [B, C]，标记C为已访问：visited = {A, B, C}。</li>
+</ul>
+<p><strong>第2次循环</strong></p>
+<ul>
 <li>从队列中取出一个节点：current_node = B。</li>
 <li>处理B（例如，打印B）。</li>
 <li>遍历B的所有邻接节点：A和D。</li>
 <li>A已访问过，跳过。</li>
-<li>D未访问过，将D加入队列：queue = [C, D]，标记D为已访问：visited = {A, B, C, D}。<br><strong>第3次循环</strong></li>
+<li>D未访问过，将D加入队列：queue = [C, D]，标记D为已访问：visited = {A, B, C, D}。</li>
+</ul>
+<p><strong>第3次循环</strong></p>
+<ul>
 <li>从队列中取出一个节点：current_node = C。</li>
 <li>处理C（例如，打印C）。</li>
 <li>遍历C的所有邻接节点：A和D。</li>
 <li>A已访问过，跳过。</li>
-<li>D已访问过，跳过。<br><strong>第4次循环</strong></li>
+<li>D已访问过，跳过。</li>
+</ul>
+<p><strong>第4次循环</strong></p>
+<ul>
 <li>从队列中取出一个节点：current_node = D。</li>
 <li>处理D（例如，打印D）。</li>
 <li>遍历D的所有邻接节点：B和C。</li>
