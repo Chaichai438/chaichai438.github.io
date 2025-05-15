@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html 
+	lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+<link rel="stylesheet" href="/css/layout.css">
+
+		
+		<title> 串口通信 -  Hexo</title>
+		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
+		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
+		
+<link rel="stylesheet" href="/lib/mdui/mdui.min.css">
+
+		
+<script src="/lib/mdui/mdui.min.js"></script>
+
+		<!-- lazyload -->
+		
+<script src="/lib/lazysizes.js"></script>
+
+		<!-- smooth-scrolling -->
+		
+<script src="/lib/smooth-scrolling.js"></script>
+
+		<!-- highlight -->
+		
+<link rel="stylesheet" href="/lib/highlight/atom-one-dark.min.css">
+
+		
+<script src="/lib/highlight/highlight.min.js"></script>
+
+		<!-- 预置 kiraicon -->
+		
+<link rel="stylesheet" href="/lib/iconfont/iconfont.css">
+
+		
+		<link
+			rel="shortcut icon"
+			href="https://chaichai438.github.io/assets/Pictures/fruitcake.gif"
+			type="image/gif"
+		/>
+		
+<link rel="stylesheet" href="/deps/css/APlayer.min.css">
+
+		
+		
+<script src="/deps/js/APlayer.min.js"></script>
+<script src="/deps/js/Meting.min.js"></script>
+
+	<meta name="generator" content="Hexo 7.3.0"></head>
+
+	<body>
+		<div
+			class="kira-background"
+			style="background-image: url('https://chaichai438.github.io/assets/Pictures/backgroud.png')"
+		></div>
+		<div class="kira-header">
+    <a
+        class="kira-drawer-button mdui-ripple"
+        title="导航栏"
+        onclick="document.querySelector('.kira-sidebar-modal').classList.add('show');document.querySelector('.kira-sidebar#sidebar').classList.add('show');"
+    >
+        <i class="kirafont icon-menu"></i>
+    </a>
+    <a href="/" title="Hexo">
+        <img
+			src="https://chaichai438.github.io/assets/Pictures/avatar.jpg"
+			alt="Chaichai"
+		/>
+    </a>
+</div>
+		<div class="kira-body">
+			<div class="kira-sidebar" id="sidebar">
+	<div class="kira-avatar mdui-ripple">
+		<a href="https://chaichai438.github.io/assets/Pictures/avatar.jpg" title="Chaichai">
+			<img
+				src="https://chaichai438.github.io/assets/Pictures/avatar.jpg"
+				alt="Chaichai"
+			/>
+		</a>
+	</div>
+	<div class="kira-count">
+		<div><span>文章</span>9</div>
+		<div><span>标签</span>3</div>
+		<div><span>分类</span>3</div>
+	</div>
+	<div class="kira-list">
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/"
+			title="回到首页"
+		>
+			<i
+				class="kirafont
+					
+						icon-home
+					"
+			></i>
+			<div class="kira-list-item-content">
+				回到首页
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/archive.html"
+			title="文章归档"
+		>
+			<i
+				class="kirafont
+					
+						icon-container
+					"
+			></i>
+			<div class="kira-list-item-content">
+				文章归档
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/about.html"
+			title="关于本人"
+		>
+			<i
+				class="kirafont
+					
+						icon-user
+					"
+			></i>
+			<div class="kira-list-item-content">
+				关于本人
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/friends.html"
+			title="我的朋友"
+		>
+			<i
+				class="kirafont
+					
+						icon-team
+					"
+			></i>
+			<div class="kira-list-item-content">
+				我的朋友
+			</div>
+		</a>
+		
+	</div>
+	<aside id="kira-sidebar">
+		
+			<div class="kira-widget-wrap">
+	<div class="kira-widget kira-social">
+		
+			<a
+				class="mdui-ripple"
+				href="tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=1939327800&website=www.oicqzone.com"
+				target="_blank"
+				mdui-tooltip="{content: 'QQ'}"
+				style="color: rgb(49, 174, 255); background-color: rgba(49, 174, 255, .1);"
+			>
+				<i
+					class="kirafont
+					
+						icon-QQ
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://space.bilibili.com/316538505"
+				target="_blank"
+				mdui-tooltip="{content: '哔哩哔哩'}"
+				style="color: rgb(231, 106, 141); background-color: rgba(231, 106, 141, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-bilibili
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://github.com/chaichai438/"
+				target="_blank"
+				mdui-tooltip="{content: 'GitHub'}"
+				style="color: rgb(25, 23, 23); background-color: rgba(25, 23, 23, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-github
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://gitee.com/<你的gitee id>"
+				target="_blank"
+				mdui-tooltip="{content: 'Gitee'}"
+				style="color: rgb(165, 15, 15); background-color: rgba(165, 15, 15, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-gitee
+					"
+				></i>
+			</a>
+		
+	</div>
+</div>
+
+		
+			
+  <div class="kira-widget-wrap">
+    <h3 class="kira-widget-title">分类</h3>
+    <div class="kira-widget">
+      <ul class="category-list">
+        
+        
+
+        
+          <li class="category-list-item">
+            <a class="category-list-link" href="/categories/RMer/">
+              RMer
+            </a>
+            <span class="category-list-count">7</span>
+          </li>
+        
+          <li class="category-list-item">
+            <a class="category-list-link" href="/categories/学习方法/">
+              学习方法
+            </a>
+            <span class="category-list-count">1</span>
+          </li>
+        
+          <li class="category-list-item">
+            <a class="category-list-link" href="/categories/RMer/算法必备知识/">
+              算法必备知识
+            </a>
+            <span class="category-list-count">6</span>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+		
+			
+	<div class="kira-widget-wrap">
+		<div id="randomtagcloud" class="kira-widget tagcloud kira-rainbow">
+			<a href="/tags/RMer/" style="font-size: 15px;">RMer</a> <a href="/tags/%E5%BC%80%E6%BA%90%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">开源学习</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 20px;">算法</a>
+		</div>
+		
+	</div>
+
+
+		
+			
+	<div class="kira-widget-wrap">
+		<h3 class="kira-widget-title">
+			Archive
+		</h3>
+		<div class="kira-widget">
+			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/">2025</a><span class="archive-list-count">9</span></li></ul>
+		</div>
+	</div>
+
+
+		
+	</aside>
+	<div class="kira-copyright">
+		&copy; 2025
+		<a href="/">Chaichai</a>
+		Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> &
+		<a href="https://github.com/ch1ny/kira-hexo/" target="_blank">Kira-Hexo</a>
+		<br />
+		
+		
+	</div>
+</div>
+<div
+	class="kira-sidebar-modal"
+	id="sidebar-modal"
+	onclick="(function(self) {
+		self.classList.remove('show');
+		document.querySelector('.kira-sidebar.show#sidebar').classList.remove('show');
+	})(this)"
+></div>
+			<div class="kira-content">
+				<div id="kira-top-header"></div>
+				<div class="kira-main-content">
+					
+<link rel="stylesheet" href="/css/kira-image.css">
+
+
+<script src="/js/kira-image.js"></script>
+
+<div class="kira-image">
+    <div class="kira-image-modal">
+        <div class="kira-image-header">
+            <div class="kira-image-counter"></div>
+            <div class="kira-image-title"></div>
+            <div class="kira-image-operation">
+                <div class="kira-image-operation-button" id="kira-image-operation-button-zoom">
+                    <i class="kirafont icon-zoom-in"></i>
+                </div>
+                <div class="kira-image-operation-button" id="kira-image-operation-button-close">
+                    <i class="kirafont icon-close"></i>
+                </div>
+            </div>
+        </div>
+        <div class="kira-image-container">
+            <div class="kira-image-prev-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-left"></i>
+                </div>
+            </div>
+            <div class="kira-image-list">
+                <div class="kira-image-prev">
+                    <img />
+                </div>
+                <div class="kira-image-now">
+                    <img />
+                </div>
+                <div class="kira-image-next">
+                    <img />
+                </div>
+            </div>
+            <div class="kira-image-next-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+	
+<link rel="stylesheet" href="/css/kira-code-copy.css">
+
+	
+<script src="/js/kira-code-copy.js"></script>
+
+
+<div class="kira-post">
+	<article>
+		
+		<div class="kira-post-cover">
+			<img
+				data-src="https://chaichai438.github.io/assets/Pictures/cover/RMer.jpg"
+				data-sizes="auto"
+				alt="串口通信"
+				class="lazyload kira-post-cover-image disabled-kira-image"
+			/>
+			<h1>串口通信</h1>
+		</div>
+		
+		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
+			<a><i class="kirafont icon-calendar-fill"></i>2025年05月15日</a>
+			<a><i class="kirafont icon-edit-fill"></i>3.2k 字</a>
+			<a><i class="kirafont icon-time-circle-fill"></i>大概 14 分钟</a>
+		</div>
+		<html><head></head><body><blockquote>
+<p>你会看到，unsigned char的一万种用法(bushi)、串口通信的原理和操作方法、try-catch有什么用？<br>虽然是AI生成的()，但是我们可以借助它来学习</p>
+</blockquote>
+<span id="more"></span>
+
+<h1><span id="unsigned-char-%E8%A7%A3%E9%87%8A">unsigned char 解释</span></h1><p><code>unsigned char</code> 是C/C++中的一种基本数据类型，表示无符号字符型数据。以下是详细解释：</p>
+<h2><span id="%E5%9F%BA%E6%9C%AC%E7%89%B9%E6%80%A7">基本特性</span></h2><ul>
+<li><strong>无符号性</strong>：只能表示非负整数，范围是0到255（在大多数平台上）</li>
+<li><strong>大小</strong>：通常占用1字节（8位）内存空间</li>
+<li><strong>用途</strong>：<ul>
+<li>存储原始字节数据</li>
+<li>处理小范围的非负整数</li>
+<li>实现位操作和字节级操作</li>
+</ul>
+</li>
+</ul>
+<h2><span id="%E4%B8%8Echar%E5%92%8Csigned-char%E7%9A%84%E5%8C%BA%E5%88%AB">与char和signed char的区别</span></h2><ul>
+<li><code>char</code>：可能是signed或unsigned，取决于编译器实现</li>
+<li><code>signed char</code>：明确表示有符号字符，范围-128到127</li>
+<li><code>unsigned char</code>：明确表示无符号字符，范围0到255</li>
+</ul>
+<h2><span id="%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81">示例代码</span></h2><figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> byte = <span class="hljs-number">200</span>;  <span class="hljs-comment">// 有效</span><br><span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> max_val = <span class="hljs-number">255</span>;  <span class="hljs-comment">// 最大值</span><br><span class="hljs-comment">// unsigned char negative = -1;  // 错误，不能赋负值</span><br><br><span class="hljs-comment">// 常用于处理二进制数据</span><br><span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> buffer[<span class="hljs-number">1024</span>];<br></code></pre></td></tr></tbody></table></figure>
+
+<h2><span id="%E7%89%B9%E6%AE%8A%E7%94%A8%E9%80%94">特殊用途</span></h2><ul>
+<li>在标准中，<code>unsigned char</code>是唯一保证没有填充位的类型</li>
+<li>可用于以字节为单位访问其他对象的内存表示</li>
+</ul>
+<h2><span id="%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9">注意事项</span></h2><ul>
+<li>当值超过255时会回绕（即256变为0，257变为1，依此类推）</li>
+<li>在算术运算中会被提升为int类型</li>
+</ul>
+<p><code>unsigned char</code>在处理网络协议、文件I/O和低级编程时特别有用。</p>
+<hr>
+<h1><span id="%E8%A7%A3%E9%87%8A-unsigned-char-tmp-%E5%92%8C%E6%95%B0%E7%BB%84%E8%B5%8B%E5%80%BC">解释 <code>unsigned char *tmp</code> 和数组赋值</span></h1><p>这段代码涉及到指针和内存操作，我来从一个初学者的角度逐步解释：</p>
+<h2><span id="%E4%BB%A3%E7%A0%81%E5%88%86%E8%A7%A3">代码分解</span></h2><figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *tmp = (<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *)(&amp;_data_write-&gt;shootStatus);<br>msg[<span class="hljs-number">1</span>] = tmp[<span class="hljs-number">0</span>];<br></code></pre></td></tr></tbody></table></figure>
+
+<h2><span id="%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%E6%8C%87%E9%92%88%E5%A3%B0%E6%98%8E%E5%92%8C%E8%B5%8B%E5%80%BC">第一部分：指针声明和赋值</span></h2><figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *tmp = (<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *)(&amp;_data_write-&gt;shootStatus);<br></code></pre></td></tr></tbody></table></figure>
+
+<ol>
+<li><p><code>_data_write-&gt;shootStatus</code>：这是一个结构体成员变量，假设<code>shootStatus</code>可能是某种状态值（比如射击状态）</p>
+</li>
+<li><p><code>&amp;_data_write-&gt;shootStatus</code>：取这个变量的内存地址</p>
+</li>
+<li><p><code>(unsigned char *)</code>：这是一个强制类型转换，将地址转换为<code>unsigned char</code>类型的指针</p>
+</li>
+<li><p><code>unsigned char *tmp</code>：声明一个无符号字符指针变量<code>tmp</code>，并将转换后的地址赋给它</p>
+</li>
+</ol>
+<p><strong>通俗理解</strong>：把<code>shootStatus</code>的内存地址当作一个字节数组来看待</p>
+<h2><span id="%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86%E6%95%B0%E7%BB%84%E8%B5%8B%E5%80%BC">第二部分：数组赋值</span></h2><figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">msg[<span class="hljs-number">1</span>] = tmp[<span class="hljs-number">0</span>];<br></code></pre></td></tr></tbody></table></figure>
+
+<ol>
+<li><p><code>tmp[0]</code>：访问<code>tmp</code>指针指向的第一个字节（因为<code>tmp</code>被当作字节数组）</p>
+</li>
+<li><p><code>msg[1]</code>：<code>msg</code>数组的第二个元素（数组索引从0开始）</p>
+</li>
+</ol>
+<p><strong>通俗理解</strong>：把<code>shootStatus</code>的第一个字节复制到<code>msg</code>数组的第二个位置</p>
+<h2><span id="%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E6%A0%B7%E5%81%9A">为什么这样做？</span></h2><p>这种操作通常用于：</p>
+<ul>
+<li>将复杂数据类型（如结构体）转换为原始字节数据</li>
+<li>提取数据的第一个字节（可能用于状态标志位）</li>
+<li>准备通过网络或串口发送数据（需要字节级别的操作）</li>
+</ul>
+<h2><span id="%E5%AE%9E%E9%99%85%E4%BE%8B%E5%AD%90">实际例子</span></h2><p>假设：</p>
+<ul>
+<li><code>shootStatus</code>是一个32位整数，值为<code>0xAABBCCDD</code></li>
+<li>内存布局（小端模式）：<ul>
+<li>字节0: 0xDD</li>
+<li>字节1: 0xCC</li>
+<li>字节2: 0xBB</li>
+<li>字节3: 0xAA</li>
+</ul>
+</li>
+</ul>
+<p>那么：</p>
+<ul>
+<li><code>tmp[0]</code>就是0xDD</li>
+<li>执行后<code>msg[1]</code>就等于0xDD</li>
+</ul>
+<h2><span id="%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9">注意事项</span></h2><ol>
+<li>这种操作依赖于具体的内存布局（大端/小端）</li>
+<li>直接操作内存需要确保类型转换是安全的</li>
+<li>这种代码常见于嵌入式系统或底层编程中</li>
+</ol>
+<hr>
+<h3><span id="%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><strong>串口通信的基本原理</strong></span></h3><h4><span id="1-%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1">1. <strong>什么是串口通信？</strong></span></h4><p>串口通信是一种<strong>逐位传输数据</strong>的方式。与并行通信（同时传输多个比特）不同，串口通信一次只传输一个比特。这种方式在长距离传输和低带宽需求的场景中非常有效。</p>
+<h4><span id="2-%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1%E7%9A%84%E5%85%B3%E9%94%AE%E6%A6%82%E5%BF%B5">2. <strong>串口通信的关键概念</strong></span></h4><ul>
+<li><p><strong>波特率（Baud Rate）</strong>：</p>
+<ul>
+<li>波特率表示每秒传输的符号数（或比特数）。常见的波特率有 9600、115200 等。</li>
+<li>例如，波特率为 9600 表示每秒传输 9600 个比特。</li>
+</ul>
+</li>
+<li><p><strong>数据位（Data Bits）</strong>：</p>
+<ul>
+<li>每个数据帧中实际传输的数据位数。通常为 7 位或 8 位。</li>
+</ul>
+</li>
+<li><p><strong>停止位（Stop Bits）</strong>：</p>
+<ul>
+<li>用于标记数据帧结束的位。通常为 1 位或 2 位。</li>
+</ul>
+</li>
+<li><p><strong>校验位（Parity Bit）</strong>：</p>
+<ul>
+<li>用于简单错误检测的位。可以是奇校验、偶校验或无校验。</li>
+</ul>
+</li>
+<li><p><strong>流控制（Flow Control）</strong>：</p>
+<ul>
+<li>用于控制数据传输速率的机制，防止数据溢出。常见的流控制方式有硬件流控制（RTS/CTS）和软件流控制（XON/XOFF）。</li>
+</ul>
+</li>
+</ul>
+<h4><span id="3-%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1%E7%9A%84%E6%95%B0%E6%8D%AE%E5%B8%A7%E6%A0%BC%E5%BC%8F">3. <strong>串口通信的数据帧格式</strong></span></h4><p>串口通信的数据通常以帧的形式传输，一个典型的数据帧包括以下几个部分：</p>
+<ol>
+<li><strong>起始位（Start Bit）</strong>：通常为一个低电平（0），表示数据帧的开始。</li>
+<li><strong>数据位（Data Bits）</strong>：实际传输的数据，通常为 7 位或 8 位。</li>
+<li><strong>校验位（Parity Bit）</strong>：可选，用于错误检测。</li>
+<li><strong>停止位（Stop Bits）</strong>：通常为 1 位或 2 位，表示数据帧的结束。</li>
+</ol>
+<h3><span id="%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1%E7%9A%84%E6%93%8D%E4%BD%9C%E6%96%B9%E6%B3%95"><strong>串口通信的操作方法</strong></span></h3><h4><span id="1-%E7%A1%AC%E4%BB%B6%E8%BF%9E%E6%8E%A5">1. <strong>硬件连接</strong></span></h4><p>串口通信通常使用 <strong>RS-232</strong> 或 <strong>TTL</strong> 电平的串口。常见的硬件接口有：</p>
+<ul>
+<li><strong>DB-9 或 DB-25 接口</strong>：用于 RS-232 串口。</li>
+<li><strong>GPIO 引脚</strong>：用于 TTL 串口，常见于单片机和嵌入式设备。</li>
+</ul>
+<h4><span id="2-%E8%BD%AF%E4%BB%B6%E9%85%8D%E7%BD%AE">2. <strong>软件配置</strong></span></h4><p>在软件中，你需要配置串口的参数，包括波特率、数据位、停止位和校验位等。以下是一个基于 <strong>Boost.Asio</strong> 的 C++ 示例代码，展示如何配置和使用串口：</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;boost/asio.hpp&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">SerialPort</span><br>{<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">SerialPort</span>(<span class="hljs-type">const</span> std::string &amp;port_name, <span class="hljs-type">int</span> baud_rate)<br>    {<br>        <span class="hljs-keyword">try</span><br>        {<br>            <span class="hljs-comment">// 打开串口</span><br>            _serial_port = <span class="hljs-keyword">new</span> boost::asio::<span class="hljs-built_in">serial_port</span>(_io_service, port_name);<br><br>            <span class="hljs-comment">// 配置串口参数</span><br>            _serial_port-&gt;<span class="hljs-built_in">set_option</span>(boost::asio::serial_port::<span class="hljs-built_in">baud_rate</span>(baud_rate));<br>            _serial_port-&gt;<span class="hljs-built_in">set_option</span>(boost::asio::serial_port::<span class="hljs-built_in">flow_control</span>(boost::asio::serial_port::flow_control::none));<br>            _serial_port-&gt;<span class="hljs-built_in">set_option</span>(boost::asio::serial_port::<span class="hljs-built_in">parity</span>(boost::asio::serial_port::parity::none));<br>            _serial_port-&gt;<span class="hljs-built_in">set_option</span>(boost::asio::serial_port::<span class="hljs-built_in">stop_bits</span>(boost::asio::serial_port::stop_bits::one));<br>            _serial_port-&gt;<span class="hljs-built_in">set_option</span>(boost::asio::serial_port::<span class="hljs-built_in">character_size</span>(<span class="hljs-number">8</span>));<br>        }<br>        <span class="hljs-built_in">catch</span> (<span class="hljs-type">const</span> std::exception &amp;e)<br>        {<br>            std::cerr &lt;&lt; <span class="hljs-string">"Error: "</span> &lt;&lt; e.<span class="hljs-built_in">what</span>() &lt;&lt; std::endl;<br>            <span class="hljs-keyword">delete</span> _serial_port;<br>            _serial_port = <span class="hljs-literal">nullptr</span>;<br>        }<br>    }<br><br>    ~<span class="hljs-built_in">SerialPort</span>()<br>    {<br>        <span class="hljs-keyword">delete</span> _serial_port;<br>    }<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">write</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">uint8_t</span> *data, <span class="hljs-type">size_t</span> size)</span></span><br><span class="hljs-function">    </span>{<br>        <span class="hljs-keyword">if</span> (_serial_port)<br>        {<br>            boost::asio::<span class="hljs-built_in">write</span>(*_serial_port, boost::asio::<span class="hljs-built_in">buffer</span>(data, size));<br>        }<br>    }<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">read</span><span class="hljs-params">(<span class="hljs-type">uint8_t</span> *data, <span class="hljs-type">size_t</span> size)</span></span><br><span class="hljs-function">    </span>{<br>        <span class="hljs-keyword">if</span> (_serial_port)<br>        {<br>            boost::asio::<span class="hljs-built_in">read</span>(*_serial_port, boost::asio::<span class="hljs-built_in">buffer</span>(data, size));<br>        }<br>    }<br><br><span class="hljs-keyword">private</span>:<br>    boost::asio::io_service _io_service;<br>    boost::asio::serial_port *_serial_port = <span class="hljs-literal">nullptr</span>;<br>};<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>{<br>    <span class="hljs-function">SerialPort <span class="hljs-title">serialPort</span><span class="hljs-params">(<span class="hljs-string">"/dev/ttyUSB0"</span>, <span class="hljs-number">115200</span>)</span></span>;<br><br>    <span class="hljs-comment">// 发送数据</span><br>    <span class="hljs-type">uint8_t</span> data_to_send[] = {<span class="hljs-number">0x01</span>, <span class="hljs-number">0x02</span>, <span class="hljs-number">0x03</span>};<br>    serialPort.<span class="hljs-built_in">write</span>(data_to_send, <span class="hljs-built_in">sizeof</span>(data_to_send));<br><br>    <span class="hljs-comment">// 接收数据</span><br>    <span class="hljs-type">uint8_t</span> data_received[<span class="hljs-number">10</span>];<br>    serialPort.<span class="hljs-built_in">read</span>(data_received, <span class="hljs-built_in">sizeof</span>(data_received));<br><br>    <span class="hljs-comment">// 打印接收到的数据</span><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">size_t</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-built_in">sizeof</span>(data_received); ++i)<br>    {<br>        std::cout &lt;&lt; std::hex &lt;&lt; <span class="hljs-built_in">static_cast</span>&lt;<span class="hljs-type">int</span>&gt;(data_received[i]) &lt;&lt; <span class="hljs-string">" "</span>;<br>    }<br>    std::cout &lt;&lt; std::endl;<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<h4><span id="3-%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93">3. <strong>数据传输</strong></span></h4><ul>
+<li><p><strong>发送数据</strong>：</p>
+<ul>
+<li>使用 <code>write</code> 方法将数据发送到串口。</li>
+<li>数据通常是一个字节数组。</li>
+</ul>
+</li>
+<li><p><strong>接收数据</strong>：</p>
+<ul>
+<li>使用 <code>read</code> 方法从串口读取数据。</li>
+<li>读取的数据同样是一个字节数组。</li>
+</ul>
+</li>
+</ul>
+<h4><span id="4-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86">4. <strong>错误处理</strong></span></h4><ul>
+<li>在实际应用中，串口通信可能会遇到各种问题，如连接断开、数据错误等。</li>
+<li>你需要在代码中添加适当的错误处理逻辑，例如捕获异常并记录日志。</li>
+</ul>
+<h3><span id="%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8%E4%B8%AD%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><strong>实际应用中的注意事项</strong></span></h3><ol>
+<li><p><strong>波特率匹配</strong>：</p>
+<ul>
+<li>发送方和接收方的波特率必须一致，否则数据无法正确解析。</li>
+</ul>
+</li>
+<li><p><strong>硬件连接</strong>：</p>
+<ul>
+<li>确保硬件连接正确，例如使用正确的串口线或转换器。</li>
+</ul>
+</li>
+<li><p><strong>调试工具</strong>：</p>
+<ul>
+<li>使用串口调试工具（如 PuTTY、Minicom 或串口调试助手）可以帮助你测试和调试串口通信。</li>
+</ul>
+</li>
+<li><p><strong>线程安全</strong>：</p>
+<ul>
+<li>如果在多线程环境中使用串口，确保对串口操作的线程安全。</li>
+</ul>
+</li>
+<li><p><strong>超时处理</strong>：</p>
+<ul>
+<li>在读取数据时，设置适当的超时时间，避免程序卡住。</li>
+</ul>
+</li>
+</ol>
+<h3><span id="%E6%80%BB%E7%BB%93"><strong>总结</strong></span></h3><p>串口通信是一种简单而有效的通信方式，适用于低速、长距离的数据传输。通过理解其基本原理和操作方法，你可以轻松地在你的项目中实现串口通信。</p>
+<hr>
+<p>这是一个很好的问题！在串口通信中，数据的字节序（Byte Order）是一个非常重要的概念。字节序决定了多字节数据（如 <code>int</code> 类型）在内存中的存储顺序。常见的字节序有两种：<strong>大端序（Big-Endian）</strong> 和 <strong>小端序（Little-Endian）</strong>。</p>
+<h3><span id="%E5%A4%A7%E7%AB%AF%E5%BA%8Fbig-endian"><strong>大端序（Big-Endian）</strong></span></h3><ul>
+<li><strong>定义</strong>：最高有效字节（MSB，Most Significant Byte）存储在最低的内存地址，最低有效字节（LSB，Least Significant Byte）存储在最高的内存地址。</li>
+<li><strong>示例</strong>：假设有一个 4 字节的整数 <code>0x12345678</code>，在大端序中，它在内存中的存储顺序是：<ul>
+<li>地址 0: <code>0x12</code></li>
+<li>地址 1: <code>0x34</code></li>
+<li>地址 2: <code>0x56</code></li>
+<li>地址 3: <code>0x78</code></li>
+</ul>
+</li>
+</ul>
+<h3><span id="%E5%B0%8F%E7%AB%AF%E5%BA%8Flittle-endian"><strong>小端序（Little-Endian）</strong></span></h3><ul>
+<li><strong>定义</strong>：最低有效字节（LSB）存储在最低的内存地址，最高有效字节（MSB）存储在最高的内存地址。</li>
+<li><strong>示例</strong>：假设有一个 4 字节的整数 <code>0x12345678</code>，在小端序中，它在内存中的存储顺序是：<ul>
+<li>地址 0: <code>0x78</code></li>
+<li>地址 1: <code>0x56</code></li>
+<li>地址 2: <code>0x34</code></li>
+<li>地址 3: <code>0x12</code></li>
+</ul>
+</li>
+</ul>
+<h3><span id="%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BB%A3%E7%A0%81%E4%B8%AD%E6%98%AF%E5%80%92%E7%9D%80%E7%9A%84"><strong>为什么代码中是倒着的？</strong></span></h3><p>在你的代码中，<code>yaw</code> 是一个 4 字节的整数，假设它是 <code>int</code> 类型。代码中通过 <code>tmp</code> 指针逐字节访问 <code>yaw</code> 的值，并将其存储到 <code>msg</code> 数组中。代码如下：</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp">tmp = (<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *)(&amp;_data_write-&gt;yaw);<br>msg[<span class="hljs-number">4</span>] = tmp[<span class="hljs-number">3</span>];<br>msg[<span class="hljs-number">5</span>] = tmp[<span class="hljs-number">2</span>];<br>msg[<span class="hljs-number">6</span>] = tmp[<span class="hljs-number">1</span>];<br>msg[<span class="hljs-number">7</span>] = tmp[<span class="hljs-number">0</span>];<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这里的关键是 <strong>字节序</strong>。假设你的系统是小端序（大多数现代计算机，如 x86 架构，都是小端序），那么 <code>yaw</code> 的字节在内存中的存储顺序是：</p>
+<ul>
+<li>地址 0: <code>0x78</code>（LSB）</li>
+<li>地址 1: <code>0x56</code></li>
+<li>地址 2: <code>0x34</code></li>
+<li>地址 3: <code>0x12</code>（MSB）</li>
+</ul>
+<p>当你通过 <code>tmp</code> 指针访问这些字节时：</p>
+<ul>
+<li><code>tmp[0]</code> 是 <code>0x78</code>（LSB）</li>
+<li><code>tmp[1]</code> 是 <code>0x56</code></li>
+<li><code>tmp[2]</code> 是 <code>0x34</code></li>
+<li><code>tmp[3]</code> 是 <code>0x12</code>（MSB）</li>
+</ul>
+<p>但是，如果你希望在 <code>msg</code> 数组中按照大端序存储这些字节（即 MSB 在前，LSB 在后），你需要将它们倒过来存储：</p>
+<ul>
+<li><code>msg[4]</code> 存储 <code>tmp[3]</code>（MSB）</li>
+<li><code>msg[5]</code> 存储 <code>tmp[2]</code></li>
+<li><code>msg[6]</code> 存储 <code>tmp[1]</code></li>
+<li><code>msg[7]</code> 存储 <code>tmp[0]</code>（LSB）</li>
+</ul>
+<p>这样，<code>msg</code> 数组中的字节顺序就是：</p>
+<ul>
+<li><code>msg[4]</code>: <code>0x12</code>（MSB）</li>
+<li><code>msg[5]</code>: <code>0x34</code></li>
+<li><code>msg[6]</code>: <code>0x56</code></li>
+<li><code>msg[7]</code>: <code>0x78</code>（LSB）</li>
+</ul>
+<h3><span id="%E6%80%BB%E7%BB%93"><strong>总结</strong></span></h3><ul>
+<li><strong>小端序</strong>：内存中存储的字节顺序是 <code>LSB -&gt; MSB</code>。</li>
+<li><strong>大端序</strong>：内存中存储的字节顺序是 <code>MSB -&gt; LSB</code>。</li>
+<li>在代码中，为了将小端序的字节转换为大端序，需要将字节倒过来存储。</li>
+</ul>
+<h3><span id="%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8"><strong>实际应用</strong></span></h3><p>在实际应用中，你需要根据通信协议的要求来决定使用哪种字节序。如果通信协议要求数据以大端序传输，而你的系统是小端序，就需要在发送数据前将字节顺序转换为大端序。反之亦然。</p>
+<hr>
+<h1><span id="c%E4%B8%ADtry-catch%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95">C++中try-catch的使用方法</span></h1><p><code>try-catch</code>是C++中异常处理的基本机制，用于捕获和处理程序运行时可能出现的异常。下面详细介绍其使用方法：</p>
+<h2><span id="%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95%E7%BB%93%E6%9E%84">基本语法结构</span></h2><figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">try</span> {<br>    <span class="hljs-comment">// 可能抛出异常的代码块</span><br>} <span class="hljs-built_in">catch</span> (异常类型<span class="hljs-number">1</span> 变量名) {<br>    <span class="hljs-comment">// 处理异常类型1的代码</span><br>} <span class="hljs-built_in">catch</span> (异常类型<span class="hljs-number">2</span> 变量名) {<br>    <span class="hljs-comment">// 处理异常类型2的代码</span><br>} <span class="hljs-built_in">catch</span> (...) {<br>    <span class="hljs-comment">// 处理所有其他未捕获异常的代码</span><br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<h2><span id="%E5%85%B7%E4%BD%93%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95">具体使用方法</span></h2><h3><span id="1-%E6%8D%95%E8%8E%B7%E7%89%B9%E5%AE%9A%E7%B1%BB%E5%9E%8B%E5%BC%82%E5%B8%B8">1. 捕获特定类型异常</span></h3><figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">try</span> {<br>    <span class="hljs-type">int</span> a = <span class="hljs-number">10</span>, b = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">if</span> (b == <span class="hljs-number">0</span>) {<br>        <span class="hljs-keyword">throw</span> std::<span class="hljs-built_in">runtime_error</span>(<span class="hljs-string">"除数不能为零"</span>);<br>    }<br>    <span class="hljs-type">int</span> c = a / b;<br>} <span class="hljs-built_in">catch</span> (<span class="hljs-type">const</span> std::runtime_error&amp; e) {<br>    std::cerr &lt;&lt; <span class="hljs-string">"捕获到运行时错误: "</span> &lt;&lt; e.<span class="hljs-built_in">what</span>() &lt;&lt; std::endl;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<h3><span id="2-%E6%8D%95%E8%8E%B7%E5%A4%9A%E7%A7%8D%E7%B1%BB%E5%9E%8B%E5%BC%82%E5%B8%B8">2. 捕获多种类型异常</span></h3><figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">try</span> {<br>    <span class="hljs-comment">// 可能抛出多种异常的代码</span><br>} <span class="hljs-built_in">catch</span> (<span class="hljs-type">const</span> std::invalid_argument&amp; e) {<br>    <span class="hljs-comment">// 处理无效参数异常</span><br>} <span class="hljs-built_in">catch</span> (<span class="hljs-type">const</span> std::out_of_range&amp; e) {<br>    <span class="hljs-comment">// 处理越界异常</span><br>} <span class="hljs-built_in">catch</span> (<span class="hljs-type">const</span> std::exception&amp; e) {<br>    <span class="hljs-comment">// 处理所有标准异常的基类</span><br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<h3><span id="3-%E6%8D%95%E8%8E%B7%E6%89%80%E6%9C%89%E5%BC%82%E5%B8%B8catch-all">3. 捕获所有异常（catch-all）</span></h3><figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">try</span> {<br>    <span class="hljs-comment">// 可能抛出异常的代码</span><br>} <span class="hljs-built_in">catch</span> (...) {<br>    std::cerr &lt;&lt; <span class="hljs-string">"捕获到未知异常"</span> &lt;&lt; std::endl;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<h2><span id="%E5%9C%A8%E6%82%A8%E6%8F%90%E4%BE%9B%E7%9A%84%E4%B8%B2%E5%8F%A3%E4%BB%A3%E7%A0%81%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8">在您提供的串口代码中的应用</span></h2><figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">SerialPort::serialPortRead</span><span class="hljs-params">(<span class="hljs-type">uint8_t</span> *msg, <span class="hljs-type">uint8_t</span> max_len)</span></span><br><span class="hljs-function"></span>{<br>    <span class="hljs-keyword">try</span> {<br>        <span class="hljs-built_in">read</span>(*_serial_port, boost::asio::<span class="hljs-built_in">buffer</span>(msg, max_len), _err);<br>    } <span class="hljs-built_in">catch</span> (...) {<br>        <span class="hljs-built_in">LOG</span>(ERROR) &lt;&lt; <span class="hljs-string">"readData from serial port error! "</span> &lt;&lt; _err.<span class="hljs-built_in">message</span>();<br>    }<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<h2><span id="%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E7%9A%84%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5">异常处理的最佳实践</span></h2><ol>
+<li><p><strong>按从具体到一般的顺序捕获异常</strong></p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">catch</span> (<span class="hljs-type">const</span> MySpecificException&amp; e) {...}<br><span class="hljs-built_in">catch</span> (<span class="hljs-type">const</span> std::exception&amp; e) {...}<br><span class="hljs-built_in">catch</span> (...) {...}<br></code></pre></td></tr></tbody></table></figure>
+</li>
+<li><p><strong>避免空的catch块</strong></p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 不好的做法</span><br><span class="hljs-built_in">catch</span> (...) {}<br><br><span class="hljs-comment">// 好的做法</span><br><span class="hljs-built_in">catch</span> (...) {<br>    <span class="hljs-comment">// 至少记录日志</span><br>    <span class="hljs-built_in">logError</span>(<span class="hljs-string">"Unknown exception caught"</span>);<br>}<br></code></pre></td></tr></tbody></table></figure>
+</li>
+<li><p><strong>使用标准异常类</strong></p>
+<ul>
+<li><code>std::exception</code> - 所有标准异常的基类</li>
+<li><code>std::runtime_error</code> - 运行时错误</li>
+<li><code>std::logic_error</code> - 逻辑错误</li>
+<li><code>std::invalid_argument</code> - 无效参数</li>
+<li><code>std::out_of_range</code> - 超出范围</li>
+</ul>
+</li>
+<li><p><strong>自定义异常类</strong></p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SerialPortException</span> : <span class="hljs-keyword">public</span> std::runtime_error {<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">SerialPortException</span>(<span class="hljs-type">const</span> std::string&amp; msg) <br>        : std::<span class="hljs-built_in">runtime_error</span>(msg) {}<br>};<br></code></pre></td></tr></tbody></table></figure></li>
+</ol>
+<h2><span id="%E5%9C%A8%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1%E4%B8%AD%E7%9A%84%E5%85%B8%E5%9E%8B%E5%BA%94%E7%94%A8">在串口通信中的典型应用</span></h2><figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">SerialPort::sendCommand</span><span class="hljs-params">(<span class="hljs-type">const</span> Command&amp; cmd)</span></span><br><span class="hljs-function"></span>{<br>    <span class="hljs-keyword">try</span> {<br>        <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">isOpen</span>()) {<br>            <span class="hljs-keyword">throw</span> <span class="hljs-built_in">SerialPortException</span>(<span class="hljs-string">"Port not open"</span>);<br>        }<br>        <span class="hljs-comment">// 发送命令...</span><br>    } <span class="hljs-built_in">catch</span> (<span class="hljs-type">const</span> SerialPortException&amp; e) {<br>        <span class="hljs-built_in">LOG</span>(ERROR) &lt;&lt; <span class="hljs-string">"Serial port error: "</span> &lt;&lt; e.<span class="hljs-built_in">what</span>();<br>        <span class="hljs-keyword">throw</span>; <span class="hljs-comment">// 重新抛出给上层处理</span><br>    } <span class="hljs-built_in">catch</span> (<span class="hljs-type">const</span> std::exception&amp; e) {<br>        <span class="hljs-built_in">LOG</span>(ERROR) &lt;&lt; <span class="hljs-string">"Standard exception: "</span> &lt;&lt; e.<span class="hljs-built_in">what</span>();<br>        <span class="hljs-keyword">throw</span>;<br>    }<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<h2><span id="%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9">注意事项</span></h2><ol>
+<li>异常处理会有性能开销，不应替代常规错误检查</li>
+<li>不要在析构函数中抛出异常</li>
+<li>确保异常安全 - 即使抛出异常也不会泄漏资源</li>
+<li>考虑使用RAII(资源获取即初始化)技术管理资源</li>
+</ol>
+<p>通过合理使用try-catch，可以使您的串口通信代码更加健壮和可靠。</p>
+</body></html>
+	</article>
+
+	 
+    <div class="kira-post-copyright">
+        <strong>Author：</strong>Chaichai<br>
+        <strong>Link：</strong><a href="https://chaichai438.github.io/2025/05/15/RM%E5%AD%A6%E4%B9%A0/%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1/" title="https:&#x2F;&#x2F;chaichai438.github.io&#x2F;2025&#x2F;05&#x2F;15&#x2F;RM学习&#x2F;串口通信&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;chaichai438.github.io&#x2F;2025&#x2F;05&#x2F;15&#x2F;RM学习&#x2F;串口通信&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+  
+	<div class="kira-post-nav">
+		<nav class="post-nav">
+			  
+			<!-- 先找到与当前文字相同的目录 -->
+			                     
+			<!-- 在找到当前文章所在的 index -->
+			                        
+			<!-- 上一篇文章 -->
+			<div class="old">
+				<span>上一章</span>
+				<a href="/2025/05/11/RM%E5%AD%A6%E4%B9%A0/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95(5)/"> 数据结构和算法(5)</a>
+			</div>
+			                  
+		</nav>
+	</div>
+	
+	<div class="kira-post-meta kira-rainbow">
+		
+			<a class="kirafont icon-container-fill -link" href="/categories/RMer/">RMer</a>
+		
+		
+			<a class="kirafont icon-tag-fill -none-link" href="/tags/RMer/" rel="tag">RMer</a>
+		
+	</div>
+	
+	<div class="kira-post-footer">
+		
+
+		
+	<div class="giscus"></div>
+  
+    <script src="https://giscus.app/client.js"
+      data-repo="chaichai438/chaichai438_discussion"
+      data-repo-id="R_kgDOOdATfw"
+      data-category="Announcements"
+      data-category-id="DIC_kwDOOdATf84CpThn"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="light"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async  
+    ></script>
+  
+
+	</div>
+	
+</div>
+
+				</div>
+			</div>
+			<div class="kira-right-column">
+	<a onclick="document.querySelector('#kira-top-header').scrollIntoView({behavior: 'smooth'});" class="kira-backtotop" aria-label="回到顶部" title="回到顶部">
+		<button class="mdui-fab mdui-ripple">
+			<i class="kirafont icon-caret-up"></i>
+		</button>
+	</a>
+</div>
+
+		</div>
+	</body>
+</html>
