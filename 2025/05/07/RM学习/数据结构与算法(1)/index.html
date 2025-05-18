@@ -391,28 +391,8 @@
 <p>大O记法的规则：<br>1、忽略常数<br>2、只关注最高阶的N</p>
 </blockquote>
 <h3><span id="%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%E5%92%8C%E5%85%B6%E6%95%88%E7%8E%87">排序算法和其效率</span></h3><p>现在我们要对数组 <code>int arr[5] = {4, 2, 7, 1 ,3}</code>进行排序</p>
-<h4><span id="%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F">冒泡排序</span></h4><pre><code>void BubbleSort()
-{
-    for (int i = 0; i &lt; 5 - 1; ++i)
-    {                         // 外层循环控制轮次（n-1轮）
-        bool swapped = false; // 优化：标记是否发生交换
-        for (int j = 0; j &lt; 5 - 1 - i; ++j)
-        { // 内层循环比较相邻元素
-            if (arr[j] &gt; arr[j + 1])
-            {                      // 如果前一个元素更大
-                int temp = arr[j]; // 交换相邻元素
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
-                swapped = true; // 标记发生交换
-            }
-        }
-        if (!swapped)
-            break; // 如果一轮未发生交换，说明已有序，提前终止
-    }
+<h4><span id="%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F">冒泡排序</span></h4><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">void BubbleSort()<br>{<br>    for (int i = 0; i &lt; 5 - 1; ++i)<br>    {                         // 外层循环控制轮次（n-1轮）<br>        bool swapped = false; // 优化：标记是否发生交换<br>        for (int j = 0; j &lt; 5 - 1 - i; ++j)<br>        { <br>            // 内层循环比较相邻元素<br>            if (arr[j] &gt; arr[j + 1])<br>            {                      // 如果前一个元素更大<br>                int temp = arr[j]; // 交换相邻元素                    arr[j] = arr[j + 1];<br>                arr[j + 1] = temp;<br>                swapped = true; // 标记发生交换<br>            }<br>        }<br>        if (!swapped)<br>            break; // 如果一轮未发生交换，说明已有序，提前终止<br>    }<br><br>    printArr(arr);<br>}<br></code></pre></td></tr></tbody></table></figure>
 
-    printArr(arr);
-}
-</code></pre>
 <h5><span id="%E5%8E%9F%E7%90%86">原理</span></h5><ul>
 <li><p>核心思想：通过多次遍历数组，每次比较相邻的两个元素，如果顺序错误就交换它们，直到数组有序。</p>
 </li>
@@ -456,24 +436,8 @@
 <ul>
 <li>最坏的情况下，时间复杂度为O($n^2$) (完全逆序)</li>
 </ul>
-<h4><span id="%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F">插入排序</span></h4><pre><code>void InsertSort()
-{
-    for (int i = 1; i &lt; 5; ++i)
-    {
-        int index = i;
-        int temp_value = arr[i];
+<h4><span id="%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F">插入排序</span></h4><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">void InsertSort()<br>{<br>    for (int i = 1; i &lt; 5; ++i)<br>    {<br>        int index = i;<br>        int temp_value = arr[i];<br><br>        while (index &gt; 0 &amp;&amp; arr[index - 1] &gt; temp_value)<br>        {<br>            arr[index] = arr[index - 1];<br>            --index;<br>        }<br>        arr[index] = temp_value;<br>    }<br><br>    printArr(arr);<br>}<br></code></pre></td></tr></tbody></table></figure>
 
-        while (index &gt; 0 &amp;&amp; arr[index - 1] &gt; temp_value)
-        {
-            arr[index] = arr[index - 1];
-            --index;
-        }
-        arr[index] = temp_value;
-    }
-
-    printArr(arr);
-}
-</code></pre>
 <h5><span id="%E5%8E%9F%E7%90%86">原理</span></h5><ul>
 <li><p>核心思想：将数组分为已排序和未排序两部分，逐个将未排序元素插入到已排序部分的正确位置。</p>
 </li>
@@ -482,30 +446,8 @@
 <li><p>最坏情况下，时间复杂度为O($n^2$) (完全逆序时需全部移动)</p>
 </li>
 </ul>
-<h4><span id="%E9%80%89%E6%8B%A9%E6%8E%92%E5%BA%8F">选择排序</span></h4><pre><code>void SectionSort()
-{
+<h4><span id="%E9%80%89%E6%8B%A9%E6%8E%92%E5%BA%8F">选择排序</span></h4><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">void SectionSort()<br>{<br><br>    for (int i = 0; i &lt; 5; ++i)<br>    {<br>        int arr_min_index = i;<br>        for (int j = i + 1; j &lt; 5; ++j)<br>        {<br>            if (arr[j] &lt; arr[arr_min_index])<br>            {<br>                arr_min_index = j;<br>            }<br>        }<br>        if (arr_min_index != i)<br>        {<br>            int temp = arr[i];<br>            arr[i] = arr[arr_min_index];<br>            arr[arr_min_index] = temp;<br>        }<br>    }<br>    printArr(arr);<br>}<br></code></pre></td></tr></tbody></table></figure>
 
-   for (int i = 0; i &lt; 5; ++i)
-   {
-       int arr_min_index = i;
-       for (int j = i + 1; j &lt; 5; ++j)
-       {
-           if (arr[j] &lt; arr[arr_min_index])
-           {
-               arr_min_index = j;
-           }
-       }
-       if (arr_min_index != i)
-       {
-           int temp = arr[i];
-           arr[i] = arr[arr_min_index];
-           arr[arr_min_index] = temp;
-       }
-   }
-
-   printArr(arr);
-}
-</code></pre>
 <h5><span id="%E5%8E%9F%E7%90%86">原理</span></h5><ul>
 <li><p>核心思想：每次从未排序部分选择最小（或最大）的元素，放到已排序部分的末尾。</p>
 </li>
