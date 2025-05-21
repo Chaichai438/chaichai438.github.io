@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html 
+	lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+<link rel="stylesheet" href="/css/layout.css">
+
+		
+		<title> 高精度计算 -  Hexo</title>
+		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
+		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
+		
+<link rel="stylesheet" href="/lib/mdui/mdui.min.css">
+
+		
+<script src="/lib/mdui/mdui.min.js"></script>
+
+		<!-- lazyload -->
+		
+<script src="/lib/lazysizes.js"></script>
+
+		<!-- smooth-scrolling -->
+		
+<script src="/lib/smooth-scrolling.js"></script>
+
+		<!-- highlight -->
+		
+<link rel="stylesheet" href="/lib/highlight/atom-one-dark.min.css">
+
+		
+<script src="/lib/highlight/highlight.min.js"></script>
+
+		<!-- 预置 kiraicon -->
+		
+<link rel="stylesheet" href="/lib/iconfont/iconfont.css">
+
+		
+		<link
+			rel="shortcut icon"
+			href="https://chaichai438.github.io/assets/Pictures/fruitcake.gif"
+			type="image/gif"
+		/>
+		
+<link rel="stylesheet" href="/deps/css/APlayer.min.css">
+
+		
+		
+<script src="/deps/js/APlayer.min.js"></script>
+<script src="/deps/js/Meting.min.js"></script>
+
+	<meta name="generator" content="Hexo 7.3.0"></head>
+
+	<body>
+		<div
+			class="kira-background"
+			style="background-image: url('https://chaichai438.github.io/assets/Pictures/backgroud.png')"
+		></div>
+		<div class="kira-header">
+    <a
+        class="kira-drawer-button mdui-ripple"
+        title="导航栏"
+        onclick="document.querySelector('.kira-sidebar-modal').classList.add('show');document.querySelector('.kira-sidebar#sidebar').classList.add('show');"
+    >
+        <i class="kirafont icon-menu"></i>
+    </a>
+    <a href="/" title="Hexo">
+        <img
+			src="https://chaichai438.github.io/assets/Pictures/avatar.jpg"
+			alt="Chaichai"
+		/>
+    </a>
+</div>
+		<div class="kira-body">
+			<div class="kira-sidebar" id="sidebar">
+	<div class="kira-avatar mdui-ripple">
+		<a href="https://chaichai438.github.io/assets/Pictures/avatar.jpg" title="Chaichai">
+			<img
+				src="https://chaichai438.github.io/assets/Pictures/avatar.jpg"
+				alt="Chaichai"
+			/>
+		</a>
+	</div>
+	<div class="kira-count">
+		<div><span>文章</span>11</div>
+		<div><span>标签</span>3</div>
+		<div><span>分类</span>4</div>
+	</div>
+	<div class="kira-list">
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/"
+			title="回到首页"
+		>
+			<i
+				class="kirafont
+					
+						icon-home
+					"
+			></i>
+			<div class="kira-list-item-content">
+				回到首页
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/archive.html"
+			title="文章归档"
+		>
+			<i
+				class="kirafont
+					
+						icon-container
+					"
+			></i>
+			<div class="kira-list-item-content">
+				文章归档
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/about.html"
+			title="关于本人"
+		>
+			<i
+				class="kirafont
+					
+						icon-user
+					"
+			></i>
+			<div class="kira-list-item-content">
+				关于本人
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/friends.html"
+			title="我的朋友"
+		>
+			<i
+				class="kirafont
+					
+						icon-team
+					"
+			></i>
+			<div class="kira-list-item-content">
+				我的朋友
+			</div>
+		</a>
+		
+	</div>
+	<aside id="kira-sidebar">
+		
+			<div class="kira-widget-wrap">
+	<div class="kira-widget kira-social">
+		
+			<a
+				class="mdui-ripple"
+				href="tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=1939327800&website=www.oicqzone.com"
+				target="_blank"
+				mdui-tooltip="{content: 'QQ'}"
+				style="color: rgb(49, 174, 255); background-color: rgba(49, 174, 255, .1);"
+			>
+				<i
+					class="kirafont
+					
+						icon-QQ
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://space.bilibili.com/316538505"
+				target="_blank"
+				mdui-tooltip="{content: '哔哩哔哩'}"
+				style="color: rgb(231, 106, 141); background-color: rgba(231, 106, 141, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-bilibili
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://github.com/chaichai438/"
+				target="_blank"
+				mdui-tooltip="{content: 'GitHub'}"
+				style="color: rgb(25, 23, 23); background-color: rgba(25, 23, 23, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-github
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://gitee.com/<你的gitee id>"
+				target="_blank"
+				mdui-tooltip="{content: 'Gitee'}"
+				style="color: rgb(165, 15, 15); background-color: rgba(165, 15, 15, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-gitee
+					"
+				></i>
+			</a>
+		
+	</div>
+</div>
+
+		
+			
+  <div class="kira-widget-wrap">
+    <h3 class="kira-widget-title">分类</h3>
+    <div class="kira-widget">
+      <ul class="category-list">
+        
+        
+
+        
+          <li class="category-list-item">
+            <a class="category-list-link" href="/categories/RMer/">
+              RMer
+            </a>
+            <span class="category-list-count">7</span>
+          </li>
+        
+          <li class="category-list-item">
+            <a class="category-list-link" href="/categories/学习方法/">
+              学习方法
+            </a>
+            <span class="category-list-count">1</span>
+          </li>
+        
+          <li class="category-list-item">
+            <a class="category-list-link" href="/categories/算法习题/">
+              算法习题
+            </a>
+            <span class="category-list-count">2</span>
+          </li>
+        
+          <li class="category-list-item">
+            <a class="category-list-link" href="/categories/RMer/算法必备知识/">
+              算法必备知识
+            </a>
+            <span class="category-list-count">6</span>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+		
+			
+	<div class="kira-widget-wrap">
+		<div id="randomtagcloud" class="kira-widget tagcloud kira-rainbow">
+			<a href="/tags/RMer/" style="font-size: 15px;">RMer</a> <a href="/tags/%E5%BC%80%E6%BA%90%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">开源学习</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 20px;">算法</a>
+		</div>
+		
+	</div>
+
+
+		
+			
+	<div class="kira-widget-wrap">
+		<h3 class="kira-widget-title">
+			Archive
+		</h3>
+		<div class="kira-widget">
+			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/">2025</a><span class="archive-list-count">11</span></li></ul>
+		</div>
+	</div>
+
+
+		
+	</aside>
+	<div class="kira-copyright">
+		&copy; 2025
+		<a href="/">Chaichai</a>
+		Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> &
+		<a href="https://github.com/ch1ny/kira-hexo/" target="_blank">Kira-Hexo</a>
+		<br />
+		
+		
+	</div>
+</div>
+<div
+	class="kira-sidebar-modal"
+	id="sidebar-modal"
+	onclick="(function(self) {
+		self.classList.remove('show');
+		document.querySelector('.kira-sidebar.show#sidebar').classList.remove('show');
+	})(this)"
+></div>
+			<div class="kira-content">
+				<div id="kira-top-header"></div>
+				<div class="kira-main-content">
+					
+<link rel="stylesheet" href="/css/kira-image.css">
+
+
+<script src="/js/kira-image.js"></script>
+
+<div class="kira-image">
+    <div class="kira-image-modal">
+        <div class="kira-image-header">
+            <div class="kira-image-counter"></div>
+            <div class="kira-image-title"></div>
+            <div class="kira-image-operation">
+                <div class="kira-image-operation-button" id="kira-image-operation-button-zoom">
+                    <i class="kirafont icon-zoom-in"></i>
+                </div>
+                <div class="kira-image-operation-button" id="kira-image-operation-button-close">
+                    <i class="kirafont icon-close"></i>
+                </div>
+            </div>
+        </div>
+        <div class="kira-image-container">
+            <div class="kira-image-prev-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-left"></i>
+                </div>
+            </div>
+            <div class="kira-image-list">
+                <div class="kira-image-prev">
+                    <img />
+                </div>
+                <div class="kira-image-now">
+                    <img />
+                </div>
+                <div class="kira-image-next">
+                    <img />
+                </div>
+            </div>
+            <div class="kira-image-next-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+	
+<link rel="stylesheet" href="/css/kira-code-copy.css">
+
+	
+<script src="/js/kira-code-copy.js"></script>
+
+
+<div class="kira-post">
+	<article>
+		
+		<div class="kira-post-cover">
+			<img
+				data-src="https://chaichai438.github.io/assets/Pictures/cover/算法.png"
+				data-sizes="auto"
+				alt="高精度计算"
+				class="lazyload kira-post-cover-image disabled-kira-image"
+			/>
+			<h1>高精度计算</h1>
+		</div>
+		
+		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
+			<a><i class="kirafont icon-calendar-fill"></i>2025年05月21日</a>
+			<a><i class="kirafont icon-edit-fill"></i>1.4k 字</a>
+			<a><i class="kirafont icon-time-circle-fill"></i>大概 6 分钟</a>
+		</div>
+		<html><head></head><body><blockquote>
+<p>有点意思🫠</p>
+</blockquote>
+<span id="more"></span>
+
+<h1><span id="%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0">题目描述</span></h1><p>用高精度计算出 S=1!+2!+3!+⋯+n!（对于 100% 的数据，1≤n≤50）。</p>
+<p>其中 ! 表示阶乘，定义为 n!=n×(n−1)×(n−2)×⋯×1。例如，5!=5×4×3×2×1=120。</p>
+<h2><span id="%E8%BE%93%E5%85%A5%E6%A0%BC%E5%BC%8F">输入格式</span></h2><p>一个正整数 n。</p>
+<h2><span id="%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F">输出格式</span></h2><p>一个正整数 S，表示计算结果。</p>
+<blockquote>
+<p>题目来源:<a target="_blank" rel="noopener" href="https://www.luogu.com.cn/problem/P1009">洛谷 阶乘求和</a></p>
+</blockquote>
+<h1><span id="%E6%88%91%E7%9A%84%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF">我的解题思路</span></h1><p>首先看到这个题我直接狂喜，这就不是一道”简简单单”的题目吗？(对于还没学习算法的人来说)。所以最开始我的思路就是直接用循环计算阶乘不就好了吗？</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">method2</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>{<br>    <span class="hljs-type">long</span> <span class="hljs-type">long</span> n, ans = <span class="hljs-number">0</span>;<br>    cin &gt;&gt; n;<br><br>    <span class="hljs-type">long</span> <span class="hljs-type">long</span> factor = <span class="hljs-number">1</span>;<br><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>; i &lt;= n; ++i) <span class="hljs-comment">// 循环n次</span><br>    {<br><br>        factor *= i;<br>        <span class="hljs-comment">// for (int j = 1; j &lt;= i; ++j) // 循环i次</span><br>        <span class="hljs-comment">// factor = factor * j;     每次需要重新计算阶乘，时间复杂度为o(n^2)</span><br>        ans += factor;<br>    }<br><br>    cout &lt;&lt; ans;<br>}<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>{<br>    <span class="hljs-built_in">method2</span>();<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<h2><span id="%E9%97%AE%E9%A2%98">问题</span></h2><p>后来在debug的时候却发现，当n达到一定程度后，所输出的数甚至会超过long long 的最大数据范围(2^{64} - 1)。这该怎么办？<br>而且题目还提到了使用高精度，对我这种小白来说，高精度是个啥？<br>这就是我们要学习的知识。虽然现在许多语言都已经包含了相关的库，但我们还是有必要去了解学习。</p>
+<h1><span id="%E9%AB%98%E7%B2%BE%E5%BA%A6">高精度</span></h1><p>高精度计算（High Precision Computing）是指在数值计算中，使用超出标准数据类型（如 int、long long、float、double 等）所能表示的范围或精度的计算方法。高精度计算主要用于处理非常大的整数、非常小的小数，或者需要极高精度的科学计算场景。</p>
+<h2><span id="%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E9%AB%98%E7%B2%BE%E5%BA%A6%E8%AE%A1%E7%AE%97">为什么需要高精度计算？</span></h2><ol>
+<li><strong>大整数计算：</strong><br>标准数据类型（如 long long）的范围有限（最大到 (2^{63} - 1)）。如果需要处理更大的整数（如加密算法中的大素数、组合数学中的阶乘等），就需要高精度计算。<br>例如，计算 1000!（1000的阶乘）的结果远远超出 long long 的范围。</li>
+<li><strong>高精度小数计算：</strong><br>浮点类型（如 float 和 double）虽然可以表示小数，但它们的精度有限（double 精度约为15-17位小数）。对于需要更高精度的科学计算（如天体物理、量子力学等），标准浮点类型无法满足需求。</li>
+<li><strong>金融计算：</strong><br>在金融领域，货币计算需要精确到小数点后多位（如汇率计算、利息计算等），而浮点数的精度误差可能导致不可接受的错误。</li>
+</ol>
+<h2><span id="%E9%AB%98%E7%B2%BE%E5%BA%A6%E8%AE%A1%E7%AE%97%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F">高精度计算的实现方式</span></h2><ol>
+<li><strong>字符串模拟：</strong><br>将大整数或高精度小数以字符串的形式存储，然后通过模拟手工计算的方式（如加法、减法、乘法、除法）进行运算。<br>例如，计算两个大整数的加法时，可以逐位相加并处理进位。</li>
+<li><strong>自定义数据结构：</strong><br>使用数组或其他数据结构存储高精度数值的每一位数字，然后实现相应的运算逻辑。<br>例如，用一个整数数组存储一个大整数的每一位数字，数组的索引表示位权。</li>
+<li><strong>使用高精度库：</strong><br>许多编程语言提供了高精度计算的库或模块。例如：<br>C++：Boost.Multiprecision 库。<br>Python：内置的 decimal 模块和 int 类型（Python的 int 可以自动处理任意大小的整数）。<br>Java：BigInteger 和 BigDecimal 类。</li>
+</ol>
+<p>对于这次的内容来说，我们无疑是要用字符串来实现高精度计算，它的本质就是我们手动来实现数的进位。</p>
+<h1><span id="%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0">代码实现</span></h1><p>这次我们直接上代码，再从代码一步步剖析，最后学习代码中的知识点。(参考洛谷题解)</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> MAX 100</span><br><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><br><br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">multipal</span><span class="hljs-params">(<span class="hljs-type">int</span> x)</span></span><br><span class="hljs-function"></span>{<br>    <span class="hljs-type">int</span> g = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = MAX - <span class="hljs-number">1</span>; i &gt;= <span class="hljs-number">0</span>; --i)<br>    {<br>        a[i] = a[i] * x + g;<br>        g = a[i] / <span class="hljs-number">10</span>;<br>        a[i] %= <span class="hljs-number">10</span>;<br>    }<br>}<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">get_sum</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>{<br>    <span class="hljs-type">int</span> g = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = MAX - <span class="hljs-number">1</span>; i &gt;= <span class="hljs-number">0</span>; --i)<br>    {<br>        b[i] = b[i] + a[i] + g;<br>        g = b[i] / <span class="hljs-number">10</span>;<br>        b[i] %= <span class="hljs-number">10</span>;<br>    }<br>}<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">print_b</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>{<br>     <span class="hljs-type">int</span> w;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt;= MAX - <span class="hljs-number">1</span>; ++i)<br>    {<br>        <span class="hljs-keyword">if</span> (b[i] != <span class="hljs-number">0</span>)<br>        {<br>            w = i;<br>            <span class="hljs-keyword">break</span>;<br>        }<br>    }<br><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = w; i &lt;= MAX - <span class="hljs-number">1</span>; ++i)<br>        cout &lt;&lt; b[i];<br>}<br><br><span class="hljs-type">int</span> a[MAX] = {<span class="hljs-number">0</span>}, b[MAX] = {<span class="hljs-number">0</span>};<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>{<br>    <span class="hljs-type">int</span> n;<br>    cin &gt;&gt; n;<br><br>    a[MAX - <span class="hljs-number">1</span>] = <span class="hljs-number">1</span>;<br>    b[MAX - <span class="hljs-number">1</span>] = <span class="hljs-number">1</span>;<br><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">2</span>; i &lt;= n; ++i)<br>    {<br>        <span class="hljs-built_in">multipal</span>(i);<br>        <span class="hljs-built_in">get_sum</span>();<br>    }<br><br>    <span class="hljs-built_in">print_b</span>();<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>要想弄明白程序的流程，必然是从主函数入。</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-type">int</span> a[MAX] = {<span class="hljs-number">0</span>}, b[MAX] = {<span class="hljs-number">0</span>};<br></code></pre></td></tr></tbody></table></figure>
+<p>这里定义了两个全局变量数组a,b,并初始化为0</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp">a[MAX - <span class="hljs-number">1</span>] = <span class="hljs-number">1</span>;<br>b[MAX - <span class="hljs-number">1</span>] = <span class="hljs-number">1</span>;<br></code></pre></td></tr></tbody></table></figure>
+<p>这里将数组最后一位数据赋值为1，便于进行接下来的运算</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">2</span>; i &lt;= n; ++i)<br>   {<br>       <span class="hljs-built_in">multipal</span>(i);<br>       <span class="hljs-built_in">get_sum</span>();<br>   }<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这里进入遍历2-n，同时进入multipal(i)函数中进行。</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-type">int</span> g = <span class="hljs-number">0</span>;<br></code></pre></td></tr></tbody></table></figure>
+<p>g表示进位，满十进一</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = MAX - <span class="hljs-number">1</span>; i &gt;= <span class="hljs-number">0</span>; --i)<span class="hljs-comment">//根据数组，我们得知个位是储存在数组的最后一位的</span><br>    {<br>        a[i] = a[i] * x + g;<span class="hljs-comment">//开始进行累乘</span><br>        g = a[i] / <span class="hljs-number">10</span>;<span class="hljs-comment">//如果g大于10则进一</span><br>        a[i] %= <span class="hljs-number">10</span>;<span class="hljs-comment">//取余</span><br>    }<br></code></pre></td></tr></tbody></table></figure>
+
+<p>接下来在get_sum()中也很好理解</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-type">int</span> g = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = MAX - <span class="hljs-number">1</span>; i &gt;= <span class="hljs-number">0</span>; --i)<br>    {<br>        b[i] = b[i] + a[i] + g;<span class="hljs-comment">//最后一位和multipal()函数中相加，以下步骤相同</span><br>        g = b[i] / <span class="hljs-number">10</span>;<br>        b[i] %= <span class="hljs-number">10</span>;<br>    }<br></code></pre></td></tr></tbody></table></figure>
+<p>在最后的print_函数中则是输出数组，又因为我们是从最后一位开始计算的，前面的数据有可能并没有填上数据，我们不需要那些数据，直接跳过就好了。<br>这样整个程序就结束，我们已经大概掌握了如何进行高精度计算。</p>
+</body></html>
+	</article>
+
+	 
+    <div class="kira-post-copyright">
+        <strong>Author：</strong>Chaichai<br>
+        <strong>Link：</strong><a href="https://chaichai438.github.io/2025/05/21/%E7%AE%97%E6%B3%95/%E9%98%B6%E4%B9%98%E6%B1%82%E5%92%8C/" title="https:&#x2F;&#x2F;chaichai438.github.io&#x2F;2025&#x2F;05&#x2F;21&#x2F;算法&#x2F;阶乘求和&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;chaichai438.github.io&#x2F;2025&#x2F;05&#x2F;21&#x2F;算法&#x2F;阶乘求和&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+  
+	<div class="kira-post-nav">
+		<nav class="post-nav">
+			              
+			<!-- 先找到与当前文字相同的目录 -->
+			      
+			<!-- 在找到当前文章所在的 index -->
+			    
+			<!-- 上一篇文章 -->
+			<div class="old">
+				<span>上一章</span>
+				<a href="/2025/05/17/%E7%AE%97%E6%B3%95/%E5%9B%9E%E6%96%87%E8%B4%A8%E6%95%B0/"> 回文质数</a>
+			</div>
+			          
+		</nav>
+	</div>
+	
+	<div class="kira-post-meta kira-rainbow">
+		
+			<a class="kirafont icon-container-fill -link" href="/categories/%E7%AE%97%E6%B3%95%E4%B9%A0%E9%A2%98/">算法习题</a>
+		
+		
+			<a class="kirafont icon-tag-fill -none-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a>
+		
+	</div>
+	
+	<div class="kira-post-footer">
+		
+
+		
+	<div class="giscus"></div>
+  
+    <script src="https://giscus.app/client.js"
+      data-repo="chaichai438/chaichai438_discussion"
+      data-repo-id="R_kgDOOdATfw"
+      data-category="Announcements"
+      data-category-id="DIC_kwDOOdATf84CpThn"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="light"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async  
+    ></script>
+  
+
+	</div>
+	
+</div>
+
+				</div>
+			</div>
+			<div class="kira-right-column">
+	<a onclick="document.querySelector('#kira-top-header').scrollIntoView({behavior: 'smooth'});" class="kira-backtotop" aria-label="回到顶部" title="回到顶部">
+		<button class="mdui-fab mdui-ripple">
+			<i class="kirafont icon-caret-up"></i>
+		</button>
+	</a>
+</div>
+
+		</div>
+	</body>
+</html>
