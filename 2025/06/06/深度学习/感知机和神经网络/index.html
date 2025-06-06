@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="/css/layout.css">
 
 		
-		<title> 感知机和神经网络 -  Hexo</title>
+		<title> 感知机 -  Hexo</title>
 		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
 		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
 		
@@ -377,10 +377,10 @@
 			<img
 				data-src="https://chaichai438.github.io/assets/Pictures/cover/Neural_Network.jpg"
 				data-sizes="auto"
-				alt="感知机和神经网络"
+				alt="感知机"
 				class="lazyload kira-post-cover-image disabled-kira-image"
 			/>
-			<h1>感知机和神经网络</h1>
+			<h1>感知机</h1>
 		</div>
 		
 		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
@@ -410,8 +410,8 @@
 <li><strong>输入</strong>：接收多个特征信号（(x_1, x_2, …, x_n)）。</li>
 <li><strong>加权求和</strong>：对输入信号赋予权重（(w_1, w_2, …, w_n)），计算加权和 (z = \sum_{i=1}^n w_i x_i + b)（(b)为偏置项）。</li>
 </ul>
-<p>[<img data-fancybox="gallery" data-sizes="auto" data-src="https://chaichai438.github.io/assets/Pictures/DeepLearning/Perceptron.png" alt="两个输入的感知机" class="lazyload">]</p>
-<p>节点计算传送过来的信号的总和，只有当这个总和超过某个<strong>阈值</strong>时才会输出1。<br>权重越大，对应该权重的信号的重要性越高。<br>[<img src="https://chaichai438.github.io/assets/Pictures/DeepLearning/Function.png">]</p>
+<p><img data-fancybox="gallery" data-sizes="auto" data-src="https://chaichai438.github.io/assets/Pictures/DeepLearning/Perceptron.png" alt="两个输入的感知机" class="lazyload"></p>
+<p>节点计算传送过来的信号的总和，只有当这个总和超过某个<strong>阈值</strong>时才会输出1。<br>权重越大，对应该权重的信号的重要性越高。<br><img src="https://chaichai438.github.io/assets/Pictures/DeepLearning/Function.png"></p>
 <p><strong>公式</strong>：<br>  [<br>  y = f\left(\sum_{i=1}^n w_i x_i + b\right), \quad f(z) \text{为激活函数}.<br>  ]<br><strong>几何解释</strong>：在特征空间中，感知机用一个<strong>超平面</strong>（如二维中的直线）将数据分为两类。</p>
 <h2><span id="12-%E6%84%9F%E7%9F%A5%E6%9C%BA%E7%9A%84%E5%AE%9E%E7%8E%B0">1.2 感知机的实现</span></h2><h3><span id="121-%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0">1.2.1 简单实现</span></h3><p>通过感知机，我们可以表示与门(AND)、与非门(NAND)、或门(OR)的逻辑电路。</p>
 <figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs py"><span class="hljs-keyword">def</span> <span class="hljs-title function_">AND</span>(<span class="hljs-params">x1,x2</span>)<br>    w1,w2,theta=<span class="hljs-number">0.5</span>,<span class="hljs-number">0.5</span>,<span class="hljs-number">0.7</span><br>    temp = x1*w1+x2*w2<br>    <span class="hljs-keyword">if</span> tmp &lt;= theta:<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span><br>    <span class="hljs-keyword">elif</span> tmp &gt; theta:<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span><br></code></pre></td></tr></tbody></table></figure>
@@ -472,7 +472,7 @@
 <h3><span id="124-%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3">1.2.4 如何解决？</span></h3><p>要解决异或问题，必须引入<strong>非线性</strong>：<br><strong>多层感知机（MLP）</strong>：  </p>
 <ul>
 <li>增加一个隐藏层（如用两个隐藏神经元分别表示AND和NAND门），再通过组合它们的输出实现异或。</li>
-<li>例如：<br>[<br>A \oplus B = (A \land \neg B) \lor (\neg A \land B).<br>]</li>
+<li>例如：<br>(<br>A \oplus B = (A \land \neg B) \lor (\neg A \land B).<br>)</li>
 </ul>
 <h3><span id="125-%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0">1.2.5 代码实现</span></h3><figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs py"><span class="hljs-keyword">def</span> <span class="hljs-title function_">XOR</span>(<span class="hljs-params">x1,x2</span>):<br>    s1 = NAND(x1,x2)<br>    s2 = OR(x1,x2)<br>    y = AND(s1,s2)<br>    <span class="hljs-keyword">return</span> y<br></code></pre></td></tr></tbody></table></figure>
 </body></html>
