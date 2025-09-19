@@ -84,7 +84,7 @@
 		</a>
 	</div>
 	<div class="kira-count">
-		<div><span>文章</span>13</div>
+		<div><span>文章</span>14</div>
 		<div><span>标签</span>5</div>
 		<div><span>分类</span>5</div>
 	</div>
@@ -289,7 +289,7 @@
 			Archive
 		</h3>
 		<div class="kira-widget">
-			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/">2025</a><span class="archive-list-count">13</span></li></ul>
+			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/">2025</a><span class="archive-list-count">14</span></li></ul>
 		</div>
 	</div>
 
@@ -463,32 +463,8 @@
 </li>
 </ul>
 <p>通过类来创建一个线程</p>
-<pre><code>class Mythod
-{
-public:
-    Mythod()
-    {
-        state = 1;
-    }
-    // 运行线程的函数
-    void run()
-    {
-        while (state)
-        {
-            this_thread::sleep_for(chrono::milliseconds(500));
-            cout &lt;&lt; "Hello!" &lt;&lt; endl;
-        }
-    }
-    // 停止线程的函数
-    void stop()
-    {
-        state = 0;
-    }
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Mythod</span><br>{<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">Mythod</span>()<br>    {<br>        state = <span class="hljs-number">1</span>;<br>    }<br>    <span class="hljs-comment">// 运行线程的函数</span><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">run</span><span class="hljs-params">()</span></span><br><span class="hljs-function">    </span>{<br>        <span class="hljs-keyword">while</span> (state)<br>        {<br>            this_thread::<span class="hljs-built_in">sleep_for</span>(chrono::<span class="hljs-built_in">milliseconds</span>(<span class="hljs-number">500</span>));<br>            cout &lt;&lt; <span class="hljs-string">"Hello!"</span> &lt;&lt; endl;<br>        }<br>    }<br>    <span class="hljs-comment">// 停止线程的函数</span><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">stop</span><span class="hljs-params">()</span></span><br><span class="hljs-function">    </span>{<br>        state = <span class="hljs-number">0</span>;<br>    }<br><br><span class="hljs-keyword">private</span>:<br>    atomic&lt;<span class="hljs-type">bool</span>&gt; state;<span class="hljs-comment">// 原子操作</span><br>};<br></code></pre></td></tr></tbody></table></figure>
 
-private:
-    atomic&lt;bool&gt; state;// 原子操作
-};
-</code></pre>
 <p>对于主程序</p>
 <pre><code>int main()
 {
