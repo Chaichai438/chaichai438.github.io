@@ -1,394 +1,165 @@
-<!DOCTYPE html>
-<html 
-	lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		
-<link rel="stylesheet" href="/css/layout.css">
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>电控组考核 | Hexo</title><meta name="author" content="Chaichai"><meta name="copyright" content="Chaichai"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="题目一 选择题1.若用数组名作为函数调用的实参，传递给形参的是(     )A.数组的首地址B.数组第一个元素的值C.数组中全部元素的值D.数组元素的个数 2.使用值传递方式将实参传给形参，下列说法正确的是(     )A.形参是实参的备份B.实参是形参的备份C.形参和实参是同一对象D.形参和实参无联系 3.以下说法正确的是(     )A.下列函数调用语句中含有2个实参:fun((a1,a2),">
+<meta property="og:type" content="article">
+<meta property="og:title" content="电控组考核">
+<meta property="og:url" content="https://chaichai438.github.io/2025/09/19/RM%E5%AD%A6%E4%B9%A0/%E7%94%B5%E6%8E%A7%E8%80%83%E6%A0%B8/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="题目一 选择题1.若用数组名作为函数调用的实参，传递给形参的是(     )A.数组的首地址B.数组第一个元素的值C.数组中全部元素的值D.数组元素的个数 2.使用值传递方式将实参传给形参，下列说法正确的是(     )A.形参是实参的备份B.实参是形参的备份C.形参和实参是同一对象D.形参和实参无联系 3.以下说法正确的是(     )A.下列函数调用语句中含有2个实参:fun((a1,a2),">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://chaichai438.github.io/assets/Pictures/cover/RMer.jpg">
+<meta property="article:published_time" content="2025-09-19T12:56:27.150Z">
+<meta property="article:modified_time" content="2025-09-19T13:26:46.069Z">
+<meta property="article:author" content="Chaichai">
+<meta property="article:tag" content="RMer">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://chaichai438.github.io/assets/Pictures/cover/RMer.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "电控组考核",
+  "url": "https://chaichai438.github.io/2025/09/19/RM%E5%AD%A6%E4%B9%A0/%E7%94%B5%E6%8E%A7%E8%80%83%E6%A0%B8/",
+  "image": "https://chaichai438.github.io/assets/Pictures/cover/RMer.jpg",
+  "datePublished": "2025-09-19T12:56:27.150Z",
+  "dateModified": "2025-09-19T13:26:46.069Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Chaichai",
+      "url": "https://chaichai438.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://chaichai438.github.io/2025/09/19/RM%E5%AD%A6%E4%B9%A0/%E7%94%B5%E6%8E%A7%E8%80%83%E6%A0%B8/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
 
-		
-		<title> 电控组考核 -  Hexo</title>
-		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
-		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
-		
-<link rel="stylesheet" href="/lib/mdui/mdui.min.css">
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
 
-		
-<script src="/lib/mdui/mdui.min.js"></script>
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
 
-		<!-- lazyload -->
-		
-<script src="/lib/lazysizes.js"></script>
-
-		<!-- smooth-scrolling -->
-		
-<script src="/lib/smooth-scrolling.js"></script>
-
-		<!-- highlight -->
-		
-<link rel="stylesheet" href="/lib/highlight/atom-one-dark.min.css">
-
-		
-<script src="/lib/highlight/highlight.min.js"></script>
-
-		<!-- 预置 kiraicon -->
-		
-<link rel="stylesheet" href="/lib/iconfont/iconfont.css">
-
-		
-		<link
-			rel="shortcut icon"
-			href="https://chaichai438.github.io/assets/Pictures/fruitcake.gif"
-			type="image/gif"
-		/>
-		
-<link rel="stylesheet" href="/deps/css/APlayer.min.css">
-
-		
-		
-<script src="/deps/js/APlayer.min.js"></script>
-<script src="/deps/js/Meting.min.js"></script>
-
-	<meta name="generator" content="Hexo 7.3.0"></head>
-
-	<body>
-		<div
-			class="kira-background"
-			style="background-image: url('https://chaichai438.github.io/assets/Pictures/backgroud.png')"
-		></div>
-		<div class="kira-header">
-    <a
-        class="kira-drawer-button mdui-ripple"
-        title="导航栏"
-        onclick="document.querySelector('.kira-sidebar-modal').classList.add('show');document.querySelector('.kira-sidebar#sidebar').classList.add('show');"
-    >
-        <i class="kirafont icon-menu"></i>
-    </a>
-    <a href="/" title="Hexo">
-        <img
-			src="https://chaichai438.github.io/assets/Pictures/avatar.jpg"
-			alt="Chaichai"
-		/>
-    </a>
-</div>
-		<div class="kira-body">
-			<div class="kira-sidebar" id="sidebar">
-	<div class="kira-avatar mdui-ripple">
-		<a href="https://chaichai438.github.io/assets/Pictures/avatar.jpg" title="Chaichai">
-			<img
-				src="https://chaichai438.github.io/assets/Pictures/avatar.jpg"
-				alt="Chaichai"
-			/>
-		</a>
-	</div>
-	<div class="kira-count">
-		<div><span>文章</span>14</div>
-		<div><span>标签</span>5</div>
-		<div><span>分类</span>5</div>
-	</div>
-	<div class="kira-list">
-		
-		<a
-			class="kira-list-item mdui-ripple false"
-			href="/"
-			title="回到首页"
-		>
-			<i
-				class="kirafont
-					
-						icon-home
-					"
-			></i>
-			<div class="kira-list-item-content">
-				回到首页
-			</div>
-		</a>
-		
-		<a
-			class="kira-list-item mdui-ripple false"
-			href="/archive.html"
-			title="文章归档"
-		>
-			<i
-				class="kirafont
-					
-						icon-container
-					"
-			></i>
-			<div class="kira-list-item-content">
-				文章归档
-			</div>
-		</a>
-		
-		<a
-			class="kira-list-item mdui-ripple false"
-			href="/about.html"
-			title="关于本人"
-		>
-			<i
-				class="kirafont
-					
-						icon-user
-					"
-			></i>
-			<div class="kira-list-item-content">
-				关于本人
-			</div>
-		</a>
-		
-		<a
-			class="kira-list-item mdui-ripple false"
-			href="/friends.html"
-			title="我的朋友"
-		>
-			<i
-				class="kirafont
-					
-						icon-team
-					"
-			></i>
-			<div class="kira-list-item-content">
-				我的朋友
-			</div>
-		</a>
-		
-	</div>
-	<aside id="kira-sidebar">
-		
-			<div class="kira-widget-wrap">
-	<div class="kira-widget kira-social">
-		
-			<a
-				class="mdui-ripple"
-				href="tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=1939327800&website=www.oicqzone.com"
-				target="_blank"
-				mdui-tooltip="{content: 'QQ'}"
-				style="color: rgb(49, 174, 255); background-color: rgba(49, 174, 255, .1);"
-			>
-				<i
-					class="kirafont
-					
-						icon-QQ
-					"
-				></i>
-			</a>
-		
-			<a
-				class="mdui-ripple"
-				href="https://space.bilibili.com/316538505"
-				target="_blank"
-				mdui-tooltip="{content: '哔哩哔哩'}"
-				style="color: rgb(231, 106, 141); background-color: rgba(231, 106, 141, .15);"
-			>
-				<i
-					class="kirafont
-					
-						icon-bilibili
-					"
-				></i>
-			</a>
-		
-			<a
-				class="mdui-ripple"
-				href="https://github.com/chaichai438/"
-				target="_blank"
-				mdui-tooltip="{content: 'GitHub'}"
-				style="color: rgb(25, 23, 23); background-color: rgba(25, 23, 23, .15);"
-			>
-				<i
-					class="kirafont
-					
-						icon-github
-					"
-				></i>
-			</a>
-		
-			<a
-				class="mdui-ripple"
-				href="https://gitee.com/<你的gitee id>"
-				target="_blank"
-				mdui-tooltip="{content: 'Gitee'}"
-				style="color: rgb(165, 15, 15); background-color: rgba(165, 15, 15, .15);"
-			>
-				<i
-					class="kirafont
-					
-						icon-gitee
-					"
-				></i>
-			</a>
-		
-	</div>
-</div>
-
-		
-			
-  <div class="kira-widget-wrap">
-    <h3 class="kira-widget-title">分类</h3>
-    <div class="kira-widget">
-      <ul class="category-list">
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
         
-        
-
-        
-          <li class="category-list-item">
-            <a class="category-list-link" href="/categories/RMer/">
-              RMer
-            </a>
-            <span class="category-list-count">9</span>
-          </li>
-        
-          <li class="category-list-item">
-            <a class="category-list-link" href="/categories/人工智能/">
-              人工智能
-            </a>
-            <span class="category-list-count">1</span>
-          </li>
-        
-          <li class="category-list-item">
-            <a class="category-list-link" href="/categories/学习方法/">
-              学习方法
-            </a>
-            <span class="category-list-count">1</span>
-          </li>
-        
-          <li class="category-list-item">
-            <a class="category-list-link" href="/categories/算法习题/">
-              算法习题
-            </a>
-            <span class="category-list-count">2</span>
-          </li>
-        
-          <li class="category-list-item">
-            <a class="category-list-link" href="/categories/RMer/算法必备知识/">
-              算法必备知识
-            </a>
-            <span class="category-list-count">7</span>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-		
-			
-	<div class="kira-widget-wrap">
-		<div id="randomtagcloud" class="kira-widget tagcloud kira-rainbow">
-			<a href="/tags/RMer/" style="font-size: 15px;">RMer</a> <a href="/tags/%E5%BC%80%E6%BA%90%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">开源学习</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">机器学习</a> <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" style="font-size: 10px;">神经网络</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 20px;">算法</a>
-		</div>
-		
-	</div>
-
-
-		
-			
-	<div class="kira-widget-wrap">
-		<h3 class="kira-widget-title">
-			Archive
-		</h3>
-		<div class="kira-widget">
-			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/">2025</a><span class="archive-list-count">14</span></li></ul>
-		</div>
-	</div>
-
-
-		
-	</aside>
-	<div class="kira-copyright">
-		&copy; 2025
-		<a href="/">Chaichai</a>
-		Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> &
-		<a href="https://github.com/ch1ny/kira-hexo/" target="_blank">Kira-Hexo</a>
-		<br />
-		
-		
-	</div>
-</div>
-<div
-	class="kira-sidebar-modal"
-	id="sidebar-modal"
-	onclick="(function(self) {
-		self.classList.remove('show');
-		document.querySelector('.kira-sidebar.show#sidebar').classList.remove('show');
-	})(this)"
-></div>
-			<div class="kira-content">
-				<div id="kira-top-header"></div>
-				<div class="kira-main-content">
-					
-<link rel="stylesheet" href="/css/kira-image.css">
-
-
-<script src="/js/kira-image.js"></script>
-
-<div class="kira-image">
-    <div class="kira-image-modal">
-        <div class="kira-image-header">
-            <div class="kira-image-counter"></div>
-            <div class="kira-image-title"></div>
-            <div class="kira-image-operation">
-                <div class="kira-image-operation-button" id="kira-image-operation-button-zoom">
-                    <i class="kirafont icon-zoom-in"></i>
-                </div>
-                <div class="kira-image-operation-button" id="kira-image-operation-button-close">
-                    <i class="kirafont icon-close"></i>
-                </div>
-            </div>
-        </div>
-        <div class="kira-image-container">
-            <div class="kira-image-prev-button-panel">
-                <div class="kira-image-exchange-button">
-                    <i class="kirafont icon-left"></i>
-                </div>
-            </div>
-            <div class="kira-image-list">
-                <div class="kira-image-prev">
-                    <img />
-                </div>
-                <div class="kira-image-now">
-                    <img />
-                </div>
-                <div class="kira-image-next">
-                    <img />
-                </div>
-            </div>
-            <div class="kira-image-next-button-panel">
-                <div class="kira-image-exchange-button">
-                    <i class="kirafont icon-right"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-	
-<link rel="stylesheet" href="/css/kira-code-copy.css">
-
-	
-<script src="/js/kira-code-copy.js"></script>
-
-
-<div class="kira-post">
-	<article>
-		
-		<div class="kira-post-cover">
-			<img
-				data-src="assets/Pictures/cover/RMer.jpg"
-				data-sizes="auto"
-				alt="电控组考核"
-				class="lazyload kira-post-cover-image disabled-kira-image"
-			/>
-			<h1>电控组考核</h1>
-		</div>
-		
-		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
-			<a><i class="kirafont icon-calendar-fill"></i>2025年09月19日</a>
-			<a><i class="kirafont icon-edit-fill"></i>1.3k 字</a>
-			<a><i class="kirafont icon-time-circle-fill"></i>大概 6 分钟</a>
-		</div>
-		<html><head></head><body><h2><span id="%E9%A2%98%E7%9B%AE%E4%B8%80-%E9%80%89%E6%8B%A9%E9%A2%98">题目一 选择题</span></h2><p>1.若用数组名作为函数调用的实参，传递给形参的是(     )<br>A.数组的首地址<br>B.数组第一个元素的值<br>C.数组中全部元素的值<br>D.数组元素的个数</p>
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Failed',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '电控组考核',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/assets/Pictures/cover/RMer.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Hexo</span></a><a class="nav-page-title" href="/"><span class="site-name">电控组考核</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  Back to Home</span></span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">电控组考核</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2025-09-19T12:56:27.150Z" title="Created 2025-09-19 20:56:27">2025-09-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2025-09-19T13:26:46.069Z" title="Updated 2025-09-19 21:26:46">2025-09-19</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/RMer/">RMer</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><html><head></head><body><h2><span id="%E9%A2%98%E7%9B%AE%E4%B8%80-%E9%80%89%E6%8B%A9%E9%A2%98">题目一 选择题</span></h2><p>1.若用数组名作为函数调用的实参，传递给形参的是(     )<br>A.数组的首地址<br>B.数组第一个元素的值<br>C.数组中全部元素的值<br>D.数组元素的个数</p>
 <p>2.使用值传递方式将实参传给形参，下列说法正确的是(     )<br>A.形参是实参的备份<br>B.实参是形参的备份<br>C.形参和实参是同一对象<br>D.形参和实参无联系</p>
 <p>3.以下说法正确的是(     )<br>A.下列函数调用语句中含有2个实参:<code>fun((a1,a2),(a3,a4,a5))</code>;<br>B.在函数中未指定存储类别的变量，其隐含的存储类别是void类型<br>C.若调用一个函数，且此函数中没有return语句，则该函数没有返回值<br>D.全局变量的作用域一定比局部变量的作用域范围大</p>
 <p>4.以下说法错误的是(     )<br>A.continue语句只能用于循环语句中<br>B.在分支结构switch中，case后面跟的一定是常量<br>C.在不同函数中可以使用相同名字的变量<br>D.<code>int num[3]={1,2,3}</code>,使用num++来让数组下标后移</p>
@@ -434,83 +205,5 @@
 <h2><span id="%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E6%A0%B7%E4%BE%8B-%231">输入输出样例 #1</span></h2><h3><span id="%E8%BE%93%E5%85%A5-%231">输入 #1</span></h3><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">5 10<br>2 5 2 2 5 2 2 2 1 2<br></code></pre></td></tr></tbody></table></figure>
 <h3><span id="%E8%BE%93%E5%87%BA-%231">输出 #1</span></h3><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">1 2 2 2 2 2 2 2 5 5<br></code></pre></td></tr></tbody></table></figure>
 
-<h2><span id="%E9%99%84%E5%8A%A0%E9%A2%98">附加题</span></h2><p>请根据一下框图写出一套算法，其中，输出量，反馈量都可认为等于当前状态，误差error=目标set-反馈fdb。比例环节 Pout = Kp*error，积分环节Iout = Ki * error，微分环节 Dout=Kd *（error-lasterror）初始状态为0，Kp、Ki、Kd为常数。目标状态为10000.算法运行100次，结果为10000+-300为15分，+-1000为10分，+-1500为5分。<br><img data-fancybox="gallery" data-sizes="auto" data-src="/assets/Pictures/PID.png" alt="PID" class="lazyload"></p>
-</body></html>
-	</article>
-
-	 
-    <div class="kira-post-copyright">
-        <strong>Author：</strong>Chaichai<br>
-        <strong>Link：</strong><a href="https://chaichai438.github.io/2025/09/19/RM%E5%AD%A6%E4%B9%A0/%E7%94%B5%E6%8E%A7%E8%80%83%E6%A0%B8/" title="https:&#x2F;&#x2F;chaichai438.github.io&#x2F;2025&#x2F;09&#x2F;19&#x2F;RM学习&#x2F;电控考核&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;chaichai438.github.io&#x2F;2025&#x2F;09&#x2F;19&#x2F;RM学习&#x2F;电控考核&#x2F;</a><br>
-        
-            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
-        
-    </div>
-
-  
-	<div class="kira-post-nav">
-		<nav class="post-nav">
-			  
-			<!-- 先找到与当前文字相同的目录 -->
-			                           
-			<!-- 在找到当前文章所在的 index -->
-			                                
-			<!-- 上一篇文章 -->
-			<div class="old">
-				<span>上一章</span>
-				<a href="/2025/06/16/RM%E5%AD%A6%E4%B9%A0/%E7%94%9F%E4%BA%A7%E8%80%85%E4%B8%8E%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%9E%8B/"> 生产者与消费者模型</a>
-			</div>
-			                          
-		</nav>
-	</div>
-	
-	<div class="kira-post-meta kira-rainbow">
-		
-			<a class="kirafont icon-container-fill -link" href="/categories/RMer/">RMer</a>
-		
-		
-			<a class="kirafont icon-tag-fill -none-link" href="/tags/RMer/" rel="tag">RMer</a>
-		
-	</div>
-	
-	<div class="kira-post-footer">
-		
-
-		
-	<div class="giscus"></div>
-  
-    <script src="https://giscus.app/client.js"
-      data-repo="chaichai438/chaichai438_discussion"
-      data-repo-id="R_kgDOOdATfw"
-      data-category="Announcements"
-      data-category-id="DIC_kwDOOdATf84CpThn"
-      data-mapping="pathname"
-      data-strict="0"
-      data-reactions-enabled="1"
-      data-emit-metadata="0"
-      data-input-position="top"
-      data-theme="light"
-      data-lang="en"
-      data-loading="lazy"
-      crossorigin="anonymous"
-      async  
-    ></script>
-  
-
-	</div>
-	
-</div>
-
-				</div>
-			</div>
-			<div class="kira-right-column">
-	<a onclick="document.querySelector('#kira-top-header').scrollIntoView({behavior: 'smooth'});" class="kira-backtotop" aria-label="回到顶部" title="回到顶部">
-		<button class="mdui-fab mdui-ripple">
-			<i class="kirafont icon-caret-up"></i>
-		</button>
-	</a>
-</div>
-
-		</div>
-	</body>
-</html>
+<h2><span id="%E9%99%84%E5%8A%A0%E9%A2%98">附加题</span></h2><p>请根据一下框图写出一套算法，其中，输出量，反馈量都可认为等于当前状态，误差error=目标set-反馈fdb。比例环节 Pout = Kp*error，积分环节Iout = Ki * error，微分环节 Dout=Kd *（error-lasterror）初始状态为0，Kp、Ki、Kd为常数。目标状态为10000.算法运行100次，结果为10000+-300为15分，+-1000为10分，+-1500为5分。<br><img src="/assets/Pictures/PID.png" alt="PID"></p>
+</body></html></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="https://chaichai438.github.io">Chaichai</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="https://chaichai438.github.io/2025/09/19/RM%E5%AD%A6%E4%B9%A0/%E7%94%B5%E6%8E%A7%E8%80%83%E6%A0%B8/">https://chaichai438.github.io/2025/09/19/RM%E5%AD%A6%E4%B9%A0/%E7%94%B5%E6%8E%A7%E8%80%83%E6%A0%B8/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles on this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless otherwise stated.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/RMer/">RMer</a></div><div class="post-share"><div class="social-share" data-image="/assets/Pictures/cover/RMer.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/06/16/RM%E5%AD%A6%E4%B9%A0/%E7%94%9F%E4%BA%A7%E8%80%85%E4%B8%8E%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%9E%8B/" title="生产者与消费者模型"><img class="cover" src="https://chaichai438.github.io/assets/Pictures/cover/RMer.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">Next</div><div class="info-item-2">生产者与消费者模型</div></div><div class="info-2"><div class="info-item-1"> 多线程编程的一个经典模型    一、生产者与消费者模型生产者与消费者模型（Producer - Consumer Model）是一种经典的多线程同步问题模型，用于描述生产者和消费者之间对共享资源（如缓冲区）的交互过程。它在计算机科学中被广泛应用于解决多线程编程中的线程同步、资源竞争和数据共享等问题。 （一）模型的基本组成 生产者（Producer） 生产者的作用是生成数据并将其放入共享缓冲区。生产者不断地生产数据，例如在实际应用场景中，它可以是一个数据采集线程，从传感器采集数据后放入缓冲区。   消费者（Consumer） 消费者从共享缓冲区中取出数据并进行处理。消费者不断地消费数据，比如一个数据分析线程从缓冲区取出数据进行分析处理。   共享缓冲区（Shared Buffer） 这是生产者和消费者之间共享的资源。它可以是一个队列、数组或其他数据结构。缓冲区的大小是有限的，它存储着生产者生产的、尚未被消费者消费的数据。    （二）模型的核心问题 同步问题 生产者和消费者需要协调工作。如果缓冲区满了，生产者不能继续生产，否则会导致数据丢失或覆盖；如果缓冲区空了，消费者不能继续消...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/05/15/RM%E5%AD%A6%E4%B9%A0/%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1/" title="串口通信"><img class="cover" src="https://chaichai438.github.io/assets/Pictures/cover/RMer.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-05-15</div><div class="info-item-2">串口通信</div></div><div class="info-2"><div class="info-item-1"> 你会看到，unsigned char的一万种用法(bushi)、串口通信的原理和操作方法、try-catch有什么用？虽然是AI生成的()，但是我们可以借助它来学习    unsigned char 解释unsigned char 是C/C++中的一种基本数据类型，表示无符号字符型数据。以下是详细解释： 基本特性 无符号性：只能表示非负整数，范围是0到255（在大多数平台上） 大小：通常占用1字节（8位）内存空间 用途： 存储原始字节数据 处理小范围的非负整数 实现位操作和字节级操作    与char和signed char的区别 char：可能是signed或unsigned，取决于编译器实现 signed char：明确表示有符号字符，范围-128到127 unsigned char：明确表示无符号字符，范围0到255  示例代码123456unsigned char byte = 200;  // 有效unsigned char max_val = 255;  // 最大值// unsigned char negative = -1;  // 错误，不能赋负值// 常用于...</div></div></div></a><a class="pagination-related" href="/2025/04/28/RM%E5%AD%A6%E4%B9%A0/250426/" title="多线程编程"><img class="cover" src="https://chaichai438.github.io/assets/Pictures/cover/RMer.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-28</div><div class="info-item-2">多线程编程</div></div><div class="info-2"><div class="info-item-1">多线程编程(基于C++)目录 什么是多线程 创建线程 线程管理 线程的传参 线程的同步与互斥  什么是多线程首先我们需要了解什么是线程。 线程（Thread）是操作系统能够进行调度的最小单位，它比进程更小，是进程的一个子集。线程是程序执行的最小单位，用于实现并发执行。 多线程指的是一个程序中包含两个或者两个以上的线程，多线程的提出是为提高代码的执行效率，这就好比工厂中的流水线，只有一条称为单线程，有多条流水线就称为多线程。  我这里还有更形象一点的例子。AI生成  线程比喻：餐厅里的服务员  想象你走进一家餐厅，餐厅就像一个程序，而餐厅里的服务员就像线程。  餐厅（进程）   餐厅是整个程序的运行环境，它有自己的资源，比如厨房（内存）、餐具（文件句柄）、服务员（线程）等。 餐厅的资源是有限的，但它可以同时为多个顾客服务。   服务员（线程）   服务员是餐厅里的线程，他们负责完成各种任务，比如点菜、送餐、清理桌子等。 每个服务员可以独立完成任务，但他们共享餐厅的资源（比如厨房和餐具）。   顾客（任务）   餐厅里的顾客代表程序中的任务。每个顾客有不同的需求，比如点不同的菜或者要...</div></div></div></a><a class="pagination-related" href="/2025/06/16/RM%E5%AD%A6%E4%B9%A0/%E7%94%9F%E4%BA%A7%E8%80%85%E4%B8%8E%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%9E%8B/" title="生产者与消费者模型"><img class="cover" src="https://chaichai438.github.io/assets/Pictures/cover/RMer.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-16</div><div class="info-item-2">生产者与消费者模型</div></div><div class="info-2"><div class="info-item-1"> 多线程编程的一个经典模型    一、生产者与消费者模型生产者与消费者模型（Producer - Consumer Model）是一种经典的多线程同步问题模型，用于描述生产者和消费者之间对共享资源（如缓冲区）的交互过程。它在计算机科学中被广泛应用于解决多线程编程中的线程同步、资源竞争和数据共享等问题。 （一）模型的基本组成 生产者（Producer） 生产者的作用是生成数据并将其放入共享缓冲区。生产者不断地生产数据，例如在实际应用场景中，它可以是一个数据采集线程，从传感器采集数据后放入缓冲区。   消费者（Consumer） 消费者从共享缓冲区中取出数据并进行处理。消费者不断地消费数据，比如一个数据分析线程从缓冲区取出数据进行分析处理。   共享缓冲区（Shared Buffer） 这是生产者和消费者之间共享的资源。它可以是一个队列、数组或其他数据结构。缓冲区的大小是有限的，它存储着生产者生产的、尚未被消费者消费的数据。    （二）模型的核心问题 同步问题 生产者和消费者需要协调工作。如果缓冲区满了，生产者不能继续生产，否则会导致数据丢失或覆盖；如果缓冲区空了，消费者不能继续消...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/butterfly-icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Chaichai</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">5</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">题目一 选择题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.</span> <span class="toc-text">题目二 学生成绩表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">3.</span> <span class="toc-text">题目三 三角形面积</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">4.</span> <span class="toc-text">输入格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">5.</span> <span class="toc-text">输出格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">6.</span> <span class="toc-text">输入输出样例 #1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">6.1.</span> <span class="toc-text">输入 #1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">6.2.</span> <span class="toc-text">输出 #1</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number"></span> <span class="toc-text">题目四 回文质数</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.</span> <span class="toc-text">输入格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">3.</span> <span class="toc-text">输出格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">4.</span> <span class="toc-text">输入输出样例 #1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">4.1.</span> <span class="toc-text">输入 #1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">4.2.</span> <span class="toc-text">输出 #1</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">5.</span> <span class="toc-text">说明&#x2F;提示</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number"></span> <span class="toc-text">题目五 选举学生会 (10 分)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.</span> <span class="toc-text">输入格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">3.</span> <span class="toc-text">输出格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">4.</span> <span class="toc-text">输入输出样例 #1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">4.1.</span> <span class="toc-text">输入 #1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">4.2.</span> <span class="toc-text">输出 #1</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">5.</span> <span class="toc-text">附加题</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Posts</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/09/19/RM%E5%AD%A6%E4%B9%A0/%E7%94%B5%E6%8E%A7%E8%80%83%E6%A0%B8/" title="电控组考核"><img src="/assets/Pictures/cover/RMer.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="电控组考核"/></a><div class="content"><a class="title" href="/2025/09/19/RM%E5%AD%A6%E4%B9%A0/%E7%94%B5%E6%8E%A7%E8%80%83%E6%A0%B8/" title="电控组考核">电控组考核</a><time datetime="2025-09-19T12:56:27.150Z" title="Created 2025-09-19 20:56:27">2025-09-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/06/16/RM%E5%AD%A6%E4%B9%A0/%E7%94%9F%E4%BA%A7%E8%80%85%E4%B8%8E%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%9E%8B/" title="生产者与消费者模型"><img src="https://chaichai438.github.io/assets/Pictures/cover/RMer.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="生产者与消费者模型"/></a><div class="content"><a class="title" href="/2025/06/16/RM%E5%AD%A6%E4%B9%A0/%E7%94%9F%E4%BA%A7%E8%80%85%E4%B8%8E%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%9E%8B/" title="生产者与消费者模型">生产者与消费者模型</a><time datetime="2025-06-16T11:41:26.655Z" title="Created 2025-06-16 19:41:26">2025-06-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/06/06/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%84%9F%E7%9F%A5%E6%9C%BA%E5%92%8C%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" title="感知机"><img src="https://chaichai438.github.io/assets/Pictures/cover/Neural_Network.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="感知机"/></a><div class="content"><a class="title" href="/2025/06/06/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%84%9F%E7%9F%A5%E6%9C%BA%E5%92%8C%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" title="感知机">感知机</a><time datetime="2025-06-06T11:44:17.164Z" title="Created 2025-06-06 19:44:17">2025-06-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/05/21/%E7%AE%97%E6%B3%95/%E9%98%B6%E4%B9%98%E6%B1%82%E5%92%8C/" title="高精度计算"><img src="https://chaichai438.github.io/assets/Pictures/cover/算法.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="高精度计算"/></a><div class="content"><a class="title" href="/2025/05/21/%E7%AE%97%E6%B3%95/%E9%98%B6%E4%B9%98%E6%B1%82%E5%92%8C/" title="高精度计算">高精度计算</a><time datetime="2025-05-21T11:40:03.299Z" title="Created 2025-05-21 19:40:03">2025-05-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/05/17/%E7%AE%97%E6%B3%95/%E5%9B%9E%E6%96%87%E8%B4%A8%E6%95%B0/" title="回文质数"><img src="https://chaichai438.github.io/assets/Pictures/cover/算法.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="回文质数"/></a><div class="content"><a class="title" href="/2025/05/17/%E7%AE%97%E6%B3%95/%E5%9B%9E%E6%96%87%E8%B4%A8%E6%95%B0/" title="回文质数">回文质数</a><time datetime="2025-05-17T11:20:39.176Z" title="Created 2025-05-17 19:20:39">2025-05-17</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Chaichai</span><span class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.3</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Reading Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light and Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle Between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Settings"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back to Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
