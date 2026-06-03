@@ -1,0 +1,1113 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>第9章：聚类 — 西瓜书学习笔记 | Click Start!</title><meta name="author" content="Chaichai"><meta name="copyright" content="Chaichai"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="聚类是机器学习中最重要的无监督学习任务之一。它在没有任何标签的情况下，       自动发现数据的内在结构，将相似的样本归为一组。本文涵盖本章所有核心知识点，       配有详细推导与通俗类比，助你从零到精通。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第9章：聚类 — 西瓜书学习笔记">
+<meta property="og:url" content="https://chaichai438.github.io/2026/05/27/ML/ml-ch09-clustering/index.html">
+<meta property="og:site_name" content="Click Start!">
+<meta property="og:description" content="聚类是机器学习中最重要的无监督学习任务之一。它在没有任何标签的情况下，       自动发现数据的内在结构，将相似的样本归为一组。本文涵盖本章所有核心知识点，       配有详细推导与通俗类比，助你从零到精通。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://chaichai438.github.io/img/avatar.jpg">
+<meta property="article:published_time" content="2026-05-26T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-26T16:00:00.000Z">
+<meta property="article:author" content="Chaichai">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="西瓜书">
+<meta property="article:tag" content="聚类">
+<meta property="article:tag" content="K-means">
+<meta property="article:tag" content="DBSCAN">
+<meta property="article:tag" content="GMM">
+<meta property="article:tag" content="AGNES">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://chaichai438.github.io/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "第9章：聚类 — 西瓜书学习笔记",
+  "url": "https://chaichai438.github.io/2026/05/27/ML/ml-ch09-clustering/",
+  "image": "https://chaichai438.github.io/img/avatar.jpg",
+  "datePublished": "2026-05-26T16:00:00.000Z",
+  "dateModified": "2026-05-26T16:00:00.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Chaichai",
+      "url": "https://chaichai438.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/fruitcake.gif"><link rel="canonical" href="https://chaichai438.github.io/2026/05/27/ML/ml-ch09-clustering/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '第9章：聚类 — 西瓜书学习笔记',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div class="bg-animation" id="web_bg" style="background-color: #49B202;"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">30</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">60</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-compass"></i><span> 页面</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"><i class="fa-fw fas fa-brain"></i><span> 机器学习</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/neko.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/fruitcake.gif" alt="Logo"><span class="site-name">Click Start!</span></a><a class="nav-page-title" href="/"><span class="site-name">第9章：聚类 — 西瓜书学习笔记</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-compass"></i><span> 页面</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"><i class="fa-fw fas fa-brain"></i><span> 机器学习</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">第9章：聚类 — 西瓜书学习笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-05-26T16:00:00.000Z" title="发表于 2026-05-27 00:00:00">2026-05-27</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-05-26T16:00:00.000Z" title="更新于 2026-05-27 00:00:00">2026-05-27</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><blockquote>
+<p>本文是周志华《机器学习》（西瓜书）第9章 <strong>聚类</strong>（Clustering）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。</p>
+</blockquote>
+<h3 id="01-聚类任务概述"><a href="#01-聚类任务概述" class="headerlink" title="01. 聚类任务概述"></a>01. 聚类任务概述</h3><p><em>什么是聚类？它能解决什么问题？</em></p>
+<p>📌 核心定义</p>
+<p><strong>聚类（Clustering）<strong>是将数据集中的样本划分为若干个不相交的子集，<br>          每个子集称为一个</strong>簇（Cluster）</strong>。聚类的目标是：</p>
+<ul>
+<li><strong>簇内相似性最大</strong>：同一簇内的样本应尽可能彼此相似</li>
+<li><strong>簇间差异性最大</strong>：不同簇的样本应尽可能不同</li>
+</ul>
+<p>形式化表示：给定样本集 $D &#x3D; {x_1, x_2, \ldots, x_m}$，聚类算法将 $D$<br>          划分为 $k$ 个不相交的簇 ${C_l \mid l &#x3D; 1, 2, \ldots, k}$，<br>          满足 $C_i \cap C_j &#x3D; \emptyset$（$i \neq j$）且 $\bigcup_{l&#x3D;1}^k C_l &#x3D; D$。<br>          每个样本 $x_j$ 的簇标记为 $\lambda_j \in {1, 2, \ldots, k}$。</p>
+<blockquote>
+<p><strong>🍎 通俗理解</strong></p>
+<p>想象你去超市买东西，超市把所有商品摆放在不同的货架区域：<br>            水果区、蔬菜区、零食区、饮料区……这就是聚类！<br>            超市并没有人告诉机器”这是苹果，那是香蕉”，而是商品本身的<strong>相似性</strong><br>            （都是新鲜食品、都是甜的、都需要冷藏）决定了它们应该放在一起。</p>
+<pre><code>        聚类就是让算法自动完成这个&quot;归类摆放&quot;的过程，而且事先我们**不告诉算法**
+        有哪些类别、每个样本属于哪类。
+</code></pre>
+</blockquote>
+<blockquote>
+<p><strong>🔑 与分类的核心区别</strong></p>
+<p><strong>分类（有监督）</strong>：训练数据有标签，模型学习”苹果→水果”的映射关系。</p>
+<p><strong>聚类（无监督）</strong>：训练数据没有标签，模型自己发现数据的自然分组结构。<br>            聚类结果的”簇标记”是没有语义的，需要人来解释含义。</p>
+</blockquote>
+<p>🌍 应用场景</p>
+<ul>
+<li><strong>👥 用户分群</strong>：将电商用户按购买行为自动分为不同群体，用于精准营销</li>
+<li><strong>🖼️ 图像分割</strong>：将图像中的像素按颜色或纹理聚类，实现前景背景分离</li>
+<li><strong>📰 文档聚类</strong>：把新闻文章自动归类为科技、体育、娱乐等主题</li>
+<li><strong>🧬 基因分析</strong>：发现具有相似表达模式的基因群组，辅助疾病研究</li>
+<li><strong>🔍 异常检测</strong>：偏离所有簇的样本往往是异常点（如信用卡欺诈）</li>
+<li><strong>🗺️ 地理分析</strong>：发现城市中的商业集聚区、居民区分布规律</li>
+</ul>
+<h3 id="02-性能度量"><a href="#02-性能度量" class="headerlink" title="02. 性能度量"></a>02. 性能度量</h3><p><em>如何评价聚类结果的好坏？</em></p>
+<p>聚类性能度量（也叫<strong>聚类有效性指标</strong>）分为两大类：</p>
+<blockquote>
+<p><strong>📎 外部指标（External Index）</strong></p>
+<p>将聚类结果与<strong>某个参考模型</strong>进行比较。参考模型通常是由领域专家给出的”正确答案”。</p>
+</blockquote>
+<blockquote>
+<p><strong>📎 内部指标（Internal Index）</strong></p>
+<p>直接考察聚类结果，<strong>不依赖任何参考模型</strong>。评估簇的内聚性和分离性。</p>
+</blockquote>
+<p>📐 外部指标：基础概念</p>
+<p>设 $D$ 中包含 $m$ 个样本，设聚类结果的簇划分为 $\mathcal{C} &#x3D; {C_1, \ldots, C_k}$，<br>          参考模型的簇划分为 $\mathcal{C}^* &#x3D; {C_1^<em>, \ldots, C_s^</em>}$。<br>          考虑所有样本对 $(x_i, x_j)$，定义四个基本量：</p>
+<blockquote>
+<p><strong>📐 四个基本集合</strong></p>
+<ul>
+<li>$a &#x3D; |SS|$：在 $\mathcal{C}$ 中<strong>同簇</strong>，在 $\mathcal{C}^*$ 中也<strong>同簇</strong>的样本对数</li>
+<li>$b &#x3D; |SD|$：在 $\mathcal{C}$ 中<strong>同簇</strong>，在 $\mathcal{C}^*$ 中<strong>不同簇</strong>的样本对数</li>
+<li>$c &#x3D; |DS|$：在 $\mathcal{C}$ 中<strong>不同簇</strong>，在 $\mathcal{C}^*$ 中<strong>同簇</strong>的样本对数</li>
+<li>$d &#x3D; |DD|$：在 $\mathcal{C}$ 中<strong>不同簇</strong>，在 $\mathcal{C}^*$ 中也<strong>不同簇</strong>的样本对数</li>
+</ul>
+<p>显然有：$a + b + c + d &#x3D; \dfrac{m(m-1)}{2}$（所有可能的样本对总数）</p>
+</blockquote>
+<blockquote>
+<p><strong>🍎 通俗理解</strong></p>
+<p>把同班同学按”兴趣”分组（$\mathcal{C}$），再和”宿舍楼层”（参考 $\mathcal{C}^*$）对比：</p>
+<p><strong>a</strong>：李明和王芳——兴趣相同 <em>且</em> 同楼层 ✅✅</p>
+<p><strong>b</strong>：李明和张强——兴趣相同 <em>但</em> 不同楼层 ✅❌</p>
+<p><strong>c</strong>：李明和赵丽——兴趣不同 <em>但</em> 同楼层 ❌✅</p>
+<p><strong>d</strong>：李明和陈伟——兴趣不同 <em>且</em> 不同楼层 ❌❌</p>
+<pre><code>        $a + d$ 越大说明聚类结果和参考模型越一致！
+</code></pre>
+</blockquote>
+<h3 id="三大外部指标"><a href="#三大外部指标" class="headerlink" title="三大外部指标"></a>三大外部指标</h3><blockquote>
+<p><strong>📐 Jaccard 系数（JC）</strong></p>
+</blockquote>
+<p>$$</p>
+<p>\text{JC} &#x3D; \frac{a}{a + b + c}</p>
+<p>$$</p>
+<blockquote>
+<p>取值范围 $[0, 1]$，<strong>越大越好</strong>。分子是”双方都同意归为同类”，分母是”至少有一方认为同类”。</p>
+</blockquote>
+<blockquote>
+<p><strong>📐 FM 指数（FMI）</strong></p>
+</blockquote>
+<p>$$</p>
+<p>\text{FMI} &#x3D; \sqrt{\frac{a}{a+b} \cdot \frac{a}{a+c}}</p>
+<p>$$</p>
+<blockquote>
+<p>取值范围 $[0, 1]$，<strong>越大越好</strong>。是精确率和召回率的几何平均，类似分类任务中的 F1 分数。</p>
+</blockquote>
+<blockquote>
+<p><strong>📐 Rand 指数（RI）</strong></p>
+</blockquote>
+<p>$$</p>
+<p>\text{RI} &#x3D; \frac{2(a + d)}{m(m-1)}</p>
+<p>$$</p>
+<blockquote>
+<p>取值范围 $[0, 1]$，<strong>越大越好</strong>。衡量”正确分配的样本对”占总样本对的比例。<br>            直觉理解：聚类和参考模型达成一致的样本对越多，RI 越高。</p>
+</blockquote>
+<p>📐 内部指标</p>
+<p>内部指标不依赖参考模型，直接通过计算样本间的距离来衡量聚类质量。<br>          先定义几个距离符号：</p>
+<blockquote>
+<p><strong>📐 基本距离符号</strong></p>
+<ul>
+<li>$\text{avg}(C)$ &#x3D; 簇 $C$ 内所有样本对的<strong>平均距离</strong>：$\text{avg}(C) &#x3D; \dfrac{2}{|C|(|C|-1)} \sum_{1 \le i &lt; j \le |C|} \text{dist}(x_i, x_j)$</li>
+<li>$\text{diam}(C)$ &#x3D; 簇 $C$ 内样本间的<strong>最大距离</strong>（直径）：$\text{diam}(C) &#x3D; \max_{1 \le i &lt; j \le |C|} \text{dist}(x_i, x_j)$</li>
+<li>$d_{\min}(C_i, C_j)$ &#x3D; 两簇间的<strong>最近样本距离</strong>：$d_{\min}(C_i, C_j) &#x3D; \min_{x_i \in C_i, x_j \in C_j} \text{dist}(x_i, x_j)$</li>
+<li>$d_{\text{cen}}(C_i, C_j)$ &#x3D; 两簇<strong>中心点之间的距离</strong>：$d_{\text{cen}}(C_i, C_j) &#x3D; \text{dist}(\mu_i, \mu_j)$</li>
+</ul>
+</blockquote>
+<blockquote>
+<p><strong>📐 DB 指数（DBI）—— 越小越好</strong></p>
+</blockquote>
+<p>$$</p>
+<p>\text{DBI} &#x3D; \frac{1}{k} \sum_{i&#x3D;1}^{k} \max_{j \neq i} \left( \frac{\text{avg}(C_i) + \text{avg}(C_j)}{d_{\text{cen}}(C_i, C_j)} \right)</p>
+<p>$$</p>
+<blockquote>
+<p>分子：两个簇各自的”内部松散程度”之和（簇内平均距离越大，说明簇越散）</p>
+<pre><code>        分母：两簇中心之间的距离（越远越好）
+
+        理想情况：各簇紧凑（分子小）且相互远离（分母大），DBI 越小越好。
+</code></pre>
+</blockquote>
+<blockquote>
+<p><strong>📐 Dunn 指数（DI）—— 越大越好</strong></p>
+</blockquote>
+<p>$$</p>
+<p>\text{DI} &#x3D; \min_{1 \le i \le k} \left{ \min_{j \neq i} \left( \frac{d_{\min}(C_i, C_j)}{\max_{1 \le l \le k} \text{diam}(C_l)} \right) \right}</p>
+<p>$$</p>
+<blockquote>
+<p>分子：任意两簇之间的最短距离（簇间最小距离）</p>
+<pre><code>        分母：所有簇中最大的直径（簇内最大分散程度）
+
+        理想情况：簇间距离大、簇本身紧凑，DI 越大越好。
+</code></pre>
+</blockquote>
+<blockquote>
+<p><strong>🍎 通俗理解 DBI vs DI</strong></p>
+<p>想象你在操场上划定了几个”兴趣小组”的活动区域（簇）：</p>
+<p><strong>DBI</strong> 评估的是：每个小组内部站得有多散 ÷ 小组间距离有多远。<br>            好的分组是小组内抱团紧（分子小），不同小组间离得远（分母大），所以 DBI 越小越好。</p>
+<p><strong>DI</strong> 评估的是：不同小组之间最近的两个人有多远 ÷ 最大的那个小组直径多宽。<br>            好的分组是不同组的人之间离得远，每个组本身面积小，所以 DI 越大越好。</p>
+</blockquote>
+<h3 id="03-距离计算"><a href="#03-距离计算" class="headerlink" title="03. 距离计算"></a>03. 距离计算</h3><p><em>如何量化两个样本之间的”相似度”？</em></p>
+<p>📏 距离度量的基本性质</p>
+<p>聚类中使用的距离函数 $\text{dist}(\cdot, \cdot)$ 需满足以下<strong>四条基本性质</strong>：</p>
+<blockquote>
+<p><strong>📐 距离公理</strong></p>
+<ul>
+<li><strong>非负性</strong>：$\text{dist}(x_i, x_j) \ge 0$（距离不能为负数）</li>
+<li><strong>同一性</strong>：$\text{dist}(x_i, x_j) &#x3D; 0$ 当且仅当 $x_i &#x3D; x_j$（同一个点到自己距离为0）</li>
+<li><strong>对称性</strong>：$\text{dist}(x_i, x_j) &#x3D; \text{dist}(x_j, x_i)$（A到B的距离等于B到A的距离）</li>
+<li><strong>直递性（三角不等式）</strong>：$\text{dist}(x_i, x_j) \le \text{dist}(x_i, x_k) + \text{dist}(x_k, x_j)$（直线最短）</li>
+</ul>
+</blockquote>
+<blockquote>
+<p><strong>⚠️ 注意</strong></p>
+<p>在某些聚类场景（如有序距离、相似度度量）中，三角不等式未必成立，<br>            我们称之为**”非度量距离”**。不满足三角不等式也可以使用，<br>            只是不叫”严格的距离度量”。</p>
+</blockquote>
+<p>📏 有序属性：闵可夫斯基距离（Minkowski Distance）</p>
+<p>当属性取值为连续的有序数值时（如身高、体重、温度），使用闵可夫斯基距离：</p>
+<blockquote>
+<p><strong>📐 闵可夫斯基距离</strong></p>
+<p>设样本 $x_i &#x3D; (x_{i1}, x_{i2}, \ldots, x_{in})$，$x_j &#x3D; (x_{j1}, x_{j2}, \ldots, x_{jn})$</p>
+</blockquote>
+<p>$$</p>
+<p>\text{dist}<em>{\text{mk}}(x_i, x_j) &#x3D; \left( \sum</em>{u&#x3D;1}^{n} |x_{iu} - x_{ju}|^p \right)^{1&#x2F;p}</p>
+<p>$$</p>
+<blockquote>
+<p><strong>📐 p&#x3D;1：曼哈顿距离</strong></p>
+</blockquote>
+<p>$$</p>
+<p>\text{dist} &#x3D; \sum_{u&#x3D;1}^{n} |x_{iu} - x_{ju}|</p>
+<p>$$</p>
+<blockquote>
+<p>也叫”出租车距离”——只能沿坐标轴方向走，如同城市街道。</p>
+</blockquote>
+<blockquote>
+<p><strong>📐 p&#x3D;2：欧氏距离</strong></p>
+</blockquote>
+<p>$$</p>
+<p>\text{dist} &#x3D; \sqrt{\sum_{u&#x3D;1}^{n} (x_{iu} - x_{ju})^2}</p>
+<p>$$</p>
+<blockquote>
+<p>日常最直觉的”直线距离”，就是尺子量出来的距离。</p>
+</blockquote>
+<blockquote>
+<p><strong>💡 p→∞：切比雪夫距离</strong></p>
+<p>$\text{dist} &#x3D; \max_u |x_{iu} - x_{ju}|$，即各维度差值的最大值。用于象棋中国王走步的最少步数计算。</p>
+</blockquote>
+<blockquote>
+<p><strong>🍎 城市地图类比</strong></p>
+<p>两地之间的距离：<br>🔵 <strong>欧氏距离</strong>：直接挖隧道的直线距离<br>🟡 <strong>曼哈顿距离</strong>：只走横街竖巷，只能转直角<br>🔴 <strong>切比雪夫距离</strong>：国际象棋棋盘上国王的最少步数</p>
+<pre><code>        同样的两点，三种&quot;距离&quot;值通常不同！选哪种距离取决于你的应用场景。
+</code></pre>
+</blockquote>
+<p>📏 无序属性：VDM（Value Difference Metric）</p>
+<p>对于<strong>离散无序属性</strong>（如性别、颜色、城市名），不能直接做减法，<br>          需要用 VDM 来衡量两个取值之间的差异：</p>
+<blockquote>
+<p><strong>📐 VDM 距离</strong></p>
+<p>设 $m_{u,a}$ 是属性 $u$ 上取值为 $a$ 的样本数，$m_{u,a,i}$ 是第 $i$ 个簇中属性 $u$ 取值为 $a$ 的样本数，$k$ 是簇数，则：</p>
+</blockquote>
+<p>$$</p>
+<p>\text{VDM}<em>p(a, b) &#x3D; \sum</em>{i&#x3D;1}^{k} \left| \frac{m_{u,a,i}}{m_{u,a}} - \frac{m_{u,b,i}}{m_{u,b}} \right|^p</p>
+<p>$$</p>
+<blockquote>
+<p>直觉：如果属性值 $a$ 和 $b$ 在各个簇中的”分布情况”越相似，则它们越接近。</p>
+</blockquote>
+<blockquote>
+<p><strong>🍎 通俗理解 VDM</strong></p>
+<p>假设要比较”颜色”属性中”红色”和”粉色”的差异：</p>
+<pre><code>        我们看红色样本中有多少比例在簇1、簇2、簇3……
+
+        再看粉色样本中有多少比例在簇1、簇2、簇3……
+
+        如果两者的&quot;分布情况&quot;很像（比如都主要分布在簇1），
+        那就说明&quot;红色&quot;和&quot;粉色&quot;比较相似。
+</code></pre>
+</blockquote>
+<p>📏 混合属性处理</p>
+<p>实际数据往往同时包含有序属性（数值型）和无序属性（类别型）。<br>          设样本有 $n_c$ 个有序属性和 $n-n_c$ 个无序属性，则混合属性距离：</p>
+<blockquote>
+<p><strong>📐 混合属性闵可夫斯基距离</strong></p>
+</blockquote>
+<p>$$</p>
+<p>\text{dist}<em>{\text{mix}}(x_i, x_j) &#x3D; \left( \sum</em>{u&#x3D;1}^{n_c} |x_{iu} - x_{ju}|^p + \sum_{u&#x3D;n_c+1}^{n} \text{VDM}<em>p(x</em>{iu}, x_{ju}) \right)^{1&#x2F;p}</p>
+<p>$$</p>
+<blockquote>
+<p><strong>💡 小结</strong></p>
+<ul>
+<li>数值型属性 → 闵可夫斯基距离（欧氏、曼哈顿等）</li>
+<li>类别型属性 → VDM</li>
+<li>混合型 → 加权组合两者</li>
+</ul>
+</blockquote>
+<h3 id="04-k-均值算法（k-means）"><a href="#04-k-均值算法（k-means）" class="headerlink" title="04. k 均值算法（k-means）"></a>04. k 均值算法（k-means）</h3><p><em>最经典的原型聚类方法</em></p>
+<p>⚡ 算法思想</p>
+<p>k-means 是**原型聚类（Prototype-based Clustering）<strong>的代表算法。<br>          它的核心思想是：用 $k$ 个</strong>原型向量（均值向量）**来代表各个簇，<br>          通过迭代优化最小化每个样本到其所属簇中心的距离之和。</p>
+<blockquote>
+<p><strong>📐 优化目标（最小化平方误差）</strong></p>
+</blockquote>
+<p>$$</p>
+<p>E &#x3D; \sum_{i&#x3D;1}^{k} \sum_{x \in C_i} |x - \mu_i|_2^2</p>
+<p>$$</p>
+<blockquote>
+<p>其中 $\mu_i &#x3D; \dfrac{1}{|C_i|} \sum_{x \in C_i} x$ 是第 $i$ 个簇的均值向量（质心）</p>
+</blockquote>
+<blockquote>
+<p><strong>🍎 通俗理解</strong></p>
+<p>设想你要在城市里选 $k$ 个外卖仓库，让所有顾客到最近仓库的总距离最小。</p>
+<pre><code>        初始时随机放 $k$ 个仓库，然后每个顾客&quot;认领&quot;最近的仓库；
+        接着把每个仓库移动到它服务的所有顾客的中心位置；
+        顾客重新认领，仓库再移动……如此反复，直到仓库位置不再变化。
+        这就是 k-means！
+</code></pre>
+</blockquote>
+<p>⚡ 算法步骤</p>
+<ol>
+<li><strong>初始化</strong>：从 $D$ 中随机选取 $k$ 个样本作为初始均值向量 ${\mu_1, \mu_2, \ldots, \mu_k}$</li>
+<li><strong>分配步（E步）</strong>：对每个样本 $x_j$，计算它到所有均值向量的距离，<br>       将其分配到最近的那个簇：<br>       $\lambda_j &#x3D; \arg\min_{i \in {1,\ldots,k}} |x_j - \mu_i|_2$</li>
+<li><strong>更新步（M步）</strong>：重新计算每个簇的均值向量（质心）：<br>       $\mu_i’ &#x3D; \dfrac{1}{|C_i|} \sum_{x \in C_i} x$</li>
+<li><strong>收敛判断</strong>：若所有均值向量都不再发生变化（$\mu_i’ &#x3D; \mu_i$），则停止；否则令 $\mu_i &#x3D; \mu_i’$，返回第2步</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">k-means Algorithm<br>输入：数据集 D = &#123;x₁,...,xₘ&#125;，聚类数 k<br>输出：簇划分 &#123;C₁, C₂, ..., Cₖ&#125;<br><br>初始化：从 D 中随机选 k 个样本作为 μ₁, μ₂, ..., μₖ<br>repeat<br>  令 Cᵢ = ∅  (i = 1, 2, ..., k)<br>  for j = 1, 2, ..., m do<br>    计算 xⱼ 与每个 μᵢ 的距离 dᵢⱼ = ‖xⱼ - μᵢ‖₂<br>    找最近的簇：λⱼ = argmin dᵢⱼ<br>    将 xⱼ 加入簇 Cλⱼ<br>  end for<br>for i = 1, 2, ..., k do<br>    计算新均值：μᵢ&#x27; = (1/|Cᵢ|) Σ x<br>    if μᵢ&#x27; ≠ μᵢ then<br>      更新 μᵢ ← μᵢ&#x27;<br>    end if<br>end for<br>until 所有均值向量均未更新<br>return 簇划分 &#123;C₁, ..., Cₖ&#125;<br></code></pre></td></tr></table></figure>
+
+
+<svg class="svg-viz" viewbox="0 0 680 220">
+<!-- 背景 -->
+<rect fill="#f8fafc" height="220" rx="8" width="680"></rect>
+<!-- 步骤标题 -->
+<text fill="#1a56db" font-size="11" font-weight="600" text-anchor="middle" x="75" y="22">Step 1: 初始化</text>
+<text fill="#1a56db" font-size="11" font-weight="600" text-anchor="middle" x="245" y="22">Step 2: 分配样本</text>
+<text fill="#1a56db" font-size="11" font-weight="600" text-anchor="middle" x="425" y="22">Step 3: 更新质心</text>
+<text fill="#1a56db" font-size="11" font-weight="600" text-anchor="middle" x="605" y="22">Step 4: 收敛</text>
+<!-- 分隔线 -->
+<line stroke="#e5e7eb" stroke-dasharray="4" stroke-width="1" x1="165" x2="165" y1="15" y2="210"></line>
+<line stroke="#e5e7eb" stroke-dasharray="4" stroke-width="1" x1="335" x2="335" y1="15" y2="210"></line>
+<line stroke="#e5e7eb" stroke-dasharray="4" stroke-width="1" x1="505" x2="505" y1="15" y2="210"></line>
+<!-- Step 1: 随机点 + 随机中心 -->
+<!-- 数据点（未分配，灰色） -->
+<circle cx="40" cy="60" fill="#d1d5db" r="5"></circle>
+<circle cx="55" cy="80" fill="#d1d5db" r="5"></circle>
+<circle cx="45" cy="95" fill="#d1d5db" r="5"></circle>
+<circle cx="70" cy="70" fill="#d1d5db" r="5"></circle>
+<circle cx="90" cy="140" fill="#d1d5db" r="5"></circle>
+<circle cx="110" cy="155" fill="#d1d5db" r="5"></circle>
+<circle cx="95" cy="170" fill="#d1d5db" r="5"></circle>
+<circle cx="75" cy="130" fill="#d1d5db" r="5"></circle>
+<circle cx="120" cy="65" fill="#d1d5db" r="5"></circle>
+<circle cx="135" cy="80" fill="#d1d5db" r="5"></circle>
+<circle cx="130" cy="50" fill="#d1d5db" r="5"></circle>
+<!-- 初始中心（十字标记） -->
+<circle cx="50" cy="70" fill="none" r="8" stroke="#ef4444" stroke-width="2.5"></circle>
+<line stroke="#ef4444" stroke-width="2.5" x1="50" x2="50" y1="62" y2="78"></line>
+<line stroke="#ef4444" stroke-width="2.5" x1="42" x2="58" y1="70" y2="70"></line>
+<circle cx="105" cy="160" fill="none" r="8" stroke="#3b82f6" stroke-width="2.5"></circle>
+<line stroke="#3b82f6" stroke-width="2.5" x1="105" x2="105" y1="152" y2="168"></line>
+<line stroke="#3b82f6" stroke-width="2.5" x1="97" x2="113" y1="160" y2="160"></line>
+<text fill="#9ca3af" font-size="9" text-anchor="middle" x="75" y="200">随机选取2个初始中心</text>
+<!-- Step 2: 分配颜色 -->
+<!-- 红色簇 -->
+<circle cx="210" cy="60" fill="#fca5a5" r="5"></circle>
+<circle cx="225" cy="80" fill="#fca5a5" r="5"></circle>
+<circle cx="215" cy="95" fill="#fca5a5" r="5"></circle>
+<circle cx="240" cy="70" fill="#fca5a5" r="5"></circle>
+<circle cx="285" cy="65" fill="#fca5a5" r="5"></circle>
+<circle cx="300" cy="80" fill="#fca5a5" r="5"></circle>
+<circle cx="295" cy="50" fill="#fca5a5" r="5"></circle>
+<!-- 蓝色簇 -->
+<circle cx="260" cy="140" fill="#93c5fd" r="5"></circle>
+<circle cx="280" cy="155" fill="#93c5fd" r="5"></circle>
+<circle cx="265" cy="170" fill="#93c5fd" r="5"></circle>
+<circle cx="245" cy="130" fill="#93c5fd" r="5"></circle>
+<!-- 中心（旧位置虚线） -->
+<circle cx="220" cy="70" fill="none" r="8" stroke="#ef4444" stroke-dasharray="3" stroke-width="2"></circle>
+<circle cx="275" cy="160" fill="none" r="8" stroke="#3b82f6" stroke-dasharray="3" stroke-width="2"></circle>
+<text fill="#9ca3af" font-size="9" text-anchor="middle" x="245" y="200">按最近中心分配颜色</text>
+<!-- Step 3: 更新质心 -->
+<!-- 红色簇 -->
+<circle cx="380" cy="60" fill="#fca5a5" r="5"></circle>
+<circle cx="395" cy="80" fill="#fca5a5" r="5"></circle>
+<circle cx="385" cy="95" fill="#fca5a5" r="5"></circle>
+<circle cx="410" cy="70" fill="#fca5a5" r="5"></circle>
+<circle cx="455" cy="65" fill="#fca5a5" r="5"></circle>
+<circle cx="470" cy="80" fill="#fca5a5" r="5"></circle>
+<circle cx="465" cy="50" fill="#fca5a5" r="5"></circle>
+<!-- 蓝色簇 -->
+<circle cx="430" cy="140" fill="#93c5fd" r="5"></circle>
+<circle cx="450" cy="155" fill="#93c5fd" r="5"></circle>
+<circle cx="435" cy="170" fill="#93c5fd" r="5"></circle>
+<circle cx="415" cy="130" fill="#93c5fd" r="5"></circle>
+<!-- 新中心（实心星形） -->
+<circle cx="423" cy="71" fill="#ef4444" r="9"></circle>
+<text fill="white" font-size="10" font-weight="700" text-anchor="middle" x="423" y="75">✦</text>
+<circle cx="433" cy="149" fill="#3b82f6" r="9"></circle>
+<text fill="white" font-size="10" font-weight="700" text-anchor="middle" x="433" y="153">✦</text>
+<text fill="#9ca3af" font-size="9" text-anchor="middle" x="425" y="200">移动质心到各簇中心</text>
+<!-- Step 4: 收敛 -->
+<!-- 红色簇（更紧凑） -->
+<circle cx="560" cy="62" fill="#ef4444" r="5"></circle>
+<circle cx="575" cy="78" fill="#ef4444" r="5"></circle>
+<circle cx="565" cy="92" fill="#ef4444" r="5"></circle>
+<circle cx="590" cy="70" fill="#ef4444" r="5"></circle>
+<circle cx="635" cy="62" fill="#ef4444" r="5"></circle>
+<circle cx="648" cy="76" fill="#ef4444" r="5"></circle>
+<circle cx="642" cy="50" fill="#ef4444" r="5"></circle>
+<!-- 蓝色簇（更紧凑） -->
+<circle cx="610" cy="138" fill="#3b82f6" r="5"></circle>
+<circle cx="628" cy="153" fill="#3b82f6" r="5"></circle>
+<circle cx="613" cy="167" fill="#3b82f6" r="5"></circle>
+<circle cx="595" cy="130" fill="#3b82f6" r="5"></circle>
+<!-- 稳定的中心 -->
+<circle cx="603" cy="71" fill="#ef4444" r="9"></circle>
+<text fill="white" font-size="10" font-weight="700" text-anchor="middle" x="603" y="75">✦</text>
+<circle cx="612" cy="147" fill="#3b82f6" r="9"></circle>
+<text fill="white" font-size="10" font-weight="700" text-anchor="middle" x="612" y="151">✦</text>
+<!-- 收敛符号 -->
+<text fill="#0e9f6e" font-size="9" font-weight="600" text-anchor="middle" x="605" y="200">✓ 质心不再移动，收敛！</text>
+<!-- 箭头 -->
+<path d="M165 110 L175 110" fill="none" stroke="#6b7280" stroke-width="1.5"></path>
+<polygon fill="#6b7280" points="175,107 180,110 175,113"></polygon>
+<path d="M335 110 L345 110" fill="none" stroke="#6b7280" stroke-width="1.5"></path>
+<polygon fill="#6b7280" points="345,107 350,110 345,113"></polygon>
+<path d="M505 110 L515 110" fill="none" stroke="#6b7280" stroke-width="1.5"></path>
+<polygon fill="#6b7280" points="515,107 520,110 515,113"></polygon>
+</svg>
+k-means 迭代过程示意图（k=2）
+
+
+<p>⚡ 优缺点与注意事项</p>
+<blockquote>
+<p><strong>✅ 优点</strong></p>
+<ul>
+<li>算法简单，易于实现和理解</li>
+<li>时间复杂度低，适合大规模数据：$O(mkT)$，$m$ 为样本数，$k$ 为簇数，$T$ 为迭代次数</li>
+<li>可扩展性好，工业界广泛应用</li>
+</ul>
+</blockquote>
+<blockquote>
+<p><strong>❌ 缺点</strong></p>
+<ul>
+<li>必须<strong>预先指定 k 值</strong>，而 k 往往难以确定</li>
+<li>对<strong>初始中心点敏感</strong>，不同初始值可能导致不同结果（可能陷入局部最优）</li>
+<li>只能发现<strong>凸形（球形）簇</strong>，对非球形分布效果差</li>
+<li>对**离群点（噪声）**很敏感</li>
+<li>每个样本只属于一个簇（硬分配），不能处理模糊边界</li>
+</ul>
+</blockquote>
+<blockquote>
+<p><strong>🔑 理论保证</strong></p>
+<p>k-means 的目标函数 $E$ 单调不增，且 $E \ge 0$，因此算法<strong>一定会收敛</strong>（但不保证全局最优）。<br>            实践中通常多次随机初始化，取 $E$ 最小的结果；或使用 <strong>k-means++</strong> 改进初始化策略。</p>
+</blockquote>
+<h3 id="05-学习向量量化（LVQ）"><a href="#05-学习向量量化（LVQ）" class="headerlink" title="05. 学习向量量化（LVQ）"></a>05. 学习向量量化（LVQ）</h3><p><em>有标记信息辅助的原型学习</em></p>
+<p>🔄 与 k-means 的区别</p>
+<p><strong>学习向量量化（Learning Vector Quantization，LVQ）<strong>也是原型聚类，<br>          但它</strong>利用了样本的标记信息</strong>，使聚类过程可以受到监督信息的引导。<br>          因此 LVQ 是一种介于无监督和有监督之间的学习方法，目的是学出一组<br>          <strong>原型向量</strong>来覆盖整个样本空间。</p>
+<blockquote>
+<p><strong>k-means</strong></p>
+<ul>
+<li>无监督，无标记信息</li>
+<li>原型 &#x3D; 簇的均值</li>
+<li>原型随着簇成员变化而更新</li>
+</ul>
+</blockquote>
+<blockquote>
+<p><strong>LVQ</strong></p>
+<ul>
+<li>有监督，利用标记信息</li>
+<li>原型 &#x3D; 代表各类的”典型样本”</li>
+<li>根据标记的对错来更新原型</li>
+</ul>
+</blockquote>
+<p>🔄 算法流程</p>
+<blockquote>
+<p><strong>📐 LVQ 核心更新规则</strong></p>
+<p>设样本 $x_j$ 的标记为 $y_j$，找到距 $x_j$ 最近的原型向量 $p^<em>$，其标记为 $t^</em>$：</p>
+<ul>
+<li><strong>若 $y_j &#x3D; t^*$（标记相同）</strong>：原型向 $x_j$ <strong>靠近</strong>：</li>
+</ul>
+</blockquote>
+<p>$$</p>
+<p>p’ &#x3D; p^* + \eta \cdot (x_j - p^*)</p>
+<p>$$</p>
+<blockquote>
+<ul>
+<li><strong>若 $y_j \neq t^*$（标记不同）</strong>：原型向 $x_j$ <strong>远离</strong>：</li>
+</ul>
+</blockquote>
+<p>$$</p>
+<p>p’ &#x3D; p^* - \eta \cdot (x_j - p^*)</p>
+<p>$$</p>
+<blockquote>
+<p>$\eta \in (0, 1)$ 为学习率</p>
+</blockquote>
+<blockquote>
+<p><strong>🍎 通俗理解</strong></p>
+<p>LVQ 的学习过程就像<strong>训练”班级代表”</strong>：</p>
+<pre><code>        每个班（类别）选一个代表（原型向量）。来了一个新同学，
+        看他最像哪个代表：
+
+        ➕ 如果这个代表和新同学是**同班的**，代表就往新同学方向走近一点（&quot;你们确实像&quot;）
+
+        ➖ 如果代表和新同学**不同班**，代表就往反方向走（&quot;你们不是一类，别搞混&quot;）
+
+
+        最终，每个代表都成了本班特征的&quot;精华提炼&quot;，同时和其他班的代表保持距离。
+</code></pre>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">LVQ Algorithm<br>输入：样本集 D = &#123;(x₁,y₁),...,(xₘ,yₘ)&#125;, 原型向量个数 q, 各类原型向量数目 n₁,...,nN, 学习率 η<br>初始化：从各类样本中随机选取 nᵢ 个样本作为各类原型向量 &#123;p₁,...,pq&#125;<br>repeat<br>  从 D 中随机选取样本 (xⱼ, yⱼ)<br>  计算 xⱼ 与所有原型向量的距离 dᵢ = ‖xⱼ - pᵢ‖<br>  找最近的原型 p* = argmin dᵢ，其标记为 t*<br>  if yⱼ == t* then<br>    p&#x27; = p* + η·(xⱼ - p*)   // 靠近<br>else<br>    p&#x27; = p* - η·(xⱼ - p*)   // 远离<br>end if<br>  更新 p* ← p&#x27;<br>until 满足停止条件<br>return 原型向量集 &#123;p₁, p₂, ..., pq&#125;<br></code></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p><strong>💡 LVQ 的应用</strong></p>
+<p>LVQ 完成后，可以用学到的原型向量对新样本进行分类或聚类——<br>            每个样本被分配到最近原型向量对应的类别。<br>            每个原型向量 $p_i$ 定义了一个 <strong>Voronoi 区域</strong>（即比它更近的所有点的集合），<br>            这些区域共同构成对样本空间的划分。</p>
+</blockquote>
+<h3 id="06-高斯混合聚类（GMM）"><a href="#06-高斯混合聚类（GMM）" class="headerlink" title="06. 高斯混合聚类（GMM）"></a>06. 高斯混合聚类（GMM）</h3><p><em>概率视角下的软性聚类</em></p>
+<p>🌊 核心思想</p>
+<p>与 k-means 不同，<strong>高斯混合聚类（Gaussian Mixture Model，GMM）</strong><br>          从<strong>概率生成模型</strong>的角度看待聚类：<br>          假设数据是由 $k$ 个高斯分布”混合”产生的，每个高斯分布对应一个簇。<br>          输出的不再是”每个样本属于哪个簇”，而是”每个样本以多大概率属于哪个簇”（<strong>软聚类</strong>）。</p>
+<blockquote>
+<p><strong>🍎 通俗理解</strong></p>
+<p>想象一个校园里有两类人群：高个子（篮球队）和矮个子（体操队）。<br>            身高分布像两座”山峰”叠在一起——<br>            每座山峰是一个高斯分布，两个混合起来就是全校身高的分布。</p>
+<pre><code>        现在来了一个身高175cm的同学，
+        GMM 不会硬性说&quot;你是篮球队或体操队&quot;，
+        而是说&quot;你有 60% 的概率是篮球队，40% 的概率是体操队&quot;。
+        这就是**软聚类**的魅力！
+</code></pre>
+</blockquote>
+<p>🌊 数学基础</p>
+<blockquote>
+<p><strong>📐 高斯分布（正态分布）</strong></p>
+<p>$n$ 维高斯分布的概率密度函数：</p>
+</blockquote>
+<p>$$</p>
+<p>p(x) &#x3D; \frac{1}{(2\pi)^{n&#x2F;2} |\Sigma|^{1&#x2F;2}} \exp\left( -\frac{1}{2}(x-\mu)^T \Sigma^{-1} (x-\mu) \right)</p>
+<p>$$</p>
+<blockquote>
+<p>其中 $\mu$ 是均值向量，$\Sigma$ 是协方差矩阵（对称正定），记为 $p(x | \mu, \Sigma)$</p>
+</blockquote>
+<blockquote>
+<p><strong>📐 高斯混合分布</strong></p>
+<p>混合高斯模型定义为 $k$ 个高斯分布的加权和：</p>
+</blockquote>
+<p>$$</p>
+<p>p_{\mathcal{M}}(x) &#x3D; \sum_{i&#x3D;1}^{k} \alpha_i \cdot p(x | \mu_i, \Sigma_i)</p>
+<p>$$</p>
+<blockquote>
+<ul>
+<li>$\alpha_i &gt; 0$ 为第 $i$ 个高斯分量的<strong>混合系数</strong>，且 $\sum_{i&#x3D;1}^k \alpha_i &#x3D; 1$</li>
+<li>$\mu_i$ 为第 $i$ 个分量的<strong>均值向量</strong></li>
+<li>$\Sigma_i$ 为第 $i$ 个分量的<strong>协方差矩阵</strong></li>
+</ul>
+</blockquote>
+<blockquote>
+<p><strong>📐 后验概率（样本属于第 i 个分量的概率）</strong></p>
+<p>由贝叶斯定理，给定样本 $x_j$，其由第 $i$ 个高斯分量生成的后验概率为：</p>
+</blockquote>
+<p>$$</p>
+<p>\gamma_{ji} &#x3D; P(z_j &#x3D; i | x_j) &#x3D; \frac{\alpha_i \cdot p(x_j | \mu_i, \Sigma_i)}{\sum_{l&#x3D;1}^{k} \alpha_l \cdot p(x_j | \mu_l, \Sigma_l)}</p>
+<p>$$</p>
+<p>🌊 EM 算法求解 GMM</p>
+<p>GMM 的参数 ${(\alpha_i, \mu_i, \Sigma_i)}$ 无法直接求解（因为每个样本”属于哪个分量”是隐变量），<br>          需要用<strong>期望最大化（EM）算法</strong>迭代求解。</p>
+<blockquote>
+<p><strong>E步（期望步）</strong></p>
+<p>固定当前参数，计算每个样本属于每个分量的后验概率 $\gamma_{ji}$（责任度）。</p>
+</blockquote>
+<blockquote>
+<p><strong>M步（最大化步）</strong></p>
+<p>利用后验概率 $\gamma_{ji}$ 更新模型参数，使似然函数最大化。</p>
+</blockquote>
+<blockquote>
+<p><strong>📐 M步更新公式</strong></p>
+<p>令 $\hat{m}<em>i &#x3D; \sum</em>{j&#x3D;1}^m \gamma_{ji}$（第 $i$ 个分量的”等效样本数”），则：</p>
+</blockquote>
+<p>$$</p>
+<p>\hat{\mu}<em>i &#x3D; \frac{\sum</em>{j&#x3D;1}^m \gamma_{ji} x_j}{\hat{m}_i}</p>
+<p>$$</p>
+<blockquote>
+</blockquote>
+<p>$$</p>
+<p>\hat{\Sigma}<em>i &#x3D; \frac{\sum</em>{j&#x3D;1}^m \gamma_{ji} (x_j - \hat{\mu}_i)(x_j - \hat{\mu}_i)^T}{\hat{m}_i}</p>
+<p>$$</p>
+<blockquote>
+</blockquote>
+<p>$$</p>
+<p>\hat{\alpha}_i &#x3D; \frac{\hat{m}_i}{m}</p>
+<p>$$</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">Gaussian Mixture Model — EM Algorithm<br>初始化：随机设置 αᵢ, μᵢ, Σᵢ (i=1,...,k)<br>repeat<br>// ========= E 步 =========<br>for j = 1, ..., m do<br>for i = 1, ..., k do<br>      γⱼᵢ = αᵢ·p(xⱼ|μᵢ,Σᵢ) / Σₗ αₗ·p(xⱼ|μₗ,Σₗ)   // 后验概率<br>end for<br>end for<br>// ========= M 步 =========<br>for i = 1, ..., k do<br>    m̂ᵢ = Σⱼ γⱼᵢ<br>    μ̂ᵢ = (1/m̂ᵢ) Σⱼ γⱼᵢ·xⱼ           // 加权均值<br>    Σ̂ᵢ = (1/m̂ᵢ) Σⱼ γⱼᵢ·(xⱼ-μ̂ᵢ)(xⱼ-μ̂ᵢ)ᵀ  // 加权协方差<br>    α̂ᵢ = m̂ᵢ / m                      // 混合系数<br>end for<br>until 似然函数 log-likelihood 变化小于阈值 ε<br>return 参数 &#123;(α̂ᵢ, μ̂ᵢ, Σ̂ᵢ)&#125;<br></code></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p><strong>💡 GMM vs k-means</strong></p>
+<ul>
+<li>k-means 是 GMM 的一个<strong>特殊情况</strong>：当所有协方差矩阵都是 $\sigma^2 I$ 且 $\sigma \to 0$ 时，GMM 退化为 k-means</li>
+<li>GMM 可以描述椭圆形的簇（通过协方差矩阵），而 k-means 只能描述球形簇</li>
+<li>GMM 提供<strong>软聚类</strong>（概率分配），k-means 是<strong>硬聚类</strong></li>
+<li>GMM 最终聚类时，将样本分配给后验概率最大的分量：$\lambda_j &#x3D; \arg\max_i \gamma_{ji}$</li>
+</ul>
+</blockquote>
+<h3 id="07-密度聚类：DBSCAN"><a href="#07-密度聚类：DBSCAN" class="headerlink" title="07. 密度聚类：DBSCAN"></a>07. 密度聚类：DBSCAN</h3><p><em>基于密度的空间聚类，能发现任意形状的簇</em></p>
+<p>🌐 核心思想</p>
+<p><strong>DBSCAN（Density-Based Spatial Clustering of Applications with Noise）</strong><br>          是基于密度的聚类算法，核心思想是：<strong>高密度区域连通形成簇，低密度区域是噪声</strong>。<br>          与 k-means 完全不同，DBSCAN 不需要指定 $k$，并且可以发现任意形状的簇。</p>
+<blockquote>
+<p><strong>🍎 通俗理解</strong></p>
+<p>想象夜晚城市的卫星俯拍图：<strong>灯光密集的区域</strong>就是城市（簇），<br>            灯光稀疏的地方是农村或荒野（噪声）。<br>            你不需要事先知道有几个城市，只要规定”灯光密度超过某个阈值就算城市”，<br>            然后把相邻的密集区域连起来，就找到了所有城市。<br>            这就是 DBSCAN 的思路！</p>
+</blockquote>
+<p>🌐 核心概念（必须掌握！）</p>
+<p>DBSCAN 有两个关键参数：邻域半径 $\epsilon$ 和最小样本数 <code>MinPts</code>，以及以下核心概念：</p>
+<details open="">
+<summary>📌 ε-邻域</summary>
+<div>
+<p>对于样本 $x_j$，其 $\epsilon$-邻域包含所有与 $x_j$ 距离不超过 $\epsilon$ 的样本：</p>
+<p style="margin:0.5rem 0;">$N_\epsilon(x_j) = \{x_i \in D \mid \text{dist}(x_i, x_j) \le \epsilon\}$</p>
+<div class="analogy-box">
+<div class="box-header">🍎 类比</div>
+<p>以某人为圆心、半径 $\epsilon$ 画一个圆，圆内的所有人就是它的 $\epsilon$-邻域。</p>
+</div>
+</div>
+</details>
+<details open="">
+<summary>📌 核心对象（Core Object）</summary>
+<div>
+<p>若 $|N_\epsilon(x_j)| \ge \text{MinPts}$，即 $x_j$ 的 $\epsilon$-邻域内包含至少 <code>MinPts</code> 个样本，则称 $x_j$ 为<strong>核心对象</strong>。</p>
+<div class="analogy-box">
+<div class="box-header">🍎 类比</div>
+<p>某个人周围（半径 $\epsilon$ 内）至少有 <code>MinPts</code> 个朋友，那他就是一个"人气王"（核心对象）。人气不够的就是边缘人或噪声。</p>
+</div>
+</div>
+</details>
+<details open="">
+<summary>📌 密度直达（Directly Density-Reachable）</summary>
+<div>
+<p>若 $x_j \in N_\epsilon(x_i)$ 且 $x_i$ 是核心对象，则称 $x_j$ 由 $x_i$ <strong>密度直达</strong>（$x_i \to x_j$）。</p>
+<div class="analogy-box">
+<div class="box-header">🍎 类比</div>
+<p>人气王 $x_i$ 的朋友圈里有 $x_j$，则 $x_j$ 是 $x_i$ 的直接下属/朋友。注意：密度直达<strong>不一定是对称的</strong>（$x_j$ 不一定是核心对象）。</p>
+</div>
+</div>
+</details>
+<details open="">
+<summary>📌 密度可达（Density-Reachable）</summary>
+<div>
+<p>若存在一个样本序列 $p_1, p_2, \ldots, p_n$，其中 $p_1 = x_i$，$p_n = x_j$，且 $p_{t+1}$ 由 $p_t$ 密度直达，则 $x_j$ 由 $x_i$ <strong>密度可达</strong>。</p>
+<div class="analogy-box">
+<div class="box-header">🍎 类比</div>
+<p>通过"朋友的朋友的朋友……"的链条能到达某人，就是密度可达。是传递闭包。</p>
+</div>
+</div>
+</details>
+<details open="">
+<summary>📌 密度相连（Density-Connected）</summary>
+<div>
+<p>若存在 $x_k$ 使得 $x_i$ 和 $x_j$ 均由 $x_k$ 密度可达，则 $x_i$ 与 $x_j$ <strong>密度相连</strong>。</p>
+<div class="key-box">
+<div class="box-header">🔑 核心定义</div>
+<p><strong>簇</strong>的定义：一个簇 $C$ 是满足以下条件的最大样本子集：<br/>
+              ① <strong>连通性</strong>：$C$ 中任意两点 $x_i, x_j$ 密度相连；<br/>
+              ② <strong>最大性</strong>：若 $x_i \in C$ 且 $x_j$ 由 $x_i$ 密度可达，则 $x_j \in C$。</p>
+</div>
+<div class="analogy-box">
+<div class="box-header">🍎 类比</div>
+<p>$x_i$ 和 $x_j$ 有一个共同的"人气王"朋友，就说他们<strong>密度相连</strong>——这是定义簇的基础！</p>
+</div>
+</div>
+</details>
+
+
+<p>🌐 DBSCAN 算法步骤</p>
+<ol>
+<li>找出所有<strong>核心对象</strong>，存入集合 $\Omega$</li>
+<li>从 $\Omega$ 中随机取一个核心对象 $o$，初始化一个新簇 $C &#x3D; {o}$</li>
+<li>将 $o$ 的 $\epsilon$-邻域内所有样本加入队列 $Q$</li>
+<li>从 $Q$ 中取出一个样本 $q$，加入 $C$；若 $q$ 也是核心对象，将其 $\epsilon$-邻域未处理的样本加入 $Q$；重复直到 $Q$ 为空</li>
+<li>将核心对象 $o$ 从 $\Omega$ 中移除，输出簇 $C$；重复步骤2~5直到 $\Omega$ 为空</li>
+<li>未被任何簇包含的样本即为<strong>噪声点（离群点）</strong></li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">DBSCAN Algorithm<br>输入：数据集 D，邻域参数 (ε, MinPts)<br>输出：簇划分 C<br><br>// 第一步：找所有核心对象<br>Ω = &#123;&#125;  // 核心对象集合<br>for j = 1, ..., m do<br>if |Nε(xⱼ)| ≥ MinPts then<br>    Ω = Ω ∪ &#123;xⱼ&#125;<br>end for<br><br>k = 0; Γ = D  // k:簇数, Γ:未被访问的样本集合<br>while Ω ≠ ∅ do<br>  Γ_old = Γ<br>  从 Ω 随机选一个核心对象 o<br>  Q = &#123;o&#125;; Γ = Γ \ &#123;o&#125;<br>  while Q ≠ ∅ do<br>    取 Q 中的一个样本 q; Q = Q \ &#123;q&#125;<br>    if q 是核心对象 then<br>      Δ = Nε(q) ∩ Γ  // 邻域中尚未处理的样本<br>      Q = Q ∪ Δ; Γ = Γ \ Δ<br>  k = k+1; 簇 Cₖ = Γ_old \ Γ<br>  Ω = Ω \ Cₖ<br>return &#123;C₁, C₂, ..., Cₖ&#125;  // Γ 中剩余为噪声点<br></code></pre></td></tr></table></figure>
+
+
+<svg class="svg-viz" viewbox="0 0 520 200">
+<rect fill="#f8fafc" height="200" rx="8" width="520"></rect>
+<!-- 簇1：月牙形 -->
+<circle cx="80" cy="100" fill="#ef4444" opacity="0.8" r="8"></circle>
+<circle cx="65" cy="85" fill="#ef4444" opacity="0.8" r="8"></circle>
+<circle cx="55" cy="70" fill="#ef4444" opacity="0.8" r="8"></circle>
+<circle cx="50" cy="55" fill="#ef4444" opacity="0.8" r="8"></circle>
+<circle cx="60" cy="42" fill="#ef4444" opacity="0.8" r="8"></circle>
+<circle cx="78" cy="33" fill="#ef4444" opacity="0.8" r="8"></circle>
+<circle cx="96" cy="30" fill="#ef4444" opacity="0.8" r="8"></circle>
+<circle cx="113" cy="37" fill="#ef4444" opacity="0.8" r="8"></circle>
+<!-- 簇2：S形 -->
+<circle cx="220" cy="50" fill="#3b82f6" opacity="0.8" r="8"></circle>
+<circle cx="235" cy="65" fill="#3b82f6" opacity="0.8" r="8"></circle>
+<circle cx="245" cy="80" fill="#3b82f6" opacity="0.8" r="8"></circle>
+<circle cx="240" cy="97" fill="#3b82f6" opacity="0.8" r="8"></circle>
+<circle cx="225" cy="112" fill="#3b82f6" opacity="0.8" r="8"></circle>
+<circle cx="210" cy="127" fill="#3b82f6" opacity="0.8" r="8"></circle>
+<circle cx="210" cy="145" fill="#3b82f6" opacity="0.8" r="8"></circle>
+<circle cx="225" cy="158" fill="#3b82f6" opacity="0.8" r="8"></circle>
+<circle cx="245" cy="165" fill="#3b82f6" opacity="0.8" r="8"></circle>
+<!-- 噪声点 -->
+<circle cx="160" cy="60" fill="#9ca3af" opacity="0.7" r="6"></circle>
+<circle cx="170" cy="130" fill="#9ca3af" opacity="0.7" r="6"></circle>
+<circle cx="150" cy="170" fill="#9ca3af" opacity="0.7" r="6"></circle>
+<circle cx="300" cy="40" fill="#9ca3af" opacity="0.7" r="6"></circle>
+<circle cx="310" cy="150" fill="#9ca3af" opacity="0.7" r="6"></circle>
+<!-- 图例 -->
+<circle cx="370" cy="50" fill="#ef4444" opacity="0.8" r="8"></circle>
+<text fill="#374151" font-size="11" x="385" y="54">簇 1（任意形状）</text>
+<circle cx="370" cy="75" fill="#3b82f6" opacity="0.8" r="8"></circle>
+<text fill="#374151" font-size="11" x="385" y="79">簇 2（任意形状）</text>
+<circle cx="370" cy="100" fill="#9ca3af" opacity="0.7" r="6"></circle>
+<text fill="#374151" font-size="11" x="385" y="104">噪声点（离群点）</text>
+<!-- 核心对象示意 -->
+<circle cx="80" cy="100" fill="none" opacity="0.5" r="20" stroke="#ef4444" stroke-dasharray="4" stroke-width="1.5"></circle>
+<text fill="#9ca3af" font-size="9" text-anchor="middle" x="80" y="180">虚线圆 = ε-邻域示意</text>
+<!-- 标题 -->
+<text fill="#9ca3af" font-size="10" text-anchor="middle" x="260" y="190">DBSCAN 能发现任意形状的簇，并自动识别噪声点</text>
+</svg>
+
+
+<blockquote>
+<p><strong>✅ DBSCAN 优点</strong></p>
+<ul>
+<li>可以发现<strong>任意形状</strong>的簇</li>
+<li>能自动识别<strong>噪声点</strong>（离群点）</li>
+<li>不需要预先指定 $k$</li>
+<li>对大多数情况鲁棒性好</li>
+</ul>
+</blockquote>
+<blockquote>
+<p><strong>❌ DBSCAN 缺点</strong></p>
+<ul>
+<li>需要设置 $\epsilon$ 和 <code>MinPts</code> 两个参数，较敏感</li>
+<li>对<strong>密度不均匀</strong>的数据效果差（密度差异大的簇难以用单一 $\epsilon$ 描述）</li>
+<li>高维数据中密度难以定义</li>
+<li>大数据集时计算开销较大</li>
+</ul>
+</blockquote>
+<h3 id="08-层次聚类：AGNES"><a href="#08-层次聚类：AGNES" class="headerlink" title="08. 层次聚类：AGNES"></a>08. 层次聚类：AGNES</h3><p><em>从底向上逐步合并，构建簇的层次结构</em></p>
+<p>🌳 核心思想</p>
+<p>**AGNES（AGglomerative NESting）**是自底向上的凝聚层次聚类算法。<br>          它将每个样本视为一个独立的簇，然后不断合并最相似的两个簇，<br>          直到满足停止条件（如簇数达到 $k$）。</p>
+<blockquote>
+<p><strong>🍎 通俗理解</strong></p>
+<p>想象生物分类学：每个物种最初都是独立的个体，然后按照亲缘关系逐步合并——<br>            先合并为”属”，再合并为”科”、”目”、”纲”……最终所有生物汇聚到一棵树上。</p>
+<pre><code>        AGNES 就是不断地把&quot;最像&quot;的两组合并，直到剩下 $k$ 组为止。
+        整个过程形成一棵**树状图（Dendrogram）**，可以直观看到聚类的层次关系。
+</code></pre>
+</blockquote>
+<p>🌳 簇间距离的三种度量</p>
+<p>AGNES 的关键在于如何定义两个<strong>簇之间</strong>的距离，这决定了每次合并哪两个簇：</p>
+<blockquote>
+<p><strong>📐 最小距离（单链接, Single Linkage）</strong></p>
+</blockquote>
+<p>$$</p>
+<p>d_{\min}(C_i, C_j) &#x3D; \min_{x \in C_i, z \in C_j} \text{dist}(x, z)</p>
+<p>$$</p>
+<blockquote>
+<p>两簇中最近的两个样本的距离。容易产生”链式效应”——把两个原本不相似的簇通过中间点串联起来。</p>
+</blockquote>
+<blockquote>
+<p><strong>📐 最大距离（全链接, Complete Linkage）</strong></p>
+</blockquote>
+<p>$$</p>
+<p>d_{\max}(C_i, C_j) &#x3D; \max_{x \in C_i, z \in C_j} \text{dist}(x, z)</p>
+<p>$$</p>
+<blockquote>
+<p>两簇中最远的两个样本的距离。倾向于产生大小相近的紧凑簇，但对离群点敏感。</p>
+</blockquote>
+<blockquote>
+<p><strong>📐 平均距离（均链接, Average Linkage）</strong></p>
+</blockquote>
+<p>$$</p>
+<p>d_{\text{avg}}(C_i, C_j) &#x3D; \frac{1}{|C_i||C_j|} \sum_{x \in C_i} \sum_{z \in C_j} \text{dist}(x, z)</p>
+<p>$$</p>
+<blockquote>
+<p>两簇中所有样本对的平均距离。综合了单链接和全链接，通常效果最好。</p>
+</blockquote>
+<blockquote>
+<p><strong>🍎 三种链接的直觉对比</strong></p>
+<p>两个城市（簇）之间的”距离”：</p>
+<pre><code>        🔵 **单链接**：两城最近的两栋楼的距离（最乐观估计）
+
+        🔴 **全链接**：两城最远的两栋楼的距离（最悲观估计）
+
+        🟢 **均链接**：两城所有楼两两配对的平均距离（综合估计）
+</code></pre>
+</blockquote>
+<p>🌳 算法步骤与树状图</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">AGNES Algorithm<br>输入：数据集 D，聚类数 k，距离度量类型<br>输出：簇划分 &#123;C₁, ..., Cₖ&#125;<br><br>// 初始化：每个样本自成一簇<br>for j = 1, ..., m do<br>  Cⱼ = &#123;xⱼ&#125;  // m 个初始簇<br>end for<br>// 计算所有簇对之间的距离矩阵 M<br>M[i][j] = dist(Cᵢ, Cⱼ) (初始 = dist(xᵢ, xⱼ))<br><br>q = m  // 当前簇数<br>while q &gt; k do<br>  找距离最小的两个簇 Cᵢ*, Cⱼ* = argmin M[i][j]<br>  合并 Cᵢ* ∪ Cⱼ* → 新簇<br>  从 M 中删除 Cᵢ*, Cⱼ* 的行列，加入新簇的行列<br>  重新计算新簇与其他簇的距离<br>  q = q - 1<br>return 当前簇划分<br></code></pre></td></tr></table></figure>
+
+
+<svg class="svg-viz" viewbox="0 0 500 220">
+<rect fill="#f8fafc" height="220" rx="8" width="500"></rect>
+<!-- 底部：6个初始样本 -->
+<circle cx="60" cy="190" fill="#3b82f6" r="10"></circle>
+<text fill="white" font-size="9" font-weight="700" text-anchor="middle" x="60" y="194">A</text>
+<circle cx="110" cy="190" fill="#3b82f6" r="10"></circle>
+<text fill="white" font-size="9" font-weight="700" text-anchor="middle" x="110" y="194">B</text>
+<circle cx="175" cy="190" fill="#ef4444" r="10"></circle>
+<text fill="white" font-size="9" font-weight="700" text-anchor="middle" x="175" y="194">C</text>
+<circle cx="225" cy="190" fill="#ef4444" r="10"></circle>
+<text fill="white" font-size="9" font-weight="700" text-anchor="middle" x="225" y="194">D</text>
+<circle cx="350" cy="190" fill="#0e9f6e" r="10"></circle>
+<text fill="white" font-size="9" font-weight="700" text-anchor="middle" x="350" y="194">E</text>
+<circle cx="420" cy="190" fill="#0e9f6e" r="10"></circle>
+<text fill="white" font-size="9" font-weight="700" text-anchor="middle" x="420" y="194">F</text>
+<!-- 第一层合并：A+B（最近） -->
+<line stroke="#3b82f6" stroke-width="2" x1="60" x2="60" y1="180" y2="150"></line>
+<line stroke="#3b82f6" stroke-width="2" x1="110" x2="110" y1="180" y2="150"></line>
+<line stroke="#3b82f6" stroke-width="2" x1="60" x2="110" y1="150" y2="150"></line>
+<circle cx="85" cy="150" fill="#bfdbfe" r="8"></circle>
+<text fill="#1d4ed8" font-size="8" text-anchor="middle" x="85" y="154">A∪B</text>
+<!-- 第一层合并：C+D -->
+<line stroke="#ef4444" stroke-width="2" x1="175" x2="175" y1="180" y2="150"></line>
+<line stroke="#ef4444" stroke-width="2" x1="225" x2="225" y1="180" y2="150"></line>
+<line stroke="#ef4444" stroke-width="2" x1="175" x2="225" y1="150" y2="150"></line>
+<circle cx="200" cy="150" fill="#fecaca" r="8"></circle>
+<text fill="#b91c1c" font-size="8" text-anchor="middle" x="200" y="154">C∪D</text>
+<!-- 第一层合并：E+F -->
+<line stroke="#0e9f6e" stroke-width="2" x1="350" x2="350" y1="180" y2="150"></line>
+<line stroke="#0e9f6e" stroke-width="2" x1="420" x2="420" y1="180" y2="150"></line>
+<line stroke="#0e9f6e" stroke-width="2" x1="350" x2="420" y1="150" y2="150"></line>
+<circle cx="385" cy="150" fill="#a7f3d0" r="8"></circle>
+<text fill="#065f46" font-size="8" text-anchor="middle" x="385" y="154">E∪F</text>
+<!-- 第二层合并：AB+CD -->
+<line stroke="#7c3aed" stroke-width="2" x1="85" x2="85" y1="142" y2="100"></line>
+<line stroke="#7c3aed" stroke-width="2" x1="200" x2="200" y1="142" y2="100"></line>
+<line stroke="#7c3aed" stroke-width="2" x1="85" x2="200" y1="100" y2="100"></line>
+<circle cx="142" cy="100" fill="#ede9fe" r="12"></circle>
+<text fill="#5b21b6" font-size="8" text-anchor="middle" x="142" y="104">AB∪CD</text>
+<!-- 第三层合并：全部 -->
+<line stroke="#374151" stroke-width="2" x1="142" x2="142" y1="88" y2="50"></line>
+<line stroke="#374151" stroke-width="2" x1="385" x2="385" y1="142" y2="50"></line>
+<line stroke="#374151" stroke-width="2" x1="142" x2="385" y1="50" y2="50"></line>
+<circle cx="263" cy="50" fill="#f3f4f6" r="14" stroke="#374151" stroke-width="1.5"></circle>
+<text fill="#111827" font-size="9" font-weight="700" text-anchor="middle" x="263" y="55">全部</text>
+<!-- 切割线（k=3时的切割位置） -->
+<line stroke="#f59e0b" stroke-dasharray="6" stroke-width="1.5" x1="30" x2="470" y1="125" y2="125"></line>
+<text fill="#92400e" font-size="9" font-weight="600" x="475" y="129">k=3</text>
+<text fill="#9ca3af" font-size="9" text-anchor="middle" x="250" y="215">层次聚类树状图 — 横线处截断即得 k 个簇</text>
+</svg>
+
+
+<blockquote>
+<p><strong>🔑 树状图（Dendrogram）的使用</strong></p>
+<p>树状图是层次聚类的最大优势——它记录了所有合并过程。<br>            只需在树状图的某个高度处<strong>横切</strong>，就可以得到对应数量的簇：<br>• 切得越低 → 簇数 $k$ 越大（更细的分组）<br>• 切得越高 → 簇数 $k$ 越小（更粗的分组）<br>• 不需要事先指定 $k$，事后按需选择！</p>
+</blockquote>
+<blockquote>
+<p><strong>✅ AGNES 优点</strong></p>
+<ul>
+<li>能生成完整的层次结构，可视化直观</li>
+<li>不需要预先指定 $k$（事后截断）</li>
+<li>能揭示数据的多尺度结构</li>
+</ul>
+</blockquote>
+<blockquote>
+<p><strong>❌ AGNES 缺点</strong></p>
+<ul>
+<li>时间复杂度高：$O(m^2 \log m)$（对大规模数据慢）</li>
+<li>合并操作<strong>不可逆</strong>，错误合并无法纠正</li>
+<li>对噪声和离群点敏感（尤其是单链接）</li>
+</ul>
+</blockquote>
+<h3 id="09-算法对比总结"><a href="#09-算法对比总结" class="headerlink" title="09. 算法对比总结"></a>09. 算法对比总结</h3><p><em>一表看懂所有聚类算法的特点与适用场景</em></p>
+<table>
+<thead>
+<tr>
+<th>算法</th>
+<th>类型</th>
+<th>是否需指定 k</th>
+<th>输出类型</th>
+<th>簇形状</th>
+<th>噪声处理</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>k-means</td>
+<td>原型聚类</td>
+<td>✅ 需要</td>
+<td>硬聚类</td>
+<td>球形（凸形）</td>
+<td>❌ 敏感</td>
+<td>数据规模大，簇形状近似球形</td>
+</tr>
+<tr>
+<td>LVQ</td>
+<td>原型聚类（半监督）</td>
+<td>✅ 需要</td>
+<td>硬聚类</td>
+<td>Voronoi 区域</td>
+<td>❌ 敏感</td>
+<td>有部分标记信息，需要学习原型</td>
+</tr>
+<tr>
+<td>高斯混合（GMM）</td>
+<td>概率聚类</td>
+<td>✅ 需要</td>
+<td>软聚类（概率）</td>
+<td>椭圆形</td>
+<td>⚠️ 一般</td>
+<td>数据符合混合高斯分布，需软分配</td>
+</tr>
+<tr>
+<td>DBSCAN</td>
+<td>密度聚类</td>
+<td>❌ 不需要</td>
+<td>硬聚类 + 噪声</td>
+<td>任意形状</td>
+<td>✅ 很好</td>
+<td>任意形状的簇，数据中有噪声</td>
+</tr>
+<tr>
+<td>AGNES</td>
+<td>层次聚类</td>
+<td>❌ 不需要（事后截断）</td>
+<td>层次结构</td>
+<td>取决于链接方式</td>
+<td>⚠️ 一般</td>
+<td>需要可视化层次关系，数据量较小</td>
+</tr>
+</tbody></table>
+<p>📊 思维导图：第九章知识体系</p>
+<svg class="svg-viz" style="max-width:100%;height:auto;" viewbox="0 0 660 400">
+<rect fill="#f8fafc" height="400" rx="10" width="660"></rect>
+<!-- 中心节点 -->
+<rect fill="url(#grad0)" height="50" rx="12" width="170" x="245" y="170"></rect>
+<defs>
+<lineargradient id="grad0" x1="0%" x2="100%" y1="0%" y2="100%">
+<stop offset="0%" style="stop-color:#1a56db;stop-opacity:1"></stop>
+<stop offset="100%" style="stop-color:#1343c4;stop-opacity:1"></stop>
+</lineargradient>
+</defs>
+<text fill="white" font-size="14" font-weight="700" text-anchor="middle" x="330" y="199">第九章 聚类</text>
+<text fill="rgba(255,255,255,0.8)" font-size="10" text-anchor="middle" x="330" y="213">Clustering</text>
+<!-- 分支1：性能度量 -->
+<line stroke="#6b7280" stroke-dasharray="5" stroke-width="1.5" x1="245" x2="140" y1="195" y2="100"></line>
+<rect fill="#eff6ff" height="40" rx="8" stroke="#bfdbfe" stroke-width="1.5" width="120" x="50" y="70"></rect>
+<text fill="#1d4ed8" font-size="11" font-weight="600" text-anchor="middle" x="110" y="88">性能度量</text>
+<text fill="#3b82f6" font-size="9" text-anchor="middle" x="110" y="103">JC / FMI / RI / DBI / DI</text>
+<!-- 分支2：距离计算 -->
+<line stroke="#6b7280" stroke-dasharray="5" stroke-width="1.5" x1="245" x2="130" y1="185" y2="190"></line>
+<rect fill="#f0fdf4" height="40" rx="8" stroke="#a7f3d0" stroke-width="1.5" width="120" x="18" y="165"></rect>
+<text fill="#15803d" font-size="11" font-weight="600" text-anchor="middle" x="78" y="183">距离计算</text>
+<text fill="#16a34a" font-size="9" text-anchor="middle" x="78" y="198">Minkowski / VDM</text>
+<!-- 分支3：原型聚类 -->
+<line stroke="#6b7280" stroke-dasharray="5" stroke-width="1.5" x1="330" x2="330" y1="170" y2="100"></line>
+<rect fill="#fdf4ff" height="50" rx="8" stroke="#e9d5ff" stroke-width="1.5" width="220" x="220" y="55"></rect>
+<text fill="#7e22ce" font-size="11" font-weight="600" text-anchor="middle" x="330" y="75">原型聚类</text>
+<text fill="#9333ea" font-size="9" text-anchor="middle" x="330" y="95">k-means · LVQ · 高斯混合（GMM）</text>
+<!-- 分支4：密度聚类 -->
+<line stroke="#6b7280" stroke-dasharray="5" stroke-width="1.5" x1="415" x2="510" y1="185" y2="185"></line>
+<rect fill="#fff1f2" height="45" rx="8" stroke="#fecdd3" stroke-width="1.5" width="130" x="505" y="162"></rect>
+<text fill="#be123c" font-size="11" font-weight="600" text-anchor="middle" x="570" y="182">密度聚类</text>
+<text fill="#e11d48" font-size="9" text-anchor="middle" x="570" y="200">DBSCAN</text>
+<!-- 分支5：层次聚类 -->
+<line stroke="#6b7280" stroke-dasharray="5" stroke-width="1.5" x1="415" x2="520" y1="210" y2="300"></line>
+<rect fill="#fff7ed" height="45" rx="8" stroke="#fed7aa" stroke-width="1.5" width="130" x="475" y="280"></rect>
+<text fill="#c2410c" font-size="11" font-weight="600" text-anchor="middle" x="540" y="300">层次聚类</text>
+<text fill="#ea580c" font-size="9" text-anchor="middle" x="540" y="318">AGNES · 树状图</text>
+<!-- 分支6：无监督学习背景 -->
+<line stroke="#6b7280" stroke-dasharray="5" stroke-width="1.5" x1="245" x2="140" y1="210" y2="300"></line>
+<rect fill="#fef9c3" height="45" rx="8" stroke="#fde047" stroke-width="1.5" width="130" x="30" y="280"></rect>
+<text fill="#854d0e" font-size="11" font-weight="600" text-anchor="middle" x="95" y="300">无监督学习</text>
+<text fill="#92400e" font-size="9" text-anchor="middle" x="95" y="318">无标签 · 自动发现结构</text>
+<!-- 底部说明 -->
+<text fill="#9ca3af" font-size="9" text-anchor="middle" x="330" y="390">周志华《机器学习》第九章 · 知识体系概览</text>
+</svg>
+
+
+<p>🎓 学习路线与重点提示</p>
+<blockquote>
+<p><strong>🔑 考试&#x2F;面试高频考点</strong></p>
+<ul>
+<li>📌 <strong>k-means 算法流程</strong>：能手写伪代码，说清楚优缺点，理解”局部最优”问题</li>
+<li>📌 <strong>DBSCAN 的核心概念</strong>：ε-邻域、核心对象、密度直达&#x2F;可达&#x2F;相连的定义与区别</li>
+<li>📌 <strong>EM 算法在 GMM 中的应用</strong>：理解 E步（计算后验）和 M步（更新参数）</li>
+<li>📌 <strong>外部指标 vs 内部指标</strong>：JC&#x2F;FMI&#x2F;RI 的公式含义；DBI&#x2F;DI 的大小方向</li>
+<li>📌 <strong>AGNES 的三种链接方式</strong>：单链接&#x2F;全链接&#x2F;均链接的区别和适用场景</li>
+<li>📌 <strong>各算法的适用场景对比</strong>：在什么情况下选哪种算法</li>
+</ul>
+</blockquote>
+<blockquote>
+<p><strong>💡 最后的类比总结</strong></p>
+<p>🍽️ <strong>k-means</strong>：食堂打菜——每道菜只能选一个窗口（硬分配），<br>            打菜员（质心）站在最中间的位置。</p>
+<pre><code>        🏫 **LVQ**：选班级代表——代表要真正&quot;代表&quot;这个班，
+        和其他班的代表要不一样。
+
+
+        🎨 **GMM**：颜料调色——数据是多种颜色的混合，
+        每种颜色有一定比例（混合系数）和特征（均值/方差）。
+
+
+        🌆 **DBSCAN**：卫星夜视图找城市——密集的灯光是城市（簇），
+        孤立的灯是村庄（噪声）。
+
+
+        🌳 **AGNES**：生物分类树——从物种不断往上合并，
+        最终形成门纲目科属种的层级结构。
+</code></pre>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://chaichai438.github.io">Chaichai</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://chaichai438.github.io/2026/05/27/ML/ml-ch09-clustering/">https://chaichai438.github.io/2026/05/27/ML/ml-ch09-clustering/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://chaichai438.github.io" target="_blank">Click Start!</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><a class="post-meta__tags" href="/tags/%E8%A5%BF%E7%93%9C%E4%B9%A6/">西瓜书</a><a class="post-meta__tags" href="/tags/%E8%81%9A%E7%B1%BB/">聚类</a><a class="post-meta__tags" href="/tags/K-means/">K-means</a><a class="post-meta__tags" href="/tags/DBSCAN/">DBSCAN</a><a class="post-meta__tags" href="/tags/GMM/">GMM</a><a class="post-meta__tags" href="/tags/AGNES/">AGNES</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/05/27/ML/ml-ch12-learning-theory/" title="第12章：计算学习理论 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">第12章：计算学习理论 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第12章 计算学习理论（Learning Theory）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  01. 基础知识与符号学习理论的基本概念和数学工具 🧮 核心概念  📐 基本设置  $\mathcal{X}$：样本空间，$\mathcal{Y}$：标记空间（如 ${-1,+1}$） $\mathcal{D}$：$\mathcal{X} \times \mathcal{Y}$ 上的未知分布 $D &#x3D; {(x_1,y_1),\ldots,(x_m,y_m)}$：从 $\mathcal{D}$ 独立同分布采样的训练集 $h: \mathcal{X} \to \mathcal{Y}$：假设（即学到的分类器） $\mathcal{H}$：假设空间（所有候选假设的集合）    📐 误差的定义  泛化误差（真实误差）：$E(h;\mathcal{D}) &#x3D; P_{(x,y)\sim\mathcal{D}}[h(x)\neq y]$（分布上的期望） 经验误差（训练误差）：$\hat{E}(h;D) &#x3D; ...</div></div></div></a><a class="pagination-related" href="/2026/05/27/ML/ml-ch11-feature-selection/" title="第11章：特征选择与稀疏学习 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">第11章：特征选择与稀疏学习 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第11章 特征选择与稀疏学习（Feature Selection）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  01. 特征选择概述为什么需要选特征？ 🎯 特征选择的目的 现实数据集中往往包含成百上千个特征，但并非所有特征都对学习有用。特征可分为三类：  ✅ 相关特征 对当前学习任务有用的特征，应当保留。   ❌ 无关特征 与学习任务无关（不相关特征），应当删除。   ⚠️ 冗余特征 包含的信息可由其他特征推出（多余），可以删除但有时有辅助作用。   🍎 通俗理解 你要根据一个人的信息预测他的收入：✅ 相关特征：学历、工作年限、所在城市——明显有用❌ 无关特征：鞋码、头发颜色——基本没用⚠️ 冗余特征：月薪和年薪——一个可以由另一个算出来 特征选择就是保留相关特征，删除无关和冗余特征，让模型更高效准确。   🔑 特征选择 vs 降维  特征选择：从原始特征中挑选出一个子集，特征的含义不变 降维（如PCA）：将原始特征变换为新的低维特征（如主成分），失去原始含义 两者都能减少特征维度，但特征选择保留了可解释性   🎯 三...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/05/28/ML/ml-ch08-ensemble-learning/" title="第8章：集成学习 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-28</div><div class="info-item-2">第8章：集成学习 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第8章 集成学习（Ensemble Learning）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  1个体与集成集成学习通过投票法（分类）或平均法（回归）将多个”基学习器”组合起来。 集成有效的必要条件 个体学习器要有一定的**”准确性”**（至少比随机猜测好） 个体学习器之间要**”多样性”**（犯不同的错误）  误差-分歧分解（直观版本）：  📐 公式  $$ E &#x3D; \bar{E} - \bar{A} $$ 其中 $E$ 是集成泛化误差，$\bar{E}$ 是个体泛化误差的加权平均，$\bar{A}$ 是分歧（个体之间有多不一致）。分歧越大，集成效果越好。   学习器1准确率 75%  学习器2准确率 75%  学习器3准确率 75% →  集成后 准确率 90%+ 只要错误不重叠，多数投票就能纠错！    🍉 通俗类比 三个独立考官各自有 75% 准确率，但他们犯错的时候不一样。当一个人判断错误，另外两个很可能判断正确，多数投票后错误就被纠正了。这就是”好而不同”的力量。  两大范式   范式 个体关系 ...</div></div></div></a><a class="pagination-related" href="/2026/05/27/ML/ml-ch10-dimensionality-reduction/" title="第10章：降维与度量学习 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-27</div><div class="info-item-2">第10章：降维与度量学习 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第10章 降维与度量学习（Dimensionality Reduction）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  01. k 近邻学习（kNN）最简单的”懒惰学习”算法 🔢 核心思想 **k近邻学习（k-Nearest Neighbor，kNN）是一种懒惰学习（lazy learning）**算法——它不构建显式的模型，而是在预测时直接找到训练集中最近的 $k$ 个样本，用它们的标记来决策。  🍎 通俗理解 你搬到一个新城市，不知道周围的餐厅好不好吃。怎么判断？看最近的几家邻居餐厅的口碑——大家都说好，这家大概也不错。这就是 kNN 的逻辑：我不认识你，但我知道你的邻居，通过邻居来判断你。   📐 kNN 分类规则 给定测试样本 $x$，找其最近的 $k$ 个训练样本构成集合 $N_k(x)$，通过投票决定类别：  $$ \hat{y} &#x3D; \underset{c \in \mathcal{Y}}{\arg\max} \sum_{x_i \in N_k(x)} \mathbb{1}(y_i &#x3D;...</div></div></div></a><a class="pagination-related" href="/2026/05/28/ML/ml-ch07-bayesian/" title="第7章：贝叶斯分类器 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-28</div><div class="info-item-2">第7章：贝叶斯分类器 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第7章 贝叶斯分类器（Bayesian）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  1贝叶斯决策论贝叶斯决策论是概率框架下实施决策的基本方法。对于分类任务，在所有相关概率已知的理想情况下，最优分类器由贝叶斯公式给出：  📐 公式  $$ P(c \mid \boldsymbol{x}) &#x3D; \frac{P(\boldsymbol{x} \mid c) P(c)}{P(\boldsymbol{x})} $$  $P(c)$：先验概率（在不知道样本长相的时候，猜它是 $c$ 类的概率） $P(\boldsymbol{x}|c)$：类条件概率（也叫”似然”，已知是 $c$ 类，样本长 $\boldsymbol{x}$ 样的概率） $P(c|\boldsymbol{x})$：后验概率（看到样本 $\boldsymbol{x}$ 后，它是 $c$ 类的更新后的概率）  贝叶斯最优分类器选择后验概率最大的类：  📐 公式  $$ h^*(\boldsymbol{x}) &#x3D; \arg\max_{c \in \mat...</div></div></div></a><a class="pagination-related" href="/2026/05/27/ML/ml-ch11-feature-selection/" title="第11章：特征选择与稀疏学习 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-27</div><div class="info-item-2">第11章：特征选择与稀疏学习 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第11章 特征选择与稀疏学习（Feature Selection）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  01. 特征选择概述为什么需要选特征？ 🎯 特征选择的目的 现实数据集中往往包含成百上千个特征，但并非所有特征都对学习有用。特征可分为三类：  ✅ 相关特征 对当前学习任务有用的特征，应当保留。   ❌ 无关特征 与学习任务无关（不相关特征），应当删除。   ⚠️ 冗余特征 包含的信息可由其他特征推出（多余），可以删除但有时有辅助作用。   🍎 通俗理解 你要根据一个人的信息预测他的收入：✅ 相关特征：学历、工作年限、所在城市——明显有用❌ 无关特征：鞋码、头发颜色——基本没用⚠️ 冗余特征：月薪和年薪——一个可以由另一个算出来 特征选择就是保留相关特征，删除无关和冗余特征，让模型更高效准确。   🔑 特征选择 vs 降维  特征选择：从原始特征中挑选出一个子集，特征的含义不变 降维（如PCA）：将原始特征变换为新的低维特征（如主成分），失去原始含义 两者都能减少特征维度，但特征选择保留了可解释性   🎯 三...</div></div></div></a><a class="pagination-related" href="/2026/05/28/ML/ml-ch03-linear-models/" title="第3章：线性模型 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-28</div><div class="info-item-2">第3章：线性模型 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第3章 线性模型（Linear Models）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  1基本形式线性模型试图学得一个通过属性的线性组合来进行预测的函数：  📐 公式  $$ f(\boldsymbol{x}) &#x3D; w_1 x_1 + w_2 x_2 + \cdots + w_d x_d + b &#x3D; \boldsymbol{w}^\top \boldsymbol{x} + b $$ 其中 $\boldsymbol{w} &#x3D; (w_1,\dots,w_d)$ 是权重向量，$b$ 是偏置（bias），$\boldsymbol{x}$ 是 $d$ 维样本向量。  📌 核心定义 核心思想：用一条直线（二维）、一个平面（三维）、一个超平面（高维）去拟合数据。简单、可解释性强 —— 每个 $w_i$ 直接反映了对应属性 $x_i$ 对预测结果的影响大小和方向。   🍉 通俗类比 你可以把线性模型想象成打分卡：每个特征 $x_i$ 是一道题得分，权重 $w_i$ 是这道题的分值系数，$b$ 是基础分（...</div></div></div></a><a class="pagination-related" href="/2026/05/28/ML/ml-ch04-decision-trees/" title="第4章：决策树 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-28</div><div class="info-item-2">第4章：决策树 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第4章 决策树（Decision Trees）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  1基本流程决策树是一棵用于分类的树形结构：内部节点对应属性测试，分支对应该属性的可能取值，叶子节点给出分类结果。 算法：TreeGenerate(D)  生成节点 node if D 中样本全属于同一类别 C： 将 node 标记为 C 类叶节点；return if A &#x3D; ∅ OR D 中样本在 A 上取值相同： 将 node 标记为 D 中样本数最多的类；return 从 A 中选最优划分属性 a* for a* 的每个取值 a_v： 为 node 生成一个分支；令 D_v 为在 a* 上取值为 a_v 的样本子集 if D_v &#x3D; ∅：将分支节点标记为 D 中样本数最多的类 else：以 TreeGenerate(D_v, A \ {a*}) 为分支节点   🍉 通俗类比 决策树就像你玩**”是谁杀了小明”**的推理游戏。每个问题（节点）都是一个关于嫌疑人的属性测试：ta是男是女？有没有不在场证明？案发时在不...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Chaichai</div><div class="author-info-description">Well begun is half-down</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">30</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">60</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Chaichai438"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Chaichai438" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="/1939327800@qq.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#01-%E8%81%9A%E7%B1%BB%E4%BB%BB%E5%8A%A1%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">01. 聚类任务概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#02-%E6%80%A7%E8%83%BD%E5%BA%A6%E9%87%8F"><span class="toc-number">2.</span> <span class="toc-text">02. 性能度量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E5%A4%A7%E5%A4%96%E9%83%A8%E6%8C%87%E6%A0%87"><span class="toc-number">3.</span> <span class="toc-text">三大外部指标</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#03-%E8%B7%9D%E7%A6%BB%E8%AE%A1%E7%AE%97"><span class="toc-number">4.</span> <span class="toc-text">03. 距离计算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#04-k-%E5%9D%87%E5%80%BC%E7%AE%97%E6%B3%95%EF%BC%88k-means%EF%BC%89"><span class="toc-number">5.</span> <span class="toc-text">04. k 均值算法（k-means）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#05-%E5%AD%A6%E4%B9%A0%E5%90%91%E9%87%8F%E9%87%8F%E5%8C%96%EF%BC%88LVQ%EF%BC%89"><span class="toc-number">6.</span> <span class="toc-text">05. 学习向量量化（LVQ）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#06-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E8%81%9A%E7%B1%BB%EF%BC%88GMM%EF%BC%89"><span class="toc-number">7.</span> <span class="toc-text">06. 高斯混合聚类（GMM）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#07-%E5%AF%86%E5%BA%A6%E8%81%9A%E7%B1%BB%EF%BC%9ADBSCAN"><span class="toc-number">8.</span> <span class="toc-text">07. 密度聚类：DBSCAN</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#08-%E5%B1%82%E6%AC%A1%E8%81%9A%E7%B1%BB%EF%BC%9AAGNES"><span class="toc-number">9.</span> <span class="toc-text">08. 层次聚类：AGNES</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#09-%E7%AE%97%E6%B3%95%E5%AF%B9%E6%AF%94%E6%80%BB%E7%BB%93"><span class="toc-number">10.</span> <span class="toc-text">09. 算法对比总结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/28/ML/ml-ch01-introduction/" title="第1章：绪论 — 西瓜书学习笔记">第1章：绪论 — 西瓜书学习笔记</a><time datetime="2026-05-27T16:00:00.000Z" title="发表于 2026-05-28 00:00:00">2026-05-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/28/ML/ml-ch03-linear-models/" title="第3章：线性模型 — 西瓜书学习笔记">第3章：线性模型 — 西瓜书学习笔记</a><time datetime="2026-05-27T16:00:00.000Z" title="发表于 2026-05-28 00:00:00">2026-05-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/28/ML/ml-ch04-decision-trees/" title="第4章：决策树 — 西瓜书学习笔记">第4章：决策树 — 西瓜书学习笔记</a><time datetime="2026-05-27T16:00:00.000Z" title="发表于 2026-05-28 00:00:00">2026-05-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/28/ML/ml-ch02-evaluation-and-selection/" title="第2章：模型评估与选择 — 西瓜书学习笔记">第2章：模型评估与选择 — 西瓜书学习笔记</a><time datetime="2026-05-27T16:00:00.000Z" title="发表于 2026-05-28 00:00:00">2026-05-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/28/ML/ml-ch05-neural-networks/" title="第5章：神经网络 — 西瓜书学习笔记">第5章：神经网络 — 西瓜书学习笔记</a><time datetime="2026-05-27T16:00:00.000Z" title="发表于 2026-05-28 00:00:00">2026-05-28</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/neko.png);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Chaichai</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.3</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(async () => {
+  const showKatex = () => {
+    document.querySelectorAll('#article-container .katex').forEach(el => el.classList.add('katex-show'))
+  }
+
+  if (!window.katex_js_css) {
+    window.katex_js_css = true
+    await btf.getCSS('https://cdn.jsdelivr.net/npm/katex@0.16.27/dist/katex.min.css')
+    if (false) {
+      await btf.getScript('https://cdn.jsdelivr.net/npm/katex@0.16.27/dist/contrib/copy-tex.min.js')
+    }
+  }
+
+  showKatex()
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

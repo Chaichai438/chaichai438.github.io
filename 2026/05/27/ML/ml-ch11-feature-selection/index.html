@@ -1,0 +1,574 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>第11章：特征选择与稀疏学习 — 西瓜书学习笔记 | Click Start!</title><meta name="author" content="Chaichai"><meta name="copyright" content="Chaichai"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="真实数据往往包含大量冗余特征和噪声特征。特征选择旨在找到对学习任务最有用的特征子集，既能减少计算代价，又能提升模型泛化性能。稀疏学习则从另一角度出发，寻求用尽量少的基表示数据。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第11章：特征选择与稀疏学习 — 西瓜书学习笔记">
+<meta property="og:url" content="https://chaichai438.github.io/2026/05/27/ML/ml-ch11-feature-selection/index.html">
+<meta property="og:site_name" content="Click Start!">
+<meta property="og:description" content="真实数据往往包含大量冗余特征和噪声特征。特征选择旨在找到对学习任务最有用的特征子集，既能减少计算代价，又能提升模型泛化性能。稀疏学习则从另一角度出发，寻求用尽量少的基表示数据。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://chaichai438.github.io/img/avatar.jpg">
+<meta property="article:published_time" content="2026-05-26T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-26T16:00:00.000Z">
+<meta property="article:author" content="Chaichai">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="西瓜书">
+<meta property="article:tag" content="特征选择">
+<meta property="article:tag" content="稀疏学习">
+<meta property="article:tag" content="L1正则化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://chaichai438.github.io/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "第11章：特征选择与稀疏学习 — 西瓜书学习笔记",
+  "url": "https://chaichai438.github.io/2026/05/27/ML/ml-ch11-feature-selection/",
+  "image": "https://chaichai438.github.io/img/avatar.jpg",
+  "datePublished": "2026-05-26T16:00:00.000Z",
+  "dateModified": "2026-05-26T16:00:00.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Chaichai",
+      "url": "https://chaichai438.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/fruitcake.gif"><link rel="canonical" href="https://chaichai438.github.io/2026/05/27/ML/ml-ch11-feature-selection/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '第11章：特征选择与稀疏学习 — 西瓜书学习笔记',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div class="bg-animation" id="web_bg" style="background-color: #49B202;"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">30</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">60</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-compass"></i><span> 页面</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"><i class="fa-fw fas fa-brain"></i><span> 机器学习</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/neko.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/fruitcake.gif" alt="Logo"><span class="site-name">Click Start!</span></a><a class="nav-page-title" href="/"><span class="site-name">第11章：特征选择与稀疏学习 — 西瓜书学习笔记</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-compass"></i><span> 页面</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"><i class="fa-fw fas fa-brain"></i><span> 机器学习</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">第11章：特征选择与稀疏学习 — 西瓜书学习笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-05-26T16:00:00.000Z" title="发表于 2026-05-27 00:00:00">2026-05-27</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-05-26T16:00:00.000Z" title="更新于 2026-05-27 00:00:00">2026-05-27</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><blockquote>
+<p>本文是周志华《机器学习》（西瓜书）第11章 <strong>特征选择与稀疏学习</strong>（Feature Selection）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。</p>
+</blockquote>
+<h3 id="01-特征选择概述"><a href="#01-特征选择概述" class="headerlink" title="01. 特征选择概述"></a>01. 特征选择概述</h3><p><em>为什么需要选特征？</em></p>
+<p>🎯 特征选择的目的</p>
+<p>现实数据集中往往包含成百上千个特征，但并非所有特征都对学习有用。特征可分为三类：</p>
+<blockquote>
+<p><strong>✅ 相关特征</strong></p>
+<p>对当前学习任务有用的特征，应当保留。</p>
+</blockquote>
+<blockquote>
+<p><strong>❌ 无关特征</strong></p>
+<p>与学习任务无关（不相关特征），应当删除。</p>
+</blockquote>
+<blockquote>
+<p><strong>⚠️ 冗余特征</strong></p>
+<p>包含的信息可由其他特征推出（多余），可以删除但有时有辅助作用。</p>
+</blockquote>
+<blockquote>
+<p><strong>🍎 通俗理解</strong></p>
+<p>你要根据一个人的信息预测他的收入：<br>✅ <strong>相关特征</strong>：学历、工作年限、所在城市——明显有用<br>❌ <strong>无关特征</strong>：鞋码、头发颜色——基本没用<br>⚠️ <strong>冗余特征</strong>：月薪和年薪——一个可以由另一个算出来</p>
+<p>特征选择就是保留相关特征，删除无关和冗余特征，让模型更高效准确。</p>
+</blockquote>
+<blockquote>
+<p><strong>🔑 特征选择 vs 降维</strong></p>
+<ul>
+<li><strong>特征选择</strong>：从原始特征中<strong>挑选出一个子集</strong>，特征的含义不变</li>
+<li><strong>降维</strong>（如PCA）：将原始特征<strong>变换</strong>为新的低维特征（如主成分），失去原始含义</li>
+<li>两者都能减少特征维度，但特征选择保留了可解释性</li>
+</ul>
+</blockquote>
+<p>🎯 三大类特征选择方法</p>
+<svg class="svg-viz" viewbox="0 0 620 160">
+<rect fill="#fafafa" height="160" rx="8" width="620"></rect>
+<!-- 过滤式 -->
+<rect fill="#fef3c7" height="80" rx="10" stroke="#fbbf24" stroke-width="2" width="160" x="30" y="40"></rect>
+<text fill="#92400e" font-size="13" font-weight="700" text-anchor="middle" x="110" y="72">过滤式</text>
+<text fill="#78350f" font-size="10" text-anchor="middle" x="110" y="90">Filter</text>
+<text fill="#78350f" font-size="9" text-anchor="middle" x="110" y="108">先选特征，再训练</text>
+<!-- 包裹式 -->
+<rect fill="#d1fae5" height="80" rx="10" stroke="#6ee7b7" stroke-width="2" width="160" x="230" y="40"></rect>
+<text fill="#065f46" font-size="13" font-weight="700" text-anchor="middle" x="310" y="72">包裹式</text>
+<text fill="#064e3b" font-size="10" text-anchor="middle" x="310" y="90">Wrapper</text>
+<text fill="#064e3b" font-size="9" text-anchor="middle" x="310" y="108">用学习器评估特征子集</text>
+<!-- 嵌入式 -->
+<rect fill="#ede9fe" height="80" rx="10" stroke="#c4b5fd" stroke-width="2" width="160" x="430" y="40"></rect>
+<text fill="#5b21b6" font-size="13" font-weight="700" text-anchor="middle" x="510" y="72">嵌入式</text>
+<text fill="#4c1d95" font-size="10" text-anchor="middle" x="510" y="90">Embedded</text>
+<text fill="#4c1d95" font-size="9" text-anchor="middle" x="510" y="108">学习过程中自动选特征</text>
+<!-- 连接箭头 -->
+<line stroke="#9ca3af" stroke-width="1.5" x1="190" x2="228" y1="80" y2="80"></line>
+<polygon fill="#9ca3af" points="228,77 234,80 228,83"></polygon>
+<line stroke="#9ca3af" stroke-width="1.5" x1="390" x2="428" y1="80" y2="80"></line>
+<polygon fill="#9ca3af" points="428,77 434,80 428,83"></polygon>
+<text fill="#9ca3af" font-size="9" text-anchor="middle" x="310" y="150">计算开销：过滤式最小 → 包裹式居中 → 嵌入式最灵活</text>
+</svg>
+
+
+<h3 id="02-子集搜索与评价"><a href="#02-子集搜索与评价" class="headerlink" title="02. 子集搜索与评价"></a>02. 子集搜索与评价</h3><p><em>特征子集的搜索策略</em></p>
+<p>🔍 子集搜索的挑战</p>
+<p>如果有 $n$ 个特征，所有可能的特征子集有 $2^n$ 个——当 $n&#x3D;100$ 时，穷举是不可能的。因此需要启发式搜索策略。</p>
+<blockquote>
+<p><strong>➕ 前向搜索（Forward）</strong></p>
+<p>从空集开始，每次<strong>添加</strong>一个最优特征，直到满足停止条件。<br>贪心策略，计算代价较低。</p>
+</blockquote>
+<blockquote>
+<p><strong>➖ 后向搜索（Backward）</strong></p>
+<p>从全集开始，每次<strong>删除</strong>一个贡献最小的特征，直到满足停止条件。<br>适合初始特征数量不太大的情况。</p>
+</blockquote>
+<blockquote>
+<p><strong>🔑 子集评价准则</strong></p>
+<p>给定特征子集 $A$，用<strong>信息增益</strong>（Information Gain）来评价：</p>
+</blockquote>
+<p>$$</p>
+<p>\text{Gain}(A) &#x3D; \text{Ent}(D) - \sum_{v} \frac{|D^v|}{|D|} \text{Ent}(D^v)</p>
+<p>$$</p>
+<blockquote>
+<p>其中 $\text{Ent}(D)$ 是数据集 $D$ 的信息熵，$D^v$ 是按特征子集 $A$ 划分后的各分支数据集。信息增益越大，特征子集的区分能力越强。</p>
+</blockquote>
+<h3 id="03-过滤式选择：Relief"><a href="#03-过滤式选择：Relief" class="headerlink" title="03. 过滤式选择：Relief"></a>03. 过滤式选择：Relief</h3><p><em>用近邻样本评估特征重要性</em></p>
+<p>🌊 Relief 算法思想</p>
+<p>Relief 是一种过滤式特征选择算法，它为每个特征设计一个<strong>相关统计量</strong>来衡量其重要性，不依赖于具体的学习器。</p>
+<blockquote>
+<p><strong>🍎 通俗理解</strong></p>
+<p>对每个样本 $x_i$，找两类邻居：<br>👥 <strong>同类最近邻（Near Hit）</strong>：与 $x_i$ 同类且距离最近的样本<br>👤 <strong>异类最近邻（Near Miss）</strong>：与 $x_i$ 不同类且距离最近的样本</p>
+<p>好的特征应该让你和<strong>同类邻居更近，和异类邻居更远</strong>。<br>      如果某特征上 $x_i$ 和同类邻居差异小、和异类邻居差异大，这个特征很有用！</p>
+</blockquote>
+<blockquote>
+<p><strong>📐 相关统计量 δ 的计算</strong></p>
+<p>对每个特征属性 $j$，统计量 $\delta^j$ 的更新规则：</p>
+</blockquote>
+<p>$$</p>
+<p>\delta^j &#x3D; \delta^j - \frac{\text{diff}(j, x_i, x_{i,\text{nh}})}{m} + \frac{\text{diff}(j, x_i, x_{i,\text{nm}})}{m}</p>
+<p>$$</p>
+<blockquote>
+<pre><code>  - $x_{i,\text{nh}}$：$x_i$ 的同类最近邻（Near Hit）
+</code></pre>
+<ul>
+<li>$x_{i,\text{nm}}$：$x_i$ 的异类最近邻（Near Miss）</li>
+<li>$\text{diff}(j, x_a, x_b)$：在第 $j$ 个属性上 $x_a$ 和 $x_b$ 的差值（数值属性取归一化差的平方，离散属性取0或1）</li>
+<li>直觉：与同类近邻差距大 → $\delta^j$ 减小（该特征让同类分散，不好）；与异类近邻差距大 → $\delta^j$ 增大（该特征能区分异类，好！）</li>
+</ul>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">Relief Algorithm（二分类版本）<br>输入：数据集 D = &#123;(x₁,y₁),...,(xₘ,yₘ)&#125;，采样次数 m₀，阈值 τ<br>输出：各特征的相关统计量<br><br>初始化 δʲ = 0 (j = 1,...,n)<br>for i = 1, 2, ..., m₀ do<br>  从 D 中随机选取样本 xᵢ<br>  找 xᵢ 的同类最近邻 x_&#123;i,nh&#125;（Near Hit）<br>  找 xᵢ 的异类最近邻 x_&#123;i,nm&#125;（Near Miss）<br>  for j = 1, 2, ..., n do<br>    δʲ = δʲ - diff(j, xᵢ, x_&#123;i,nh&#125;)/m₀ + diff(j, xᵢ, x_&#123;i,nm&#125;)/m₀<br>  end for<br>end for<br>return 统计量 δ  // δʲ ≥ τ 的特征被选中<br></code></pre></td></tr></table></figure>
+
+
+<svg class="svg-viz" viewbox="0 0 480 180">
+<rect fill="#fafafa" height="180" rx="8" width="480"></rect>
+<!-- 类别1（圆形，橙色） -->
+<circle cx="150" cy="90" fill="#fbbf24" r="12" stroke="#d97706" stroke-width="2"></circle>
+<text fill="white" font-size="9" font-weight="700" text-anchor="middle" x="150" y="94">xᵢ</text>
+<circle cx="200" cy="75" fill="#fbbf24" r="10" stroke="#d97706" stroke-width="1.5"></circle>
+<text fill="white" font-size="8" text-anchor="middle" x="200" y="79">nh</text>
+<circle cx="120" cy="60" fill="#fef3c7" r="9" stroke="#d97706" stroke-width="1.5"></circle>
+<circle cx="175" cy="120" fill="#fef3c7" r="9" stroke="#d97706" stroke-width="1.5"></circle>
+<!-- 类别2（方形，蓝色） -->
+<rect fill="#3b82f6" height="20" rx="4" stroke="#1d4ed8" stroke-width="2" width="20" x="290" y="70"></rect>
+<text fill="white" font-size="9" font-weight="700" text-anchor="middle" x="300" y="83">nm</text>
+<rect fill="#bfdbfe" height="18" rx="4" stroke="#3b82f6" stroke-width="1.5" width="18" x="330" y="95"></rect>
+<rect fill="#bfdbfe" height="18" rx="4" stroke="#3b82f6" stroke-width="1.5" width="18" x="265" y="110"></rect>
+<!-- Near Hit 线（绿色虚线，近） -->
+<line stroke="#059669" stroke-dasharray="5" stroke-width="2" x1="162" x2="192" y1="85" y2="77"></line>
+<text fill="#059669" font-size="9" font-weight="600" x="178" y="72">Near Hit（同类近邻）</text>
+<!-- Near Miss 线（红色虚线，远） -->
+<line stroke="#dc2626" stroke-dasharray="5" stroke-width="2" x1="162" x2="290" y1="90" y2="80"></line>
+<text fill="#dc2626" font-size="9" font-weight="600" x="225" y="108">Near Miss（异类近邻）</text>
+<!-- 说明 -->
+<text fill="#9ca3af" font-size="9" text-anchor="middle" x="240" y="160">好特征：同类靠近（Near Hit 差小），异类远离（Near Miss 差大）</text>
+</svg>
+
+
+<blockquote>
+<p><strong>💡 Relief-F（多分类扩展）</strong></p>
+<p>Relief 只适用于二分类。<strong>Relief-F</strong> 扩展到多分类：对每个类别分别找异类最近邻，然后按各类别的比例加权求平均差值。</p>
+</blockquote>
+<h3 id="04-包裹式选择：LVW"><a href="#04-包裹式选择：LVW" class="headerlink" title="04. 包裹式选择：LVW"></a>04. 包裹式选择：LVW</h3><p><em>把学习器当做”黑盒”来评估特征</em></p>
+<p>📦 包裹式选择思想</p>
+<p>包裹式特征选择将最终要使用的学习器的<strong>性能</strong>作为特征子集的评价标准。即：直接把学习器训练在不同的特征子集上，看哪个子集效果最好。</p>
+<blockquote>
+<p><strong>🍎 通俗理解</strong></p>
+<p>过滤式：用固定标准（信息增益）预先筛选特征，再给学习器用——就像HR初筛简历。</p>
+<pre><code>  包裹式：每个特征子集都让学习器实际&quot;上岗试用&quot;，看效果——就像直接让候选人做实习测试。
+
+  包裹式效果更好，但计算开销大得多！
+</code></pre>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">LVW (Las Vegas Wrapper) Algorithm<br>输入：数据集 D，学习算法 A，控制参数 T<br>输出：特征子集 A*<br><br>初始化 A* = 所有特征，err* = 用 A 在 A* 上交叉验证的误差<br>d* = |A*|，t = 0<br>repeat<br>  t = t + 1<br>  随机产生特征子集 A&#x27;<br>  用学习算法 A 在特征子集 A&#x27; 上交叉验证，得误差 err&#x27;<br>  if err&#x27; &lt; err*，或 (err&#x27; == err* 且 |A&#x27;| &lt; d*) then<br>    A* = A&#x27;，err* = err&#x27;，d* = |A&#x27;|<br>until t &gt; T  // 或其他停止条件<br>return A*<br></code></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p><strong>⚠️ LVW 的缺点</strong></p>
+<ul>
+<li>计算开销<strong>极大</strong>——每个候选特征子集都需要训练学习器</li>
+<li>随机搜索不保证找到全局最优</li>
+<li>T 的选择影响结果</li>
+</ul>
+</blockquote>
+<h3 id="05-嵌入式选择与正则化"><a href="#05-嵌入式选择与正则化" class="headerlink" title="05. 嵌入式选择与正则化"></a>05. 嵌入式选择与正则化</h3><p><em>L1正则化（Lasso）：最优雅的特征选择</em></p>
+<p>🔗 嵌入式选择的思想</p>
+<p>嵌入式特征选择将<strong>特征选择过程融入学习器的训练过程</strong>中，在训练时自动完成特征选择。最经典的方法是通过<strong>正则化</strong>使得模型权重稀疏。</p>
+<h3 id="L1-正则化（Lasso）"><a href="#L1-正则化（Lasso）" class="headerlink" title="L1 正则化（Lasso）"></a>L1 正则化（Lasso）</h3><blockquote>
+<p><strong>📐 Lasso 目标函数</strong></p>
+<p>在最小化损失函数的同时，加入 L1 范数惩罚项：</p>
+</blockquote>
+<p>$$</p>
+<p>\min_w \sum_{i&#x3D;1}^m \ell(f(x_i;w), y_i) + \lambda |w|_1</p>
+<p>$$</p>
+<blockquote>
+<p>其中 $|w|_1 &#x3D; \sum_j |w_j|$ 是 L1 范数，$\lambda &gt; 0$ 是正则化参数。</p>
+<p>✅ L1 正则化会使许多权重精确等于 <strong>0</strong>，从而自动完成特征选择！</p>
+</blockquote>
+<h3 id="L1-vs-L2-正则化"><a href="#L1-vs-L2-正则化" class="headerlink" title="L1 vs L2 正则化"></a>L1 vs L2 正则化</h3><blockquote>
+<p><strong>📐 L2 正则化（Ridge）</strong></p>
+</blockquote>
+<p>$$</p>
+<p>\min_w \sum_{i&#x3D;1}^m \ell(f(x_i;w), y_i) + \lambda |w|_2^2</p>
+<p>$$</p>
+<blockquote>
+<p>L2 正则化使权重<strong>趋向于小但不为零</strong>，不产生稀疏解，不能做特征选择。</p>
+</blockquote>
+<svg class="svg-viz" viewbox="0 0 560 220">
+<rect fill="#fafafa" height="220" rx="8" width="560"></rect>
+<!-- 左：L1（菱形约束域） -->
+<text fill="#d97706" font-size="12" font-weight="700" text-anchor="middle" x="140" y="22">L1 正则化（Lasso）</text>
+<!-- 等损失椭圆 -->
+<ellipse cx="165" cy="120" fill="none" rx="80" ry="55" stroke="#3b82f6" stroke-dasharray="5" stroke-width="1.5"></ellipse>
+<ellipse cx="165" cy="120" fill="none" rx="55" ry="38" stroke="#3b82f6" stroke-dasharray="3" stroke-width="1"></ellipse>
+<!-- 菱形约束域 -->
+<polygon fill="rgba(251,191,36,0.15)" points="140,75 190,120 140,165 90,120" stroke="#d97706" stroke-width="2"></polygon>
+<!-- 交点（稀疏解，在顶点） -->
+<circle cx="140" cy="75" fill="#dc2626" r="6"></circle>
+<text fill="#dc2626" font-size="10" font-weight="700" x="150" y="70">解在顶点！w₂=0</text>
+<!-- L1范数中心 -->
+<text fill="#d97706" font-size="9" text-anchor="middle" x="140" y="185">菱形约束域（L1范数球）</text>
+<text fill="#9ca3af" font-size="9" text-anchor="middle" x="140" y="198">解倾向于落在顶点 → 稀疏！</text>
+<!-- 分隔线 -->
+<line stroke="#e5e7eb" stroke-dasharray="6" stroke-width="1.5" x1="280" x2="280" y1="15" y2="210"></line>
+<!-- 右：L2（圆形约束域） -->
+<text fill="#7c3aed" font-size="12" font-weight="700" text-anchor="middle" x="420" y="22">L2 正则化（Ridge）</text>
+<!-- 等损失椭圆 -->
+<ellipse cx="420" cy="120" fill="none" rx="80" ry="55" stroke="#3b82f6" stroke-dasharray="5" stroke-width="1.5"></ellipse>
+<ellipse cx="420" cy="120" fill="none" rx="55" ry="38" stroke="#3b82f6" stroke-dasharray="3" stroke-width="1"></ellipse>
+<!-- 圆形约束域 -->
+<circle cx="420" cy="120" fill="rgba(167,139,250,0.15)" r="50" stroke="#7c3aed" stroke-width="2"></circle>
+<!-- 交点（非稀疏解，在圆弧上） -->
+<circle cx="395" cy="78" fill="#059669" r="6"></circle>
+<text fill="#059669" font-size="10" font-weight="700" x="368" y="72">解在弧上，w₁≠0,w₂≠0</text>
+<text fill="#7c3aed" font-size="9" text-anchor="middle" x="420" y="185">圆形约束域（L2范数球）</text>
+<text fill="#9ca3af" font-size="9" text-anchor="middle" x="420" y="198">解在弧上 → 不稀疏</text>
+</svg>
+几何直觉：L1的菱形约束域有顶点，最优解倾向于落在顶点（坐标轴上），产生稀疏解；L2的圆形约束域没有顶点，解不会自然归零。
+
+
+<blockquote>
+<p><strong>🔑 L1 vs L2 核心区别</strong></p>
+<table>
+<thead>
+<tr>
+<th>性质</th>
+<th>L1（Lasso）</th>
+<th>L2（Ridge）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>稀疏性</td>
+<td>✅ 产生稀疏解（很多权重&#x3D;0）</td>
+<td>❌ 权重趋小但不为0</td>
+</tr>
+<tr>
+<td>特征选择</td>
+<td>✅ 隐式完成特征选择</td>
+<td>❌ 不能直接做特征选择</td>
+</tr>
+<tr>
+<td>几何意义</td>
+<td>菱形约束域（顶点处解稀疏）</td>
+<td>圆形约束域（解在弧上不稀疏）</td>
+</tr>
+<tr>
+<td>求解</td>
+<td>非光滑，需次梯度&#x2F;坐标下降</td>
+<td>有闭合解，易求</td>
+</tr>
+<tr>
+<td>共线性</td>
+<td>倾向于只保留其中一个特征</td>
+<td>同等缩小相关特征的权重</td>
+</tr>
+</tbody></table>
+</blockquote>
+<h3 id="决策树的嵌入式特征选择"><a href="#决策树的嵌入式特征选择" class="headerlink" title="决策树的嵌入式特征选择"></a>决策树的嵌入式特征选择</h3><blockquote>
+<p><strong>💡 决策树天然地做特征选择</strong></p>
+<p>决策树在每次节点分裂时选择<strong>信息增益最大</strong>的特征——这个过程本身就是特征选择！特征如果从未被用于分裂，则说明对当前任务无关紧要。因此决策树是天然的嵌入式特征选择方法，也是随机森林特征重要性的来源。</p>
+</blockquote>
+<h3 id="06-稀疏表示与字典学习"><a href="#06-稀疏表示与字典学习" class="headerlink" title="06. 稀疏表示与字典学习"></a>06. 稀疏表示与字典学习</h3><p><em>用少量”基”来表示数据</em></p>
+<p>📚 稀疏表示的动机</p>
+<p>如果数据样本可以用少数<strong>基向量（字典原子）的稀疏线性组合</strong>来表示，则可以去除噪声、压缩信息。这种思想在信号处理、图像压缩和计算机视觉中广泛应用。</p>
+<blockquote>
+<p><strong>🍎 通俗理解</strong></p>
+<p>一首歌的乐谱可以用钢琴、小提琴、鼓等乐器（字典原子）演奏，但通常只需要少数几种乐器（稀疏表示）就能还原大部分旋律。</p>
+<p>字典学习就是从数据中学出这些”乐器”（原子），再用尽量少的原子组合来表示每首”歌”（数据样本）。</p>
+</blockquote>
+<blockquote>
+<p><strong>📐 稀疏表示问题</strong></p>
+<p>给定数据矩阵 $X \in \mathbb{R}^{d \times m}$，寻找字典 $B \in \mathbb{R}^{d \times k}$（$k$ 个原子，$k \gg d$）和稀疏系数矩阵 $A \in \mathbb{R}^{k \times m}$，使得：</p>
+</blockquote>
+<p>$$</p>
+<p>\min_{B, A} |X - BA|_F^2 \quad \text{s.t.} \quad \forall i, |a_i|_0 \le s_0</p>
+<p>$$</p>
+<blockquote>
+<p>其中 $|a_i|_0$ 是第 $i$ 个样本系数向量的非零元素个数（L0范数），$s_0$ 是稀疏度约束。</p>
+<p>由于 L0 约束组合优化问题 NP-hard，实践中常用 <strong>L1 范数松弛</strong>代替 L0：</p>
+</blockquote>
+<p>$$</p>
+<p>\min_{B, A} |X - BA|_F^2 + \lambda |A|_1</p>
+<p>$$</p>
+<p>📚 字典学习（K-SVD）</p>
+<p>字典学习（Dictionary Learning）目标：同时学习字典 $B$ 和稀疏表示 $A$，交替优化：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">字典学习（交替优化框架）<br>输入：数据矩阵 X，字典大小 k，稀疏度 s₀<br>初始化：字典 B（如用随机样本初始化）<br>repeat<br>// 第一步：固定字典 B，求稀疏系数 A<br>for i = 1, ..., m do<br>    求解稀疏编码问题：min ‖xᵢ - Baᵢ‖² + λ‖aᵢ‖₁<br>  end for<br>// 第二步：固定稀疏系数 A，更新字典 B<br>for k = 1, ..., K do<br>    找使用了第k个原子的样本集合 Ωₖ<br>    用 SVD 同时更新第k个字典原子和对应系数<br>  end for<br>until 收敛<br>return 字典 B，稀疏系数 A<br></code></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p><strong>💡 字典学习 vs PCA</strong></p>
+<ul>
+<li><strong>PCA</strong>：字典是正交的（主成分正交），每个样本用 $d’$ 个成分（非稀疏）</li>
+<li><strong>字典学习</strong>：字典是过完备的（$k &gt; d$，冗余），但每个样本用很少的原子（稀疏）</li>
+<li>字典学习更灵活，适合信号的稀疏分析</li>
+</ul>
+</blockquote>
+<h3 id="07-压缩感知"><a href="#07-压缩感知" class="headerlink" title="07. 压缩感知"></a>07. 压缩感知</h3><p><em>用少量观测恢复稀疏信号</em></p>
+<p>🎵 压缩感知的革命性思想</p>
+<p>传统信号处理（奈奎斯特采样定理）：采样率至少是信号最高频率的2倍才能无损恢复。<strong>压缩感知</strong>打破了这一限制：如果信号是<strong>稀疏的</strong>（在某个字典下的系数大多为0），则可以用远少于奈奎斯特的<strong>随机观测</strong>来恢复原始信号！</p>
+<blockquote>
+<p><strong>🍎 通俗理解</strong></p>
+<p>一幅 1000×1000 像素的图片，传统需要存储100万个像素值。但如果这幅图片在某个变换域（如傅里叶、小波）下只有1000个非零系数，那么理论上只需要存储远少于100万的随机观测，也能恢复完整图片！这就是压缩感知的奇妙之处——信号的稀疏性等于信息量其实很少，可以大幅压缩。</p>
+</blockquote>
+<blockquote>
+<p><strong>📐 压缩感知模型</strong></p>
+<p>原始信号 $x \in \mathbb{R}^n$ 在字典 $\Psi$ 下有稀疏表示 $s$（$x &#x3D; \Psi s$，$|s|_0 \ll n$）。</p>
+<p>用观测矩阵 $\Phi \in \mathbb{R}^{m \times n}$（$m \ll n$）获得观测 $y &#x3D; \Phi x &#x3D; \Phi \Psi s &#x3D; A s$。</p>
+<p>从 $y &#x3D; As$（严重欠定方程组）中恢复 $s$：</p>
+</blockquote>
+<p>$$</p>
+<p>\min_s |s|_0 \quad \text{s.t.} \quad As &#x3D; y</p>
+<p>$$</p>
+<blockquote>
+<p>用 L1 松弛（基追踪，Basis Pursuit）：</p>
+</blockquote>
+<p>$$</p>
+<p>\min_s |s|_1 \quad \text{s.t.} \quad As &#x3D; y</p>
+<p>$$</p>
+<blockquote>
+<p>在**限制等距性（RIP）**条件下，此 L1 问题能精确恢复稀疏信号 $s$。</p>
+</blockquote>
+<blockquote>
+<p><strong>🔑 限制等距性（RIP 条件）</strong></p>
+<p>矩阵 $A$ 满足 RIP 条件，即对所有 $s$-稀疏向量 $s$，存在 $\delta_s \in (0, 1)$：</p>
+</blockquote>
+<p>$$</p>
+<p>（1-\delta_s）|s|_2^2 \le |As|_2^2 \le （1+\delta_s）|s|_2^2</p>
+<p>$$</p>
+<blockquote>
+<p>RIP 条件保证了 $A$ 不会把不同的稀疏信号压缩到同一个观测，从而保证可恢复性。<strong>随机高斯矩阵</strong>以极高概率满足 RIP 条件。</p>
+</blockquote>
+<blockquote>
+<p><strong>✅ 压缩感知的条件</strong></p>
+<ul>
+<li>信号在某个字典下是<strong>稀疏的</strong></li>
+<li>观测矩阵满足 <strong>RIP 条件</strong>（如随机矩阵）</li>
+<li>观测数 $m \ge O(s \log(n&#x2F;s))$ 即可恢复（$s$ 为稀疏度）</li>
+</ul>
+</blockquote>
+<ul>
+<li>MRI 医学成像（减少扫描时间）</li>
+<li>图像压缩与恢复</li>
+<li>无线通信中的信道估计</li>
+<li>雷达信号处理</li>
+</ul>
+<h3 id="08-对比总结"><a href="#08-对比总结" class="headerlink" title="08. 对比总结"></a>08. 对比总结</h3><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>类型</th>
+<th>核心思想</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Relief</td>
+<td>过滤式</td>
+<td>同类邻居近、异类邻居远</td>
+<td>快速，不依赖学习器，适合二&#x2F;多分类</td>
+</tr>
+<tr>
+<td>LVW</td>
+<td>包裹式</td>
+<td>用学习器评估特征子集性能</td>
+<td>效果好，计算开销大</td>
+</tr>
+<tr>
+<td>L1&#x2F;Lasso</td>
+<td>嵌入式</td>
+<td>L1惩罚使权重稀疏化</td>
+<td>在训练时自动选择特征，高效</td>
+</tr>
+<tr>
+<td>决策树</td>
+<td>嵌入式</td>
+<td>分裂时自动选信息增益最大的特征</td>
+<td>天然特征选择，可解释性强</td>
+</tr>
+<tr>
+<td>字典学习</td>
+<td>无监督稀疏</td>
+<td>学习过完备字典+稀疏系数</td>
+<td>信号稀疏表示，过完备字典</td>
+</tr>
+<tr>
+<td>压缩感知</td>
+<td>信号恢复</td>
+<td>稀疏信号用少量随机观测恢复</td>
+<td>打破奈奎斯特限制，需满足RIP</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>🔑 考试高频考点</strong></p>
+<ul>
+<li>📌 <strong>三类特征选择方法</strong>的区别（过滤式&#x2F;包裹式&#x2F;嵌入式）和各自代表算法</li>
+<li>📌 <strong>Relief 的相关统计量计算公式</strong>：同类近邻差小好，异类近邻差大好</li>
+<li>📌 <strong>L1 vs L2 正则化</strong>：为什么 L1 产生稀疏解（几何直觉！）</li>
+<li>📌 <strong>字典学习</strong>的目标函数和交替优化框架</li>
+<li>📌 <strong>压缩感知的基本原理</strong>：稀疏性 + RIP 条件 → 少量观测可恢复</li>
+</ul>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://chaichai438.github.io">Chaichai</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://chaichai438.github.io/2026/05/27/ML/ml-ch11-feature-selection/">https://chaichai438.github.io/2026/05/27/ML/ml-ch11-feature-selection/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://chaichai438.github.io" target="_blank">Click Start!</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><a class="post-meta__tags" href="/tags/%E8%A5%BF%E7%93%9C%E4%B9%A6/">西瓜书</a><a class="post-meta__tags" href="/tags/%E7%89%B9%E5%BE%81%E9%80%89%E6%8B%A9/">特征选择</a><a class="post-meta__tags" href="/tags/%E7%A8%80%E7%96%8F%E5%AD%A6%E4%B9%A0/">稀疏学习</a><a class="post-meta__tags" href="/tags/L1%E6%AD%A3%E5%88%99%E5%8C%96/">L1正则化</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/05/27/ML/ml-ch09-clustering/" title="第9章：聚类 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">第9章：聚类 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第9章 聚类（Clustering）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  01. 聚类任务概述什么是聚类？它能解决什么问题？ 📌 核心定义 聚类（Clustering）是将数据集中的样本划分为若干个不相交的子集，          每个子集称为一个簇（Cluster）。聚类的目标是：  簇内相似性最大：同一簇内的样本应尽可能彼此相似 簇间差异性最大：不同簇的样本应尽可能不同  形式化表示：给定样本集 $D &#x3D; {x_1, x_2, \ldots, x_m}$，聚类算法将 $D$          划分为 $k$ 个不相交的簇 ${C_l \mid l &#x3D; 1, 2, \ldots, k}$，          满足 $C_i \cap C_j &#x3D; \emptyset$（$i \neq j$）且 $\bigcup_{l&#x3D;1}^k C_l &#x3D; D$。          每个样本 $x_j$ 的簇标记为 $\lambda_j \in {1, 2, \ldots, k}$。 ...</div></div></div></a><a class="pagination-related" href="/2026/05/27/ML/ml-ch10-dimensionality-reduction/" title="第10章：降维与度量学习 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">第10章：降维与度量学习 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第10章 降维与度量学习（Dimensionality Reduction）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  01. k 近邻学习（kNN）最简单的”懒惰学习”算法 🔢 核心思想 **k近邻学习（k-Nearest Neighbor，kNN）是一种懒惰学习（lazy learning）**算法——它不构建显式的模型，而是在预测时直接找到训练集中最近的 $k$ 个样本，用它们的标记来决策。  🍎 通俗理解 你搬到一个新城市，不知道周围的餐厅好不好吃。怎么判断？看最近的几家邻居餐厅的口碑——大家都说好，这家大概也不错。这就是 kNN 的逻辑：我不认识你，但我知道你的邻居，通过邻居来判断你。   📐 kNN 分类规则 给定测试样本 $x$，找其最近的 $k$ 个训练样本构成集合 $N_k(x)$，通过投票决定类别：  $$ \hat{y} &#x3D; \underset{c \in \mathcal{Y}}{\arg\max} \sum_{x_i \in N_k(x)} \mathbb{1}(y_i &#x3D;...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/05/28/ML/ml-ch14-probabilistic-graphical/" title="第14章：概率图模型 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-28</div><div class="info-item-2">第14章：概率图模型 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第14章 概率图模型（Probabilistic Graphical）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  ①. 基本概念与模型分类有向图 vs. 无向图，概率图的两种范式  🗺️ 生活类比：家族族谱 vs. 朋友圈 **有向图（贝叶斯网络）**像家族族谱——你从父母到子女有明确的方向。”基因”沿有向边传递，父子关系带来因果依赖。**无向图（马尔可夫随机场）**像朋友圈——朋友之间没有方向，你们相互影响。”状态”通过无向连接相互约束。  📐 概率图模型 &#x3D; 图结构 + 概率分布 一个概率图模型就是用图 $\mathcal{G}&#x3D;(\mathcal{V},\mathcal{E})$ 描述随机变量集合 $\boldsymbol{X}&#x3D;{X_1,\ldots,X_n}$ 之间的依赖关系，用一套参数 $\boldsymbol{\Theta}$ 来量化这些关系。    有向图（贝叶斯网络） A B C D 父→子    局部条件概率表（CPT）   无向图（马尔可夫随机场） A B C D   ...</div></div></div></a><a class="pagination-related" href="/2026/05/27/ML/ml-ch12-learning-theory/" title="第12章：计算学习理论 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-27</div><div class="info-item-2">第12章：计算学习理论 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第12章 计算学习理论（Learning Theory）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  01. 基础知识与符号学习理论的基本概念和数学工具 🧮 核心概念  📐 基本设置  $\mathcal{X}$：样本空间，$\mathcal{Y}$：标记空间（如 ${-1,+1}$） $\mathcal{D}$：$\mathcal{X} \times \mathcal{Y}$ 上的未知分布 $D &#x3D; {(x_1,y_1),\ldots,(x_m,y_m)}$：从 $\mathcal{D}$ 独立同分布采样的训练集 $h: \mathcal{X} \to \mathcal{Y}$：假设（即学到的分类器） $\mathcal{H}$：假设空间（所有候选假设的集合）    📐 误差的定义  泛化误差（真实误差）：$E(h;\mathcal{D}) &#x3D; P_{(x,y)\sim\mathcal{D}}[h(x)\neq y]$（分布上的期望） 经验误差（训练误差）：$\hat{E}(h;D) &#x3D; ...</div></div></div></a><a class="pagination-related" href="/2026/05/28/ML/ml-ch08-ensemble-learning/" title="第8章：集成学习 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-28</div><div class="info-item-2">第8章：集成学习 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第8章 集成学习（Ensemble Learning）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  1个体与集成集成学习通过投票法（分类）或平均法（回归）将多个”基学习器”组合起来。 集成有效的必要条件 个体学习器要有一定的**”准确性”**（至少比随机猜测好） 个体学习器之间要**”多样性”**（犯不同的错误）  误差-分歧分解（直观版本）：  📐 公式  $$ E &#x3D; \bar{E} - \bar{A} $$ 其中 $E$ 是集成泛化误差，$\bar{E}$ 是个体泛化误差的加权平均，$\bar{A}$ 是分歧（个体之间有多不一致）。分歧越大，集成效果越好。   学习器1准确率 75%  学习器2准确率 75%  学习器3准确率 75% →  集成后 准确率 90%+ 只要错误不重叠，多数投票就能纠错！    🍉 通俗类比 三个独立考官各自有 75% 准确率，但他们犯错的时候不一样。当一个人判断错误，另外两个很可能判断正确，多数投票后错误就被纠正了。这就是”好而不同”的力量。  两大范式   范式 个体关系 ...</div></div></div></a><a class="pagination-related" href="/2026/05/28/ML/ml-ch07-bayesian/" title="第7章：贝叶斯分类器 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-28</div><div class="info-item-2">第7章：贝叶斯分类器 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第7章 贝叶斯分类器（Bayesian）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  1贝叶斯决策论贝叶斯决策论是概率框架下实施决策的基本方法。对于分类任务，在所有相关概率已知的理想情况下，最优分类器由贝叶斯公式给出：  📐 公式  $$ P(c \mid \boldsymbol{x}) &#x3D; \frac{P(\boldsymbol{x} \mid c) P(c)}{P(\boldsymbol{x})} $$  $P(c)$：先验概率（在不知道样本长相的时候，猜它是 $c$ 类的概率） $P(\boldsymbol{x}|c)$：类条件概率（也叫”似然”，已知是 $c$ 类，样本长 $\boldsymbol{x}$ 样的概率） $P(c|\boldsymbol{x})$：后验概率（看到样本 $\boldsymbol{x}$ 后，它是 $c$ 类的更新后的概率）  贝叶斯最优分类器选择后验概率最大的类：  📐 公式  $$ h^*(\boldsymbol{x}) &#x3D; \arg\max_{c \in \mat...</div></div></div></a><a class="pagination-related" href="/2026/05/28/ML/ml-ch15-rule-learning/" title="第15章：规则学习 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-28</div><div class="info-item-2">第15章：规则学习 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第15章 规则学习（Rule Learning）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  ①. 基本概念与”规则”的形式命题规则 vs. 一阶规则，规则集与规则列表  📋 生活类比：医学诊断手册 医生看病的经验，最自然的表达就是”规则”——“如果发烧+咳嗽+白细胞升高，则很可能是细菌感染”。一条规则覆盖一类病例，不需要算概率，不需要调参数，看一眼就懂。规则学习的目标就是从数据中自动挖掘这样的诊断规则。  📜 规则的基本形式 规则的一般形式为：  📐 命题规则（Propositional Rule）  $$ \textbf{IF};(f_1 \in V_1) \land (f_2 \in V_2) \land \cdots \land (f_k \in V_k);\textbf{THEN}; c $$  规则体（body）是属性-值检验的合取，头部（head）是一个类别标签。  规则集（Rule Set）一组无序的规则，每个样本被匹配的规则投票决定类别。冲突时可用优先级解决。 规则列表（Rule List）规则按顺序排...</div></div></div></a><a class="pagination-related" href="/2026/05/28/ML/ml-ch05-neural-networks/" title="第5章：神经网络 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-28</div><div class="info-item-2">第5章：神经网络 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第5章 神经网络（Neural Networks）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  1神经元模型M-P 神经元神经网络的基本单元模拟了生物神经元：接收多个输入信号，加权求和，经激活函数后输出。  📐 公式  $$ y &#x3D; f\left(\sum_{i&#x3D;1}^n w_i x_i - \theta\right) $$ 其中 $f(\cdot)$ 为激活函数，$\theta$ 为偏置阈值。 常用激活函数   函数 表达式 特点    Sigmoid $\sigma(x)&#x3D;\frac{1}{1+e^{-x}}$ 输出 (0,1)，梯度饱和问题   Tanh $\tanh(x)$ 输出 (-1,1)，零中心，仍有饱和   ReLU $\max(0,x)$ 缓解梯度消失，计算简单，但”死神经元”问题   LeakyReLU $\max(\alpha x, x)$ 解决死神经元，$\alpha$ 通常很小    🍉 通俗类比 一个神经元就像公司里的决策者：听取各个下属（输入）的汇报，每个人说话分...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Chaichai</div><div class="author-info-description">Well begun is half-down</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">30</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">60</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Chaichai438"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Chaichai438" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="/1939327800@qq.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#01-%E7%89%B9%E5%BE%81%E9%80%89%E6%8B%A9%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">01. 特征选择概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#02-%E5%AD%90%E9%9B%86%E6%90%9C%E7%B4%A2%E4%B8%8E%E8%AF%84%E4%BB%B7"><span class="toc-number">2.</span> <span class="toc-text">02. 子集搜索与评价</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#03-%E8%BF%87%E6%BB%A4%E5%BC%8F%E9%80%89%E6%8B%A9%EF%BC%9ARelief"><span class="toc-number">3.</span> <span class="toc-text">03. 过滤式选择：Relief</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#04-%E5%8C%85%E8%A3%B9%E5%BC%8F%E9%80%89%E6%8B%A9%EF%BC%9ALVW"><span class="toc-number">4.</span> <span class="toc-text">04. 包裹式选择：LVW</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#05-%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%80%89%E6%8B%A9%E4%B8%8E%E6%AD%A3%E5%88%99%E5%8C%96"><span class="toc-number">5.</span> <span class="toc-text">05. 嵌入式选择与正则化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#L1-%E6%AD%A3%E5%88%99%E5%8C%96%EF%BC%88Lasso%EF%BC%89"><span class="toc-number">6.</span> <span class="toc-text">L1 正则化（Lasso）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#L1-vs-L2-%E6%AD%A3%E5%88%99%E5%8C%96"><span class="toc-number">7.</span> <span class="toc-text">L1 vs L2 正则化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%B3%E7%AD%96%E6%A0%91%E7%9A%84%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%89%B9%E5%BE%81%E9%80%89%E6%8B%A9"><span class="toc-number">8.</span> <span class="toc-text">决策树的嵌入式特征选择</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#06-%E7%A8%80%E7%96%8F%E8%A1%A8%E7%A4%BA%E4%B8%8E%E5%AD%97%E5%85%B8%E5%AD%A6%E4%B9%A0"><span class="toc-number">9.</span> <span class="toc-text">06. 稀疏表示与字典学习</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#07-%E5%8E%8B%E7%BC%A9%E6%84%9F%E7%9F%A5"><span class="toc-number">10.</span> <span class="toc-text">07. 压缩感知</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#08-%E5%AF%B9%E6%AF%94%E6%80%BB%E7%BB%93"><span class="toc-number">11.</span> <span class="toc-text">08. 对比总结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/28/ML/ml-ch01-introduction/" title="第1章：绪论 — 西瓜书学习笔记">第1章：绪论 — 西瓜书学习笔记</a><time datetime="2026-05-27T16:00:00.000Z" title="发表于 2026-05-28 00:00:00">2026-05-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/28/ML/ml-ch03-linear-models/" title="第3章：线性模型 — 西瓜书学习笔记">第3章：线性模型 — 西瓜书学习笔记</a><time datetime="2026-05-27T16:00:00.000Z" title="发表于 2026-05-28 00:00:00">2026-05-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/28/ML/ml-ch04-decision-trees/" title="第4章：决策树 — 西瓜书学习笔记">第4章：决策树 — 西瓜书学习笔记</a><time datetime="2026-05-27T16:00:00.000Z" title="发表于 2026-05-28 00:00:00">2026-05-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/28/ML/ml-ch02-evaluation-and-selection/" title="第2章：模型评估与选择 — 西瓜书学习笔记">第2章：模型评估与选择 — 西瓜书学习笔记</a><time datetime="2026-05-27T16:00:00.000Z" title="发表于 2026-05-28 00:00:00">2026-05-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/28/ML/ml-ch05-neural-networks/" title="第5章：神经网络 — 西瓜书学习笔记">第5章：神经网络 — 西瓜书学习笔记</a><time datetime="2026-05-27T16:00:00.000Z" title="发表于 2026-05-28 00:00:00">2026-05-28</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/neko.png);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Chaichai</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.3</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(async () => {
+  const showKatex = () => {
+    document.querySelectorAll('#article-container .katex').forEach(el => el.classList.add('katex-show'))
+  }
+
+  if (!window.katex_js_css) {
+    window.katex_js_css = true
+    await btf.getCSS('https://cdn.jsdelivr.net/npm/katex@0.16.27/dist/katex.min.css')
+    if (false) {
+      await btf.getScript('https://cdn.jsdelivr.net/npm/katex@0.16.27/dist/contrib/copy-tex.min.js')
+    }
+  }
+
+  showKatex()
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

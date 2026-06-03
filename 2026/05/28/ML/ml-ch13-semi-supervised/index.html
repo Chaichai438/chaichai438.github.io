@@ -1,0 +1,620 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>第13章：半监督学习 — 西瓜书学习笔记 | Click Start!</title><meta name="author" content="Chaichai"><meta name="copyright" content="Chaichai"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="现实中标注数据昂贵、无标签数据廉价——半监督学习正是要充分挖掘无标签样本中蕴藏的分布信息，在尽量少的人工标注代价下学习出性能强大的模型。这是连接监督学习与无监督学习的重要桥梁。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第13章：半监督学习 — 西瓜书学习笔记">
+<meta property="og:url" content="https://chaichai438.github.io/2026/05/28/ML/ml-ch13-semi-supervised/index.html">
+<meta property="og:site_name" content="Click Start!">
+<meta property="og:description" content="现实中标注数据昂贵、无标签数据廉价——半监督学习正是要充分挖掘无标签样本中蕴藏的分布信息，在尽量少的人工标注代价下学习出性能强大的模型。这是连接监督学习与无监督学习的重要桥梁。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://chaichai438.github.io/img/avatar.jpg">
+<meta property="article:published_time" content="2026-05-27T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-27T16:00:00.000Z">
+<meta property="article:author" content="Chaichai">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="西瓜书">
+<meta property="article:tag" content="半监督学习">
+<meta property="article:tag" content="协同训练">
+<meta property="article:tag" content="TSVM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://chaichai438.github.io/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "第13章：半监督学习 — 西瓜书学习笔记",
+  "url": "https://chaichai438.github.io/2026/05/28/ML/ml-ch13-semi-supervised/",
+  "image": "https://chaichai438.github.io/img/avatar.jpg",
+  "datePublished": "2026-05-27T16:00:00.000Z",
+  "dateModified": "2026-05-27T16:00:00.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Chaichai",
+      "url": "https://chaichai438.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/fruitcake.gif"><link rel="canonical" href="https://chaichai438.github.io/2026/05/28/ML/ml-ch13-semi-supervised/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '第13章：半监督学习 — 西瓜书学习笔记',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div class="bg-animation" id="web_bg" style="background-color: #49B202;"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">30</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">60</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-compass"></i><span> 页面</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"><i class="fa-fw fas fa-brain"></i><span> 机器学习</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/neko.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/fruitcake.gif" alt="Logo"><span class="site-name">Click Start!</span></a><a class="nav-page-title" href="/"><span class="site-name">第13章：半监督学习 — 西瓜书学习笔记</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-compass"></i><span> 页面</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"><i class="fa-fw fas fa-brain"></i><span> 机器学习</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">第13章：半监督学习 — 西瓜书学习笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-05-27T16:00:00.000Z" title="发表于 2026-05-28 00:00:00">2026-05-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-05-27T16:00:00.000Z" title="更新于 2026-05-28 00:00:00">2026-05-28</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><blockquote>
+<p>本文是周志华《机器学习》（西瓜书）第13章 <strong>半监督学习</strong>（Semi-Supervised）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。</p>
+</blockquote>
+<h3 id="①-问题概述与基本假设"><a href="#①-问题概述与基本假设" class="headerlink" title="①. 问题概述与基本假设"></a>①. 问题概述与基本假设</h3><p><em>为什么半监督学习有效？三大核心假设</em></p>
+<blockquote>
+<p><strong>🎓 生活类比：考前临时抱佛脚</strong></p>
+<p>期末复习只有 10 道有答案的例题（标注数据），但你手里有 1000 份历年试卷但没有答案（无标签数据）。半监督学习就是：虽然不知道 1000 份的答案，但通过观察这些题目的规律和分布——“这类题总是一起出现”、”这两道题很像”——来辅助你学习那 10 道有答案的题，效果远好于只看 10 道题。</p>
+</blockquote>
+<p>📌 问题设定</p>
+<p>设有<strong>有标记样本集</strong> $D_l &#x3D; {(\boldsymbol{x}<em>1, y_1), \ldots, (\boldsymbol{x}<em>l, y_l)}$，以及<strong>无标记样本集</strong> $D_u &#x3D; {\boldsymbol{x}</em>{l+1}, \ldots, \boldsymbol{x}</em>{l+u}}$，通常 $l \ll u$（标注远少于未标注）。</p>
+<p>半监督学习的目标：利用 $D_l \cup D_u$ 学习一个比仅用 $D_l$ 更好的模型。</p>
+<svg class="svg-viz" viewbox="0 0 680 200" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arr13" markerheight="6" markerwidth="8" orient="auto" refx="8" refy="3">
+<polygon fill="#6b7280" points="0 0, 8 3, 0 6"></polygon>
+</marker>
+</defs>
+<!-- 监督学习 -->
+<rect fill="#dbeafe" height="160" rx="10" stroke="#3b82f6" stroke-width="1.5" width="190" x="20" y="20"></rect>
+<text fill="#1e40af" font-size="13" font-weight="700" text-anchor="middle" x="115" y="48">监督学习</text>
+<!-- 标注点 -->
+<circle cx="55" cy="80" fill="#3b82f6" r="8"></circle><text fill="white" font-size="9" text-anchor="middle" x="55" y="84">✓</text>
+<circle cx="90" cy="100" fill="#ef4444" r="8"></circle><text fill="white" font-size="9" text-anchor="middle" x="90" y="104">✓</text>
+<circle cx="130" cy="70" fill="#3b82f6" r="8"></circle><text fill="white" font-size="9" text-anchor="middle" x="130" y="74">✓</text>
+<circle cx="165" cy="115" fill="#ef4444" r="8"></circle><text fill="white" font-size="9" text-anchor="middle" x="165" y="119">✓</text>
+<text fill="#3b82f6" font-size="11" text-anchor="middle" x="115" y="155">全部有标签</text>
+<!-- 半监督学习 -->
+<rect fill="#d1fae5" height="160" rx="10" stroke="#059669" stroke-width="2" width="190" x="245" y="20"></rect>
+<text fill="#065f46" font-size="13" font-weight="700" text-anchor="middle" x="340" y="48">半监督学习 ✨</text>
+<!-- 标注点 -->
+<circle cx="275" cy="80" fill="#059669" r="8"></circle><text fill="white" font-size="9" text-anchor="middle" x="275" y="84">✓</text>
+<circle cx="315" cy="110" fill="#ef4444" r="8"></circle><text fill="white" font-size="9" text-anchor="middle" x="315" y="114">✓</text>
+<!-- 无标注点 -->
+<circle cx="295" cy="65" fill="none" r="6" stroke="#9ca3af" stroke-dasharray="3,2" stroke-width="1.5"></circle>
+<circle cx="350" cy="90" fill="none" r="6" stroke="#9ca3af" stroke-dasharray="3,2" stroke-width="1.5"></circle>
+<circle cx="370" cy="70" fill="none" r="6" stroke="#9ca3af" stroke-dasharray="3,2" stroke-width="1.5"></circle>
+<circle cx="330" cy="130" fill="none" r="6" stroke="#9ca3af" stroke-dasharray="3,2" stroke-width="1.5"></circle>
+<circle cx="395" cy="115" fill="none" r="6" stroke="#9ca3af" stroke-dasharray="3,2" stroke-width="1.5"></circle>
+<text fill="#059669" font-size="11" text-anchor="middle" x="340" y="155">少量标签 + 大量无标签</text>
+<!-- 无监督学习 -->
+<rect fill="#fef3c7" height="160" rx="10" stroke="#d97706" stroke-width="1.5" width="190" x="470" y="20"></rect>
+<text fill="#92400e" font-size="13" font-weight="700" text-anchor="middle" x="565" y="48">无监督学习</text>
+<circle cx="505" cy="75" fill="none" r="6" stroke="#9ca3af" stroke-dasharray="3,2" stroke-width="1.5"></circle>
+<circle cx="535" cy="95" fill="none" r="6" stroke="#9ca3af" stroke-dasharray="3,2" stroke-width="1.5"></circle>
+<circle cx="560" cy="70" fill="none" r="6" stroke="#9ca3af" stroke-dasharray="3,2" stroke-width="1.5"></circle>
+<circle cx="590" cy="100" fill="none" r="6" stroke="#9ca3af" stroke-dasharray="3,2" stroke-width="1.5"></circle>
+<circle cx="545" cy="125" fill="none" r="6" stroke="#9ca3af" stroke-dasharray="3,2" stroke-width="1.5"></circle>
+<circle cx="615" cy="80" fill="none" r="6" stroke="#9ca3af" stroke-dasharray="3,2" stroke-width="1.5"></circle>
+<text fill="#d97706" font-size="11" text-anchor="middle" x="565" y="155">全部无标签</text>
+</svg>
+实心圆=有标签，虚线圆=无标签
+
+
+<p>🏗️ 三大基本假设</p>
+<p>半监督学习有效性建立在以下假设之上，<strong>若假设不成立，引入无标签数据可能有害！</strong></p>
+<p><strong>平滑性假设（Smoothness）</strong></p>
+<p>若两个样本在输入空间中距离很近，则它们的输出标签也应相似。</p>
+<p>→ 决策边界应穿过低密度区域</p>
+<p><strong>聚类假设（Cluster）</strong></p>
+<p>同一聚类中的样本倾向于属于同一类别，数据的自然聚类结构揭示类别信息。</p>
+<p>→ 聚类等价于分类边界</p>
+<p><strong>流形假设（Manifold）</strong></p>
+<p>高维输入数据分布在某个低维流形上，同一流形上相邻的样本应有相似标签。</p>
+<p>→ 在流形空间中距离近的点具有相似标签（平滑性假设的低维形式）</p>
+<h3 id="②-生成式方法"><a href="#②-生成式方法" class="headerlink" title="②. 生成式方法"></a>②. 生成式方法</h3><p><em>EM 算法 + 高斯混合模型：用概率模型整合无标签数据</em></p>
+<blockquote>
+<p><strong>🎲 生活类比：猜测蘑菇种类</strong></p>
+<p>你是个蘑菇专家，见过 5 种有明确标签的蘑菇样本，还有 100 个不知道种类的蘑菇。生成式方法的思路是：假设所有蘑菇都服从某种混合高斯分布（不同种类是不同的高斯分量），用 EM 算法反复猜测：先猜每个无标签蘑菇最可能是哪一类（E步），再基于这些猜测更新每一类的参数（M步），直到收敛。</p>
+</blockquote>
+<p>📐 高斯混合模型（GMM）半监督</p>
+<p>假设数据由高斯混合分布生成，每个类别对应一个或多个高斯分量：</p>
+<blockquote>
+<p><strong>📐 混合模型</strong></p>
+</blockquote>
+<p>$$</p>
+<p>p(\boldsymbol{x}) &#x3D; \sum_{k&#x3D;1}^{K} \alpha_k \cdot p(\boldsymbol{x} \mid \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)</p>
+<p>$$</p>
+<blockquote>
+<p>其中 $\alpha_k \geq 0, \sum_{k&#x3D;1}^K \alpha_k &#x3D; 1$，$p(\boldsymbol{x} \mid \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)$ 是第 $k$ 个高斯分量。</p>
+</blockquote>
+<p>对数似然函数同时考虑有标签和无标签数据：</p>
+<blockquote>
+<p><strong>📐 联合对数似然</strong></p>
+</blockquote>
+<p>$$</p>
+<p>\mathcal{L} &#x3D; \underbrace{\sum_{(\boldsymbol{x}<em>i, y_i)\in D_l} \ln p(\boldsymbol{x}<em>i, y_i)}</em>{\text{有标签部分}} + \underbrace{\sum</em>{\boldsymbol{x}_j \in D_u} \ln p(\boldsymbol{x}<em>j)}</em>{\text{无标签部分}}</p>
+<p>$$</p>
+<h3 id="EM-算法求解流程"><a href="#EM-算法求解流程" class="headerlink" title="EM 算法求解流程"></a>EM 算法求解流程</h3><p>Algorithm: 半监督 GMM（EM算法）<br>输入: 有标签集 D_l，无标签集 D_u，类别数 K<br>初始化: 由 D_l 估计初始参数 {α_k, μ_k, Σ_k}</p>
+<p>重复直到收敛:<br>  &#x2F;&#x2F; E步：计算每个无标签样本属于各分量的后验概率<br>  for x_j in D_u:<br>    γ_jk &#x3D; α_k · p(x_j|μ_k, Σ_k) &#x2F; Σ_k’ [α_k’ · p(x_j|μ_k’, Σ_k’)]</p>
+<p>  &#x2F;&#x2F; M步：利用 D_l（硬标签）和 D_u（软标签 γ）更新参数<br>  for k &#x3D; 1,…,K:<br>    μ_k ← (Σ_{有标签 y_i&#x3D;k} x_i + Σ_{无标签} γ_jk · x_j) &#x2F; (n_k + Σ_j γ_jk)<br>    Σ_k ← 类似加权协方差更新<br>    α_k ← (n_k + Σ_j γ_jk) &#x2F; (l + u)</p>
+<p>输出: 分类决策函数 f(x) &#x3D; argmax_k γ_k(x)</p>
+<blockquote>
+<p><strong>⚠️ 生成式方法的风险</strong></p>
+<p>模型假设（如高斯分布）若与实际数据分布不符，无标签数据不但无益，反而会<strong>降低</strong>性能——这就是”假设不成立时半监督有害”的典型案例。</p>
+</blockquote>
+<h3 id="③-半监督支持向量机（S³VM-TSVM）"><a href="#③-半监督支持向量机（S³VM-TSVM）" class="headerlink" title="③. 半监督支持向量机（S³VM &#x2F; TSVM）"></a>③. 半监督支持向量机（S³VM &#x2F; TSVM）</h3><p><em>让决策超平面穿过低密度区域</em></p>
+<blockquote>
+<p><strong>✂️ 生活类比：沿峡谷划边界</strong></p>
+<p>普通 SVM 只看有标签点，在它们之间找最宽的”街道”。TSVM 的直觉是：我不仅要让标注点分开，还要让分割线尽量走在数据的”峡谷”（低密度区域），避免把紧密聚集的无标签点群切成两半——因为同一群点很可能是同一类。</p>
+</blockquote>
+<p>📐 TSVM 优化目标</p>
+<p>直觉核心：<strong>决策边界应穿过特征空间中数据分布稀疏的区域</strong>，这与平滑性假设一致。</p>
+<p>为无标签样本分配伪标签 $\hat{y}_j \in {-1, +1}$，然后同时优化：</p>
+<blockquote>
+<p><strong>📐 TSVM 优化问题</strong></p>
+</blockquote>
+<p>$$</p>
+<p>\min_{\boldsymbol{w},b,\hat{y},\boldsymbol{\xi},\hat{\boldsymbol{\xi}}} \frac{1}{2}|\boldsymbol{w}|^2 + C_l\sum_{i&#x3D;1}^l \xi_i + C_u\sum_{j&#x3D;1}^u \hat{\xi}_j</p>
+<p>$$</p>
+<blockquote>
+</blockquote>
+<p>$$</p>
+<p>\text{s.t.}\quad y_i(\boldsymbol{w}^\top\boldsymbol{x}_i+b)\geq 1-\xi_i,\quad \xi_i\geq 0 \quad (i&#x3D;1,\ldots,l)</p>
+<p>$$</p>
+<blockquote>
+</blockquote>
+<p>$$</p>
+<p>\hat{y}_j(\boldsymbol{w}^\top\boldsymbol{x}_j+b)\geq 1-\hat{\xi}_j,\quad \hat{\xi}_j\geq 0 \quad (j&#x3D;1,\ldots,u)</p>
+<p>$$</p>
+<blockquote>
+<p>其中 $C_l, C_u$ 分别控制有标签&#x2F;无标签样本的惩罚力度，通常令 $C_u$ 从小到大逐渐增大。</p>
+</blockquote>
+<svg class="svg-viz" viewbox="0 0 680 220" xmlns="http://www.w3.org/2000/svg">
+<!-- 左：普通SVM -->
+<rect fill="#f8fafc" height="200" rx="8" stroke="#e2e8f0" stroke-width="1" width="315" x="10" y="10"></rect>
+<text fill="#374151" font-size="12" font-weight="700" text-anchor="middle" x="167" y="32">普通 SVM（仅用有标签点）</text>
+<!-- 标注点 -->
+<circle cx="80" cy="100" fill="#3b82f6" r="9"></circle><text fill="white" font-size="9" text-anchor="middle" x="80" y="104">+</text>
+<circle cx="110" cy="130" fill="#3b82f6" r="9"></circle><text fill="white" font-size="9" text-anchor="middle" x="110" y="134">+</text>
+<circle cx="230" cy="90" fill="#ef4444" r="9"></circle><text fill="white" font-size="9" text-anchor="middle" x="230" y="94">-</text>
+<circle cx="260" cy="120" fill="#ef4444" r="9"></circle><text fill="white" font-size="9" text-anchor="middle" x="260" y="124">-</text>
+<!-- 无标注点群（集中在中间） -->
+<circle cx="155" cy="85" fill="none" r="5" stroke="#9ca3af" stroke-dasharray="3,2" stroke-width="1.5"></circle>
+<circle cx="165" cy="105" fill="none" r="5" stroke="#9ca3af" stroke-dasharray="3,2" stroke-width="1.5"></circle>
+<circle cx="150" cy="120" fill="none" r="5" stroke="#9ca3af" stroke-dasharray="3,2" stroke-width="1.5"></circle>
+<circle cx="175" cy="95" fill="none" r="5" stroke="#9ca3af" stroke-dasharray="3,2" stroke-width="1.5"></circle>
+<!-- 决策边界（穿过无标注点群） -->
+<line stroke="#6b7280" stroke-dasharray="5,3" stroke-width="2" x1="163" x2="163" y1="45" y2="185"></line>
+<line opacity=".5" stroke="#6b7280" stroke-dasharray="3,2" stroke-width="1" x1="143" x2="143" y1="45" y2="185"></line>
+<line opacity=".5" stroke="#6b7280" stroke-dasharray="3,2" stroke-width="1" x1="183" x2="183" y1="45" y2="185"></line>
+<text fill="#ef4444" font-size="10" text-anchor="middle" x="163" y="195">❌ 边界穿过数据密集区</text>
+<!-- 右：TSVM -->
+<rect fill="#f0fdf4" height="200" rx="8" stroke="#6ee7b7" stroke-width="1.5" width="315" x="355" y="10"></rect>
+<text fill="#065f46" font-size="12" font-weight="700" text-anchor="middle" x="512" y="32">TSVM（利用无标签点）</text>
+<!-- 标注点 -->
+<circle cx="415" cy="100" fill="#3b82f6" r="9"></circle><text fill="white" font-size="9" text-anchor="middle" x="415" y="104">+</text>
+<circle cx="445" cy="130" fill="#3b82f6" r="9"></circle><text fill="white" font-size="9" text-anchor="middle" x="445" y="134">+</text>
+<circle cx="565" cy="90" fill="#ef4444" r="9"></circle><text fill="white" font-size="9" text-anchor="middle" x="565" y="94">-</text>
+<circle cx="595" cy="120" fill="#ef4444" r="9"></circle><text fill="white" font-size="9" text-anchor="middle" x="595" y="124">-</text>
+<!-- 无标注点群（两侧） -->
+<circle cx="460" cy="90" fill="none" r="5" stroke="#3b82f6" stroke-dasharray="3,2" stroke-width="1.5"></circle>
+<circle cx="470" cy="115" fill="none" r="5" stroke="#3b82f6" stroke-dasharray="3,2" stroke-width="1.5"></circle>
+<circle cx="450" cy="125" fill="none" r="5" stroke="#3b82f6" stroke-dasharray="3,2" stroke-width="1.5"></circle>
+<circle cx="540" cy="100" fill="none" r="5" stroke="#ef4444" stroke-dasharray="3,2" stroke-width="1.5"></circle>
+<circle cx="555" cy="120" fill="none" r="5" stroke="#ef4444" stroke-dasharray="3,2" stroke-width="1.5"></circle>
+<!-- TSVM决策边界（走低密度区） -->
+<line stroke="#059669" stroke-width="2.5" x1="505" x2="505" y1="45" y2="185"></line>
+<line opacity=".5" stroke="#059669" stroke-dasharray="3,2" stroke-width="1" x1="490" x2="490" y1="45" y2="185"></line>
+<line opacity=".5" stroke="#059669" stroke-dasharray="3,2" stroke-width="1" x1="520" x2="520" y1="45" y2="185"></line>
+<text fill="#059669" font-size="10" text-anchor="middle" x="512" y="195">✅ 边界走低密度区间隙</text>
+</svg>
+
+
+<blockquote>
+<p><strong>💡 实现策略：逐步增大 $C_u$</strong></p>
+<p>从 $C_u \ll C_l$ 开始，逐渐增大 $C_u$，使无标签数据的约束越来越严格，防止局部最优陷阱。这是一种<strong>从监督到半监督的平滑过渡</strong>策略。</p>
+</blockquote>
+<h3 id="④-基于图的半监督学习"><a href="#④-基于图的半监督学习" class="headerlink" title="④. 基于图的半监督学习"></a>④. 基于图的半监督学习</h3><p><em>标签传播：让标签在数据图上”流动”</em></p>
+<blockquote>
+<p><strong>🕸️ 生活类比：谣言传播</strong></p>
+<p>把所有样本看成城市里的人，样本越相似，两人之间的”道路”越宽。知道身份的人（有标签）是信息源，通过人际网络把”标签信息”传播出去。住得近（相似度高）的人更容易被影响，最终每个人都会有一个稳定的”标签信念值”。</p>
+</blockquote>
+<p>🔧 图构建与标签传播算法</p>
+<h3 id="Step-1：构建样本图"><a href="#Step-1：构建样本图" class="headerlink" title="Step 1：构建样本图"></a>Step 1：构建样本图</h3><p>将所有 $l+u$ 个样本视为图的节点，边权重 $w_{ij}$ 反映样本相似度，常用高斯核：</p>
+<blockquote>
+<p><strong>📐 高斯权重</strong></p>
+</blockquote>
+<p>$$</p>
+<p>w_{ij} &#x3D; \exp!\left(-\frac{|\boldsymbol{x}_i - \boldsymbol{x}_j|^2}{2\sigma^2}\right)</p>
+<p>$$</p>
+<h3 id="Step-2：标签传播（Label-Propagation）"><a href="#Step-2：标签传播（Label-Propagation）" class="headerlink" title="Step 2：标签传播（Label Propagation）"></a>Step 2：标签传播（Label Propagation）</h3><p>定义概率转移矩阵 $\boldsymbol{T}$（行归一化）：$T_{ij} &#x3D; \frac{w_{ij}}{\sum_k w_{ik}}$</p>
+<blockquote>
+<p><strong>📐 迭代传播公式</strong></p>
+</blockquote>
+<p>$$</p>
+<p>\boldsymbol{F}(t+1) &#x3D; \alpha \boldsymbol{T} \boldsymbol{F}(t) + (1-\alpha)\boldsymbol{Y}</p>
+<p>$$</p>
+<blockquote>
+<p>其中 $\boldsymbol{F}$ 是标签置信矩阵，$\boldsymbol{Y}$ 是初始标签矩阵（有标签行用 one-hot，无标签行全零），$\alpha \in (0,1)$ 控制传播强度。</p>
+</blockquote>
+<p>迭代收敛的闭式解：</p>
+<blockquote>
+<p><strong>📐 闭式解</strong></p>
+</blockquote>
+<p>$$</p>
+<p>\boldsymbol{F}^* &#x3D; (1-\alpha)(\boldsymbol{I} - \alpha\boldsymbol{T})^{-1}\boldsymbol{Y}</p>
+<p>$$</p>
+<svg class="svg-viz" viewbox="0 0 680 200" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arr-lp" markerheight="5" markerwidth="7" orient="auto" refx="7" refy="2.5">
+<polygon fill="#059669" points="0 0, 7 2.5, 0 5"></polygon>
+</marker>
+</defs>
+<!-- 图节点和边 -->
+<!-- 节点1（标注+） -->
+<circle cx="80" cy="100" fill="#dbeafe" r="22" stroke="#3b82f6" stroke-width="2"></circle>
+<text fill="#1e40af" font-size="10" font-weight="700" text-anchor="middle" x="80" y="97">标注</text>
+<text fill="#3b82f6" font-size="13" text-anchor="middle" x="80" y="110">+</text>
+<!-- 无标注节点A -->
+<circle cx="200" cy="70" fill="#f0fdf4" r="20" stroke="#6ee7b7" stroke-dasharray="4,2" stroke-width="2"></circle>
+<text fill="#6b7280" font-size="11" text-anchor="middle" x="200" y="75">?</text>
+<!-- 无标注节点B -->
+<circle cx="200" cy="135" fill="#f0fdf4" r="20" stroke="#6ee7b7" stroke-dasharray="4,2" stroke-width="2"></circle>
+<text fill="#6b7280" font-size="11" text-anchor="middle" x="200" y="140">?</text>
+<!-- 无标注节点C -->
+<circle cx="340" cy="100" fill="#f0fdf4" r="20" stroke="#6ee7b7" stroke-dasharray="4,2" stroke-width="2"></circle>
+<text fill="#6b7280" font-size="11" text-anchor="middle" x="340" y="105">?</text>
+<!-- 节点2（标注-） -->
+<circle cx="480" cy="100" fill="#fee2e2" r="22" stroke="#ef4444" stroke-width="2"></circle>
+<text fill="#991b1b" font-size="10" font-weight="700" text-anchor="middle" x="480" y="97">标注</text>
+<text fill="#ef4444" font-size="13" text-anchor="middle" x="480" y="110">-</text>
+<!-- 无标注节点D -->
+<circle cx="600" cy="100" fill="#f0fdf4" r="20" stroke="#6ee7b7" stroke-dasharray="4,2" stroke-width="2"></circle>
+<text fill="#6b7280" font-size="11" text-anchor="middle" x="600" y="105">?</text>
+<!-- 边 -->
+<line opacity=".6" stroke="#3b82f6" stroke-width="2.5" x1="102" x2="182" y1="90" y2="75"></line>
+<line opacity=".6" stroke="#3b82f6" stroke-width="2.5" x1="102" x2="182" y1="110" y2="130"></line>
+<line stroke="#9ca3af" stroke-width="1.5" x1="220" x2="320" y1="75" y2="95"></line>
+<line stroke="#9ca3af" stroke-width="1.5" x1="220" x2="320" y1="130" y2="105"></line>
+<line stroke="#9ca3af" stroke-width="1.5" x1="360" x2="458" y1="95" y2="100"></line>
+<line opacity=".6" stroke="#ef4444" stroke-width="2.5" x1="502" x2="580" y1="100" y2="100"></line>
+<!-- 传播箭头 -->
+<text fill="#059669" font-size="10" text-anchor="middle" x="140" y="60">w=0.9</text>
+<text fill="#059669" font-size="10" text-anchor="middle" x="140" y="150">w=0.8</text>
+<text fill="#ef4444" font-size="10" text-anchor="middle" x="545" y="92">w=0.85</text>
+<!-- 传播后的结果 -->
+<text fill="#3b82f6" font-size="10" text-anchor="middle" x="200" y="175">→ 传为"+"</text>
+<text fill="#6b7280" font-size="10" text-anchor="middle" x="340" y="175">→ 中性</text>
+<text fill="#ef4444" font-size="10" text-anchor="middle" x="600" y="175">→ 传为"-"</text>
+</svg>
+标签沿高权重边传播，与有标签节点越近（边权越大）影响越强
+
+
+<blockquote>
+<p><strong>🔑 标签传播 vs. 标签扩散</strong></p>
+<ul>
+<li><strong>标签传播（Label Propagation）</strong>：有标签节点的标签固定（钳制），标签只向无标签节点传播。</li>
+<li><strong>标签扩散（Label Spreading）</strong>：引入正则化参数 $\alpha$，有标签节点也可被邻居”影响”，更鲁棒但可能偏移原始标签。</li>
+</ul>
+</blockquote>
+<h3 id="⑤-基于分歧的方法（协同训练）"><a href="#⑤-基于分歧的方法（协同训练）" class="headerlink" title="⑤. 基于分歧的方法（协同训练）"></a>⑤. 基于分歧的方法（协同训练）</h3><p><em>多视图学习：让不同视角的模型互相”教”对方</em></p>
+<blockquote>
+<p><strong>👫 生活类比：两个专家互相补课</strong></p>
+<p>数学老师和物理老师共同批改同一批没有答案的题。数学老师对某道题有 95% 把握，就把它的”答案”告诉物理老师补充训练；物理老师对另一道题有把握，反过来告诉数学老师。通过互相”喂高置信样本”，两位老师的综合能力越来越强。</p>
+</blockquote>
+<p>🔄 协同训练（Co-Training）算法</p>
+<blockquote>
+<p><strong>🔑 多视图假设</strong></p>
+<p>数据可分解为两个充分且条件独立的视图（特征集），如：一个网页的<strong>文字内容</strong>和<strong>超链接锚文本</strong>。</p>
+</blockquote>
+<p>Algorithm: Co-Training（协同训练）<br>输入: 有标签集 L，无标签池 U，视图1特征 X¹，视图2特征 X²</p>
+<p>&#x2F;&#x2F; 初始化两个分类器<br>h₁ ← 在 (X¹_L, Y_L) 上训练<br>h₂ ← 在 (X²_L, Y_L) 上训练</p>
+<p>重复 T 轮:<br>  &#x2F;&#x2F; 各自对无标签数据预测，挑出最有把握的<br>  P₁ ← h₁ 在 U 上预测置信度最高的 p 个正例和 n 个负例<br>  P₂ ← h₂ 在 U 上预测置信度最高的 p 个正例和 n 个负例</p>
+<p>  &#x2F;&#x2F; 互相”喂”高置信样本（关键！）<br>  用 P₁ 的伪标签扩充 h₂ 的训练集<br>  用 P₂ 的伪标签扩充 h₁ 的训练集</p>
+<p>  &#x2F;&#x2F; 更新两个分类器<br>  从 U 中移除 P₁ ∪ P₂</p>
+<p>输出: 集成分类器 h₁ + h₂</p>
+<blockquote>
+<p><strong>✅ 优点</strong></p>
+<ul>
+<li>不要求生成式假设，适用性广</li>
+<li>两个视图的”分歧”提供了天然的信号</li>
+<li>理论保证：若视图充分且独立，性能随无标签数据增多单调提升</li>
+</ul>
+</blockquote>
+<blockquote>
+<p><strong>⚠️ 局限</strong></p>
+<ul>
+<li>需要自然存在的多视图（特征分割有时很难）</li>
+<li>若两个视图有相关性，效果打折</li>
+<li>错误的伪标签会累积（error accumulation）</li>
+</ul>
+</blockquote>
+<h3 id="单视图变体：自训练（Self-Training）"><a href="#单视图变体：自训练（Self-Training）" class="headerlink" title="单视图变体：自训练（Self-Training）"></a>单视图变体：自训练（Self-Training）</h3><p>只用一个模型，每轮将自己最自信的预测结果加入训练集，循环迭代。简单有效但误差积累风险更高。</p>
+<p>Algorithm: Self-Training（自训练）<br>输入: 有标签集 L，无标签池 U<br>h ← 在 L 上训练初始模型</p>
+<p>重复直到 U 为空或达到上限:<br>  对 U 中所有样本预测，取置信度 &gt; θ 的样本集合 Û<br>  将 (Û, 伪标签) 加入 L，从 U 移除<br>  h ← 在新的 L 上重新训练</p>
+<p>输出: h</p>
+<h3 id="⑥-半监督聚类"><a href="#⑥-半监督聚类" class="headerlink" title="⑥. 半监督聚类"></a>⑥. 半监督聚类</h3><p><em>用少量先验约束引导聚类方向</em></p>
+<p>🔗 约束 k-均值（Constrained k-Means）</p>
+<p>在经典 k-Means 基础上引入**必连（must-link）<strong>和</strong>勿连（cannot-link）**约束：</p>
+<blockquote>
+<p><strong>🔗 必连约束（Must-Link）</strong></p>
+<p>样本 $\boldsymbol{x}_i$ 与 $\boldsymbol{x}_j$ 必须在<strong>同一</strong>簇中。</p>
+<p>来源：已知同类的标注对</p>
+</blockquote>
+<blockquote>
+<p><strong>⛔ 勿连约束（Cannot-Link）</strong></p>
+<p>样本 $\boldsymbol{x}_i$ 与 $\boldsymbol{x}_j$ 必须在<strong>不同</strong>簇中。</p>
+<p>来源：已知异类的标注对</p>
+</blockquote>
+<p>Algorithm: Constrained k-Means<br>输入: 样本集 X，簇数 k，约束集 M（必连）, C（勿连）<br>初始化: 随机选 k 个中心 {μ₁,…,μk}</p>
+<p>重复直到收敛:<br>  for x_i in X:<br>    &#x2F;&#x2F; 找最近中心，但要满足约束<br>    λ(x_i) ← argmin_{k} d(x_i, μ_k)  s.t. 不违反 M 和 C 中的约束</p>
+<p>  &#x2F;&#x2F; 更新中心<br>  μ_k ← mean({x_i : λ(x_i) &#x3D; k})</p>
+<p>若无满足约束的分配: 报错（约束冲突）</p>
+<h3 id="半监督聚类的另一思路：带标签引导"><a href="#半监督聚类的另一思路：带标签引导" class="headerlink" title="半监督聚类的另一思路：带标签引导"></a>半监督聚类的另一思路：带标签引导</h3><p>直接利用少量标注样本初始化聚类中心，或用标注样本的分布来调整距离度量，让聚类空间更符合任务目标。</p>
+<blockquote>
+<p><strong>💡 两种监督信息来源</strong></p>
+<ul>
+<li><strong>标注信息</strong>：部分样本已知类别，可直接作为聚类锚点</li>
+<li><strong>成对约束</strong>：只知道”这两个是同类”或”不同类”，无需具体类别标签，更易获取</li>
+</ul>
+</blockquote>
+<h3 id="⑦-方法横向对比与总结"><a href="#⑦-方法横向对比与总结" class="headerlink" title="⑦. 方法横向对比与总结"></a>⑦. 方法横向对比与总结</h3><p><em>四类半监督方法的适用场景与优劣</em></p>
+<table>
+<thead>
+<tr>
+<th>方法类别</th>
+<th>代表算法</th>
+<th>核心假设</th>
+<th>优点</th>
+<th>缺点&#x2F;风险</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>生成式方法</td>
+<td>GMM + EM</td>
+<td>数据来自参数化分布</td>
+<td>有概率解释，可计算不确定性</td>
+<td>模型误规约导致性能下降</td>
+<td>分布假设较合理的低维数据</td>
+</tr>
+<tr>
+<td>半监督 SVM</td>
+<td>TSVM、S³VM</td>
+<td>决策面走低密度区</td>
+<td>最大间隔原则，鲁棒</td>
+<td>计算代价高，非凸优化</td>
+<td>中小规模二分类</td>
+</tr>
+<tr>
+<td>图半监督</td>
+<td>LPA、LGC、流形正则</td>
+<td>平滑性&#x2F;流形假设</td>
+<td>直觉清晰，支持多类</td>
+<td>图构建开销大，不易泛化到新点</td>
+<td>有明显流形结构的数据</td>
+</tr>
+<tr>
+<td>协同训练</td>
+<td>Co-Training、Self-Training</td>
+<td>多视图充分且独立</td>
+<td>无分布假设，灵活</td>
+<td>错误累积，视图分割难</td>
+<td>存在多视图的文本&#x2F;多模态数据</td>
+</tr>
+<tr>
+<td>半监督聚类</td>
+<td>约束 k-Means</td>
+<td>聚类结构对齐分类</td>
+<td>利用成对约束，标注代价低</td>
+<td>约束冲突导致失败</td>
+<td>获取成对约束比类别标签更容易时</td>
+</tr>
+</tbody></table>
+<p>🎯 半监督学习使用决策树</p>
+<svg class="svg-viz" viewbox="0 0 680 280" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arr-dec" markerheight="5" markerwidth="7" orient="auto" refx="7" refy="2.5">
+<polygon fill="#6b7280" points="0 0, 7 2.5, 0 5"></polygon>
+</marker>
+</defs>
+<!-- Root -->
+<rect fill="#059669" height="44" rx="8" width="200" x="240" y="10"></rect>
+<text fill="#fff" font-size="11.5" font-weight="700" text-anchor="middle" x="340" y="32">有无标签数据可用？</text>
+<text fill="rgba(255,255,255,.8)" font-size="10" text-anchor="middle" x="340" y="46">l ≪ u</text>
+<!-- Yes -->
+<line marker-end="url(#arr-dec)" stroke="#6b7280" stroke-width="1.5" x1="290" x2="170" y1="54" y2="100"></line>
+<text fill="#059669" font-size="10" font-weight="600" x="200" y="88">是</text>
+<!-- No -->
+<line marker-end="url(#arr-dec)" stroke="#6b7280" stroke-width="1.5" x1="390" x2="510" y1="54" y2="100"></line>
+<text fill="#ef4444" font-size="10" font-weight="600" x="470" y="88">否</text>
+<!-- 有无标签，进一步 -->
+<rect fill="#d1fae5" height="40" rx="8" stroke="#059669" stroke-width="1.5" width="180" x="80" y="100"></rect>
+<text fill="#065f46" font-size="11" text-anchor="middle" x="170" y="118">数据有自然多视图？</text>
+<text fill="#6b7280" font-size="10" text-anchor="middle" x="170" y="132">（多特征集）</text>
+<rect fill="#f1f5f9" height="40" rx="8" stroke="#94a3b8" stroke-width="1.5" width="160" x="420" y="100"></rect>
+<text fill="#374151" font-size="11" text-anchor="middle" x="500" y="124">使用普通监督学习</text>
+<!-- 多视图 Yes -> 协同训练 -->
+<line marker-end="url(#arr-dec)" stroke="#6b7280" stroke-width="1.5" x1="130" x2="90" y1="140" y2="190"></line>
+<text fill="#059669" font-size="10" font-weight="600" x="92" y="176">是</text>
+<rect fill="#d1fae5" height="36" rx="8" stroke="#059669" stroke-width="1.5" width="140" x="20" y="190"></rect>
+<text fill="#065f46" font-size="11" text-anchor="middle" x="90" y="212">协同训练</text>
+<!-- 多视图 No -> 分布已知? -->
+<line marker-end="url(#arr-dec)" stroke="#6b7280" stroke-width="1.5" x1="210" x2="250" y1="140" y2="190"></line>
+<text fill="#ef4444" font-size="10" font-weight="600" x="240" y="176">否</text>
+<rect fill="#d1fae5" height="36" rx="8" stroke="#059669" stroke-width="1.5" width="160" x="185" y="190"></rect>
+<text fill="#065f46" font-size="11" text-anchor="middle" x="265" y="206">数据有流形结构？</text>
+<text fill="#6b7280" font-size="10" text-anchor="middle" x="265" y="220">（高维但低维分布）</text>
+<!-- 流形 Yes -> 图半监督 -->
+<line marker-end="url(#arr-dec)" stroke="#6b7280" stroke-width="1.5" x1="230" x2="190" y1="226" y2="260"></line>
+<rect fill="#d1fae5" height="30" rx="8" stroke="#059669" stroke-width="1.5" width="120" x="130" y="255"></rect>
+<text fill="#065f46" font-size="10.5" text-anchor="middle" x="190" y="275">图半监督学习</text>
+<!-- 流形 No -> TSVM -->
+<line marker-end="url(#arr-dec)" stroke="#6b7280" stroke-width="1.5" x1="305" x2="350" y1="226" y2="260"></line>
+<rect fill="#d1fae5" height="30" rx="8" stroke="#059669" stroke-width="1.5" width="130" x="305" y="255"></rect>
+<text fill="#065f46" font-size="10.5" text-anchor="middle" x="370" y="275">TSVM / 生成式</text>
+</svg>
+
+
+<p>📝 核心公式速查</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>关键公式</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GMM-EM E步</td>
+<td>$\gamma_{jk} &#x3D; \dfrac{\alpha_k p(\boldsymbol{x}_j</td>
+<td>\boldsymbol{\mu}<em>k,\boldsymbol{\Sigma}<em>k)}{\sum</em>{k’}\alpha</em>{k’} p(\boldsymbol{x}_j</td>
+</tr>
+<tr>
+<td>TSVM 目标</td>
+<td>$\min \frac{1}{2}|\boldsymbol{w}|^2 + C_l\sum\xi_i + C_u\sum\hat{\xi}_j$</td>
+<td>同时最大化有&#x2F;无标签样本间隔</td>
+</tr>
+<tr>
+<td>标签传播</td>
+<td>$\boldsymbol{F}^* &#x3D; (1-\alpha)(\boldsymbol{I}-\alpha\boldsymbol{T})^{-1}\boldsymbol{Y}$</td>
+<td>迭代传播的闭式稳态解</td>
+</tr>
+<tr>
+<td>图权重</td>
+<td>$w_{ij} &#x3D; \exp(-|\boldsymbol{x}_i-\boldsymbol{x}_j|^2 &#x2F; 2\sigma^2)$</td>
+<td>高斯核衡量样本相似度</td>
+</tr>
+</tbody></table>
+<p><strong>半监督学习的核心矛盾</strong>：无标签数据理论上能帮助模型，但<em>只有当数据假设（平滑性&#x2F;聚类&#x2F;流形）成立时</em>才真的有帮助——这要求我们在使用前仔细检验数据结构，而非盲目引入无标签数据。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://chaichai438.github.io">Chaichai</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://chaichai438.github.io/2026/05/28/ML/ml-ch13-semi-supervised/">https://chaichai438.github.io/2026/05/28/ML/ml-ch13-semi-supervised/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://chaichai438.github.io" target="_blank">Click Start!</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><a class="post-meta__tags" href="/tags/%E8%A5%BF%E7%93%9C%E4%B9%A6/">西瓜书</a><a class="post-meta__tags" href="/tags/%E5%8D%8A%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/">半监督学习</a><a class="post-meta__tags" href="/tags/%E5%8D%8F%E5%90%8C%E8%AE%AD%E7%BB%83/">协同训练</a><a class="post-meta__tags" href="/tags/TSVM/">TSVM</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/05/28/ML/ml-ch14-probabilistic-graphical/" title="第14章：概率图模型 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">第14章：概率图模型 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第14章 概率图模型（Probabilistic Graphical）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  ①. 基本概念与模型分类有向图 vs. 无向图，概率图的两种范式  🗺️ 生活类比：家族族谱 vs. 朋友圈 **有向图（贝叶斯网络）**像家族族谱——你从父母到子女有明确的方向。”基因”沿有向边传递，父子关系带来因果依赖。**无向图（马尔可夫随机场）**像朋友圈——朋友之间没有方向，你们相互影响。”状态”通过无向连接相互约束。  📐 概率图模型 &#x3D; 图结构 + 概率分布 一个概率图模型就是用图 $\mathcal{G}&#x3D;(\mathcal{V},\mathcal{E})$ 描述随机变量集合 $\boldsymbol{X}&#x3D;{X_1,\ldots,X_n}$ 之间的依赖关系，用一套参数 $\boldsymbol{\Theta}$ 来量化这些关系。    有向图（贝叶斯网络） A B C D 父→子    局部条件概率表（CPT）   无向图（马尔可夫随机场） A B C D   ...</div></div></div></a><a class="pagination-related" href="/2026/05/28/ML/ml-ch06-svm/" title="第6章：支持向量机 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">第6章：支持向量机 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第6章 支持向量机（SVM）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  1间隔与支持向量SVM 的目标是找到一个超平面 $w^\top x + b &#x3D; 0$，使两类样本到它的最小距离最大化：  📐 公式  $$ \max_{\boldsymbol{w},b} \frac{2}{|\boldsymbol{w}|} \quad \text{s.t.} \quad y_i(\boldsymbol{w}^\top \boldsymbol{x}_i + b) \ge 1,; i&#x3D;1,\dots,m $$ 等价于最小化 $\frac{1}{2}|\boldsymbol{w}|^2$。距离超平面最近的几个样本称为支持向量（Support Vectors），它们决定了超平面的位置。    wTx+b=0（决策边界）    wTx+b=1 wTx+b=-1 间隔 = 2/||w||         ★ 支持向量（大圆点）决定边界位置    🍉 通俗类比 SVM 像是在两群人之间拉一条警戒隔离带。要的不是刚好把人分开就行...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/05/27/ML/ml-ch09-clustering/" title="第9章：聚类 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-27</div><div class="info-item-2">第9章：聚类 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第9章 聚类（Clustering）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  01. 聚类任务概述什么是聚类？它能解决什么问题？ 📌 核心定义 聚类（Clustering）是将数据集中的样本划分为若干个不相交的子集，          每个子集称为一个簇（Cluster）。聚类的目标是：  簇内相似性最大：同一簇内的样本应尽可能彼此相似 簇间差异性最大：不同簇的样本应尽可能不同  形式化表示：给定样本集 $D &#x3D; {x_1, x_2, \ldots, x_m}$，聚类算法将 $D$          划分为 $k$ 个不相交的簇 ${C_l \mid l &#x3D; 1, 2, \ldots, k}$，          满足 $C_i \cap C_j &#x3D; \emptyset$（$i \neq j$）且 $\bigcup_{l&#x3D;1}^k C_l &#x3D; D$。          每个样本 $x_j$ 的簇标记为 $\lambda_j \in {1, 2, \ldots, k}$。 ...</div></div></div></a><a class="pagination-related" href="/2026/05/28/ML/ml-ch16-reinforcement-learning/" title="第16章：强化学习 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-28</div><div class="info-item-2">第16章：强化学习 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第16章 强化学习（Reinforcement Learning）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  ①. 任务与框架：MDP马尔可夫决策过程：状态、动作、奖励、转移  🐕 生活类比：训狗学把戏 你不直接告诉狗狗”坐下”的精确肌肉指令，你只在它做对时给一根骨头（奖励），做错时不给。狗狗试了无数次后才隐约明白”哪种行为更容易拿到骨头”。它不知道全局最优策略是什么，只能在试错中逐渐逼近。  🎮 MDP 四要素   智能体 (Agent) 策略 π  环境 (Environment) 动态 P,R   动作 a_t   新状态 s_{t+1} + 奖励 r_t           要素 符号 含义    状态空间 $\mathcal{S}$ 所有可能的环境状态   动作空间 $\mathcal{A}$ 智能体可执行的动作   状态转移概率 $P(s’ s,a)$   奖励函数 $R(s,a)$ 或 $R(s,a,s’)$ 即时获得的标量奖励   策略 $\pi(a s)$   📐 核心概念：值函数与 Bellman ...</div></div></div></a><a class="pagination-related" href="/2026/05/28/ML/ml-ch15-rule-learning/" title="第15章：规则学习 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-28</div><div class="info-item-2">第15章：规则学习 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第15章 规则学习（Rule Learning）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  ①. 基本概念与”规则”的形式命题规则 vs. 一阶规则，规则集与规则列表  📋 生活类比：医学诊断手册 医生看病的经验，最自然的表达就是”规则”——“如果发烧+咳嗽+白细胞升高，则很可能是细菌感染”。一条规则覆盖一类病例，不需要算概率，不需要调参数，看一眼就懂。规则学习的目标就是从数据中自动挖掘这样的诊断规则。  📜 规则的基本形式 规则的一般形式为：  📐 命题规则（Propositional Rule）  $$ \textbf{IF};(f_1 \in V_1) \land (f_2 \in V_2) \land \cdots \land (f_k \in V_k);\textbf{THEN}; c $$  规则体（body）是属性-值检验的合取，头部（head）是一个类别标签。  规则集（Rule Set）一组无序的规则，每个样本被匹配的规则投票决定类别。冲突时可用优先级解决。 规则列表（Rule List）规则按顺序排...</div></div></div></a><a class="pagination-related" href="/2026/05/28/ML/ml-ch06-svm/" title="第6章：支持向量机 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-28</div><div class="info-item-2">第6章：支持向量机 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第6章 支持向量机（SVM）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  1间隔与支持向量SVM 的目标是找到一个超平面 $w^\top x + b &#x3D; 0$，使两类样本到它的最小距离最大化：  📐 公式  $$ \max_{\boldsymbol{w},b} \frac{2}{|\boldsymbol{w}|} \quad \text{s.t.} \quad y_i(\boldsymbol{w}^\top \boldsymbol{x}_i + b) \ge 1,; i&#x3D;1,\dots,m $$ 等价于最小化 $\frac{1}{2}|\boldsymbol{w}|^2$。距离超平面最近的几个样本称为支持向量（Support Vectors），它们决定了超平面的位置。    wTx+b=0（决策边界）    wTx+b=1 wTx+b=-1 间隔 = 2/||w||         ★ 支持向量（大圆点）决定边界位置    🍉 通俗类比 SVM 像是在两群人之间拉一条警戒隔离带。要的不是刚好把人分开就行...</div></div></div></a><a class="pagination-related" href="/2026/05/28/ML/ml-ch04-decision-trees/" title="第4章：决策树 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-28</div><div class="info-item-2">第4章：决策树 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第4章 决策树（Decision Trees）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  1基本流程决策树是一棵用于分类的树形结构：内部节点对应属性测试，分支对应该属性的可能取值，叶子节点给出分类结果。 算法：TreeGenerate(D)  生成节点 node if D 中样本全属于同一类别 C： 将 node 标记为 C 类叶节点；return if A &#x3D; ∅ OR D 中样本在 A 上取值相同： 将 node 标记为 D 中样本数最多的类；return 从 A 中选最优划分属性 a* for a* 的每个取值 a_v： 为 node 生成一个分支；令 D_v 为在 a* 上取值为 a_v 的样本子集 if D_v &#x3D; ∅：将分支节点标记为 D 中样本数最多的类 else：以 TreeGenerate(D_v, A \ {a*}) 为分支节点   🍉 通俗类比 决策树就像你玩**”是谁杀了小明”**的推理游戏。每个问题（节点）都是一个关于嫌疑人的属性测试：ta是男是女？有没有不在场证明？案发时在不...</div></div></div></a><a class="pagination-related" href="/2026/05/28/ML/ml-ch07-bayesian/" title="第7章：贝叶斯分类器 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-28</div><div class="info-item-2">第7章：贝叶斯分类器 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第7章 贝叶斯分类器（Bayesian）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  1贝叶斯决策论贝叶斯决策论是概率框架下实施决策的基本方法。对于分类任务，在所有相关概率已知的理想情况下，最优分类器由贝叶斯公式给出：  📐 公式  $$ P(c \mid \boldsymbol{x}) &#x3D; \frac{P(\boldsymbol{x} \mid c) P(c)}{P(\boldsymbol{x})} $$  $P(c)$：先验概率（在不知道样本长相的时候，猜它是 $c$ 类的概率） $P(\boldsymbol{x}|c)$：类条件概率（也叫”似然”，已知是 $c$ 类，样本长 $\boldsymbol{x}$ 样的概率） $P(c|\boldsymbol{x})$：后验概率（看到样本 $\boldsymbol{x}$ 后，它是 $c$ 类的更新后的概率）  贝叶斯最优分类器选择后验概率最大的类：  📐 公式  $$ h^*(\boldsymbol{x}) &#x3D; \arg\max_{c \in \mat...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Chaichai</div><div class="author-info-description">Well begun is half-down</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">30</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">60</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Chaichai438"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Chaichai438" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="/1939327800@qq.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%91%A0-%E9%97%AE%E9%A2%98%E6%A6%82%E8%BF%B0%E4%B8%8E%E5%9F%BA%E6%9C%AC%E5%81%87%E8%AE%BE"><span class="toc-number">1.</span> <span class="toc-text">①. 问题概述与基本假设</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%91%A1-%E7%94%9F%E6%88%90%E5%BC%8F%E6%96%B9%E6%B3%95"><span class="toc-number">2.</span> <span class="toc-text">②. 生成式方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#EM-%E7%AE%97%E6%B3%95%E6%B1%82%E8%A7%A3%E6%B5%81%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">EM 算法求解流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%91%A2-%E5%8D%8A%E7%9B%91%E7%9D%A3%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA%EF%BC%88S%C2%B3VM-TSVM%EF%BC%89"><span class="toc-number">4.</span> <span class="toc-text">③. 半监督支持向量机（S³VM &#x2F; TSVM）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%91%A3-%E5%9F%BA%E4%BA%8E%E5%9B%BE%E7%9A%84%E5%8D%8A%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0"><span class="toc-number">5.</span> <span class="toc-text">④. 基于图的半监督学习</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Step-1%EF%BC%9A%E6%9E%84%E5%BB%BA%E6%A0%B7%E6%9C%AC%E5%9B%BE"><span class="toc-number">6.</span> <span class="toc-text">Step 1：构建样本图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Step-2%EF%BC%9A%E6%A0%87%E7%AD%BE%E4%BC%A0%E6%92%AD%EF%BC%88Label-Propagation%EF%BC%89"><span class="toc-number">7.</span> <span class="toc-text">Step 2：标签传播（Label Propagation）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%91%A4-%E5%9F%BA%E4%BA%8E%E5%88%86%E6%AD%A7%E7%9A%84%E6%96%B9%E6%B3%95%EF%BC%88%E5%8D%8F%E5%90%8C%E8%AE%AD%E7%BB%83%EF%BC%89"><span class="toc-number">8.</span> <span class="toc-text">⑤. 基于分歧的方法（协同训练）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%95%E8%A7%86%E5%9B%BE%E5%8F%98%E4%BD%93%EF%BC%9A%E8%87%AA%E8%AE%AD%E7%BB%83%EF%BC%88Self-Training%EF%BC%89"><span class="toc-number">9.</span> <span class="toc-text">单视图变体：自训练（Self-Training）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%91%A5-%E5%8D%8A%E7%9B%91%E7%9D%A3%E8%81%9A%E7%B1%BB"><span class="toc-number">10.</span> <span class="toc-text">⑥. 半监督聚类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%8A%E7%9B%91%E7%9D%A3%E8%81%9A%E7%B1%BB%E7%9A%84%E5%8F%A6%E4%B8%80%E6%80%9D%E8%B7%AF%EF%BC%9A%E5%B8%A6%E6%A0%87%E7%AD%BE%E5%BC%95%E5%AF%BC"><span class="toc-number">11.</span> <span class="toc-text">半监督聚类的另一思路：带标签引导</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%91%A6-%E6%96%B9%E6%B3%95%E6%A8%AA%E5%90%91%E5%AF%B9%E6%AF%94%E4%B8%8E%E6%80%BB%E7%BB%93"><span class="toc-number">12.</span> <span class="toc-text">⑦. 方法横向对比与总结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/28/ML/ml-ch01-introduction/" title="第1章：绪论 — 西瓜书学习笔记">第1章：绪论 — 西瓜书学习笔记</a><time datetime="2026-05-27T16:00:00.000Z" title="发表于 2026-05-28 00:00:00">2026-05-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/28/ML/ml-ch03-linear-models/" title="第3章：线性模型 — 西瓜书学习笔记">第3章：线性模型 — 西瓜书学习笔记</a><time datetime="2026-05-27T16:00:00.000Z" title="发表于 2026-05-28 00:00:00">2026-05-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/28/ML/ml-ch04-decision-trees/" title="第4章：决策树 — 西瓜书学习笔记">第4章：决策树 — 西瓜书学习笔记</a><time datetime="2026-05-27T16:00:00.000Z" title="发表于 2026-05-28 00:00:00">2026-05-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/28/ML/ml-ch02-evaluation-and-selection/" title="第2章：模型评估与选择 — 西瓜书学习笔记">第2章：模型评估与选择 — 西瓜书学习笔记</a><time datetime="2026-05-27T16:00:00.000Z" title="发表于 2026-05-28 00:00:00">2026-05-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/28/ML/ml-ch05-neural-networks/" title="第5章：神经网络 — 西瓜书学习笔记">第5章：神经网络 — 西瓜书学习笔记</a><time datetime="2026-05-27T16:00:00.000Z" title="发表于 2026-05-28 00:00:00">2026-05-28</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/neko.png);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Chaichai</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.3</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(async () => {
+  const showKatex = () => {
+    document.querySelectorAll('#article-container .katex').forEach(el => el.classList.add('katex-show'))
+  }
+
+  if (!window.katex_js_css) {
+    window.katex_js_css = true
+    await btf.getCSS('https://cdn.jsdelivr.net/npm/katex@0.16.27/dist/katex.min.css')
+    if (false) {
+      await btf.getScript('https://cdn.jsdelivr.net/npm/katex@0.16.27/dist/contrib/copy-tex.min.js')
+    }
+  }
+
+  showKatex()
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

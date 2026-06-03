@@ -1,0 +1,429 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>第15章：规则学习 — 西瓜书学习笔记 | Click Start!</title><meta name="author" content="Chaichai"><meta name="copyright" content="Chaichai"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="用人类最自然的 IF-THEN 形式表达知识——规则学习追求的不只是预测准确性，更是可解释性。当你要向别人解释&#39;为什么这样判断&#39;时，一条清晰的规则胜过一千个参数。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第15章：规则学习 — 西瓜书学习笔记">
+<meta property="og:url" content="https://chaichai438.github.io/2026/05/28/ML/ml-ch15-rule-learning/index.html">
+<meta property="og:site_name" content="Click Start!">
+<meta property="og:description" content="用人类最自然的 IF-THEN 形式表达知识——规则学习追求的不只是预测准确性，更是可解释性。当你要向别人解释&#39;为什么这样判断&#39;时，一条清晰的规则胜过一千个参数。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://chaichai438.github.io/img/avatar.jpg">
+<meta property="article:published_time" content="2026-05-27T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-27T16:00:00.000Z">
+<meta property="article:author" content="Chaichai">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="西瓜书">
+<meta property="article:tag" content="规则学习">
+<meta property="article:tag" content="序贯覆盖">
+<meta property="article:tag" content="剪枝优化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://chaichai438.github.io/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "第15章：规则学习 — 西瓜书学习笔记",
+  "url": "https://chaichai438.github.io/2026/05/28/ML/ml-ch15-rule-learning/",
+  "image": "https://chaichai438.github.io/img/avatar.jpg",
+  "datePublished": "2026-05-27T16:00:00.000Z",
+  "dateModified": "2026-05-27T16:00:00.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Chaichai",
+      "url": "https://chaichai438.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/fruitcake.gif"><link rel="canonical" href="https://chaichai438.github.io/2026/05/28/ML/ml-ch15-rule-learning/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '第15章：规则学习 — 西瓜书学习笔记',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div class="bg-animation" id="web_bg" style="background-color: #49B202;"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">30</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">60</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-compass"></i><span> 页面</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"><i class="fa-fw fas fa-brain"></i><span> 机器学习</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/neko.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/fruitcake.gif" alt="Logo"><span class="site-name">Click Start!</span></a><a class="nav-page-title" href="/"><span class="site-name">第15章：规则学习 — 西瓜书学习笔记</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-compass"></i><span> 页面</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"><i class="fa-fw fas fa-brain"></i><span> 机器学习</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">第15章：规则学习 — 西瓜书学习笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-05-27T16:00:00.000Z" title="发表于 2026-05-28 00:00:00">2026-05-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-05-27T16:00:00.000Z" title="更新于 2026-05-28 00:00:00">2026-05-28</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><blockquote>
+<p>本文是周志华《机器学习》（西瓜书）第15章 <strong>规则学习</strong>（Rule Learning）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。</p>
+</blockquote>
+<h3 id="①-基本概念与”规则”的形式"><a href="#①-基本概念与”规则”的形式" class="headerlink" title="①. 基本概念与”规则”的形式"></a>①. 基本概念与”规则”的形式</h3><p><em>命题规则 vs. 一阶规则，规则集与规则列表</em></p>
+<blockquote>
+<p><strong>📋 生活类比：医学诊断手册</strong></p>
+<p>医生看病的经验，最自然的表达就是”规则”——“如果发烧+咳嗽+白细胞升高，则很可能是细菌感染”。一条规则覆盖一类病例，不需要算概率，不需要调参数，看一眼就懂。规则学习的目标就是<strong>从数据中自动挖掘这样的诊断规则</strong>。</p>
+</blockquote>
+<p>📜 规则的基本形式</p>
+<p>规则的一般形式为：</p>
+<blockquote>
+<p><strong>📐 命题规则（Propositional Rule）</strong></p>
+</blockquote>
+<p>$$</p>
+<p>\textbf{IF};(f_1 \in V_1) \land (f_2 \in V_2) \land \cdots \land (f_k \in V_k);\textbf{THEN}; c</p>
+<p>$$</p>
+<blockquote>
+<p>规则体（body）是<strong>属性-值检验的合取</strong>，头部（head）是一个类别标签。</p>
+</blockquote>
+<h3 id="规则集（Rule-Set）"><a href="#规则集（Rule-Set）" class="headerlink" title="规则集（Rule Set）"></a>规则集（Rule Set）</h3><p>一组无序的规则，每个样本被匹配的规则<strong>投票</strong>决定类别。冲突时可用优先级解决。</p>
+<h3 id="规则列表（Rule-List）"><a href="#规则列表（Rule-List）" class="headerlink" title="规则列表（Rule List）"></a>规则列表（Rule List）</h3><p>规则<strong>按顺序排列</strong>，第一个匹配的规则决定结果。若都无法匹配，使用默认规则（default rule）。</p>
+<h3 id="🔑-核心评估指标"><a href="#🔑-核心评估指标" class="headerlink" title="🔑 核心评估指标"></a>🔑 核心评估指标</h3><table>
+<thead>
+<tr>
+<th>指标</th>
+<th>定义</th>
+<th>直觉</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>覆盖率（Coverage）</td>
+<td>规则体为真的样本中，头部类别正确的比例</td>
+<td>这条规则”准不准”？</td>
+</tr>
+<tr>
+<td>准确率（Accuracy）</td>
+<td>$</td>
+<td>{\text{正确分类}}</td>
+</tr>
+<tr>
+<td>信息增益（FOIL Gain）</td>
+<td>加入新文字后，正例覆盖量的对数增量</td>
+<td>新条件”有没有用”？</td>
+</tr>
+</tbody></table>
+<h3 id="②-序贯覆盖（Sequential-Covering）"><a href="#②-序贯覆盖（Sequential-Covering）" class="headerlink" title="②. 序贯覆盖（Sequential Covering）"></a>②. 序贯覆盖（Sequential Covering）</h3><p><em>逐条学习，覆盖一批就划掉一批</em></p>
+<blockquote>
+<p><strong>🎯 生活类比：一块块地”吃”数据</strong></p>
+<p>规则学习不像决策树那样一次性划分样本空间，而是像玩贪吃蛇：每次学一条最好的规则，覆盖到的样本就”吃掉”（从训练集中移除），然后对着剩下的样本再学下一条。直到所有样本都被覆盖，或剩下的都是”噪音”。</p>
+</blockquote>
+<p>Algorithm: 序贯覆盖框架<br>输入: 训练集 D，评估函数 E<br>R ← ∅  &#x2F;&#x2F; 规则集</p>
+<p>while D 中还有未被覆盖的目标类样本:<br>  r ← LearnOneRule(D, E)   &#x2F;&#x2F; 学习一条最优规则<br>  if r 的质量低于阈值: break<br>  R ← R ∪ {r}<br>  从 D 中移除被 r 覆盖的样本</p>
+<p>return R</p>
+<p>🌿 单条规则生成 — 从一般到特殊</p>
+<p>初始规则体为空 $\emptyset$（匹配所有样本），然后逐步**添加文字（literal）**使其更”特殊”，直到覆盖的样本质量足够高：</p>
+<blockquote>
+<p><strong>📐 自顶向下搜索（Top-Down &#x2F; 一般→特殊）</strong></p>
+</blockquote>
+<p>$$</p>
+<p>\emptyset ;\xrightarrow{+f_1&#x3D;v_1}; (f_1&#x3D;v_1) ;\xrightarrow{+f_2&#x3D;v_2}; (f_1&#x3D;v_1)\land(f_2&#x3D;v_2) ;\longrightarrow; \cdots</p>
+<p>$$</p>
+<blockquote>
+<p><strong>🔽 自顶向下（多数算法）</strong></p>
+<p>从空规则出发，贪心地添加文字。每次加文字时，<strong>评估所有可能的候选文字</strong>，选择使规则质量提升最大的。典型算法：CN2、RIPPER。</p>
+</blockquote>
+<blockquote>
+<p><strong>🔼 自底向上</strong></p>
+<p>从某个正例出发生成最特殊的规则，再逐步<strong>删除文字</strong>（泛化）。如 AQ 系列算法。较少单独使用，通常结合剪枝。</p>
+</blockquote>
+<svg class="svg-viz" viewbox="0 0 680 180" xmlns="http://www.w3.org/2000/svg">
+<rect fill="#fff7ed" height="130" rx="8" stroke="#ea580c" stroke-width="1.5" width="120" x="10" y="40"></rect>
+<circle cx="40" cy="70" fill="#ea580c" r="6"></circle><circle cx="70" cy="70" fill="#ea580c" r="6"></circle>
+<circle cx="55" cy="95" fill="#3b82f6" r="6"></circle><circle cx="85" cy="95" fill="#ea580c" r="6"></circle>
+<text fill="#9a3412" font-size="10" text-anchor="middle" x="70" y="130">全部数据</text>
+<text fill="#9a3412" font-size="10" text-anchor="middle" x="70" y="145">规则1 覆盖</text>
+<text fill="#ea580c" font-size="20" x="145" y="105">→</text>
+<rect fill="#fefce8" height="130" rx="8" stroke="#ca8a04" stroke-width="1.5" width="120" x="175" y="40"></rect>
+<circle cx="205" cy="70" fill="#9ca3af" r="6"></circle><circle cx="235" cy="70" fill="#9ca3af" r="6"></circle>
+<circle cx="220" cy="95" fill="#3b82f6" r="6"></circle><circle cx="250" cy="95" fill="#ca8a04" r="6"></circle>
+<text fill="#854d0e" font-size="10" text-anchor="middle" x="235" y="130">剩余数据</text>
+<text fill="#854d0e" font-size="10" text-anchor="middle" x="235" y="145">规则2 覆盖</text>
+<text fill="#ea580c" font-size="20" x="310" y="105">→</text>
+<rect fill="#f1f5f9" height="130" rx="8" stroke="#94a3b8" stroke-width="1.5" width="120" x="340" y="40"></rect>
+<circle cx="370" cy="70" fill="#9ca3af" r="6"></circle><circle cx="400" cy="70" fill="#9ca3af" r="6"></circle>
+<circle cx="385" cy="95" fill="#9ca3af" r="6"></circle><circle cx="415" cy="95" fill="#9ca3af" r="6"></circle>
+<text fill="#475569" font-size="10" text-anchor="middle" x="400" y="130">剩余（噪音/</text>
+<text fill="#475569" font-size="10" text-anchor="middle" x="400" y="145">默认规则）</text>
+<text fill="#ea580c" font-size="20" x="480" y="105">→</text>
+<!-- 学到的规则 -->
+<rect fill="#e2e8f0" height="80" rx="8" stroke="#ea580c" stroke-width="2" width="160" x="510" y="55"></rect>
+<text fill="#c2410c" font-size="11" font-weight="700" text-anchor="middle" x="590" y="78">IF A₁=橙 AND A₂&lt;0.5</text>
+<text fill="#c2410c" font-size="11" font-weight="700" text-anchor="middle" x="590" y="100">THEN class = 🔴</text>
+<text fill="#6b7280" font-size="10" text-anchor="middle" x="590" y="125">(覆盖率 95%, 准确率 90%)</text>
+</svg>
+
+
+<h3 id="③-剪枝优化"><a href="#③-剪枝优化" class="headerlink" title="③. 剪枝优化"></a>③. 剪枝优化</h3><p><em>防止过拟合：删除冗余文字和整条规则</em></p>
+<p>✂️ 预剪枝 vs. 后剪枝</p>
+<p>在规则<strong>生成过程中</strong>提前停止。当加入新文字后，<strong>验证集上的性能不再提升</strong>时，停止继续添加文字。</p>
+<p>优点：加速生成；缺点：可能过早停止</p>
+<blockquote>
+<p><strong>🔧 后剪枝（Post-pruning）</strong></p>
+<p>先生成完整的规则，再用**缩减误差剪枝（REP）**等技术逐步删除末尾的文字，检查验证集性能是否提升。</p>
+<p>优点：更精准；缺点：先要生成完整规则</p>
+</blockquote>
+<h3 id="RIPPER-的剪枝策略（k-折交叉验证）"><a href="#RIPPER-的剪枝策略（k-折交叉验证）" class="headerlink" title="RIPPER 的剪枝策略（k 折交叉验证）"></a>RIPPER 的剪枝策略（k 折交叉验证）</h3><p>RIPPER 算法使用<strong>增长集</strong>（growing set）生成规则，用<strong>剪枝集</strong>（pruning set）后剪枝。剪枝时计算每个文字的剪枝度量 $v$：</p>
+<blockquote>
+<p><strong>📐 剪枝度量（RIPPER）</strong></p>
+</blockquote>
+<p>$$</p>
+<p>v(r, D) &#x3D; \frac{p + (N - n)}{P + N}</p>
+<p>$$</p>
+<blockquote>
+<p>其中 $p$&#x3D;剪枝后规则命中正例数，$n$&#x3D;剪枝后命中负例数，$P,N$&#x3D;剪枝集上总正&#x2F;负例数。</p>
+<p>直觉：<strong>删除冗余文字后，若度量值上升就剪掉</strong>。</p>
+</blockquote>
+<h3 id="④-一阶规则学习"><a href="#④-一阶规则学习" class="headerlink" title="④. 一阶规则学习"></a>④. 一阶规则学习</h3><p><em>从命题到一阶：引入变量和关系</em></p>
+<blockquote>
+<p><strong>🎓 从”属性”到”关系”</strong></p>
+<p><strong>命题规则</strong>：IF 身高&gt;180 AND 体重&gt;80 THEN 类别&#x3D;篮球 ← 只能处理固定属性。<strong>一阶规则</strong>：IF Father(X, Y) AND Father(Y, Z) THEN Grandfather(X, Z) ← 引入<strong>变量</strong>和<strong>谓词</strong>，能表达关系！</p>
+</blockquote>
+<p>🌐 FOIL 算法（First-Order Inductive Learner）</p>
+<p>FOIL 是一阶序贯覆盖的代表算法，每条规则按 FOIL 信息增益选择文字：</p>
+<blockquote>
+<p><strong>📐 FOIL 信息增益</strong></p>
+</blockquote>
+<p>$$</p>
+<p>\text{FoilGain} &#x3D; |\hat{P}| \cdot \left( \log_2 \frac{|\hat{P}|}{|\hat{P}|+|\hat{N}|} - \log_2 \frac{|P|}{|P|+|N|} \right)</p>
+<p>$$</p>
+<blockquote>
+<p>其中 $P,N$ 是加入文字前覆盖的正&#x2F;负例数，$\hat{P},\hat{N}$ 是加入后。直观理解：<strong>新文字让正例更集中了吗？</strong></p>
+</blockquote>
+<blockquote>
+<p><strong>💡 一阶文字的类型</strong></p>
+<p>FOIL 可添加以下类型的新文字到规则中：</p>
+<ol>
+<li><strong>已有变量的谓词</strong>：用规则中已有的变量组合描述关系（如 Parents(X,Y)）</li>
+<li><strong>引入新变量</strong>：用谓词引入新变量（如 Father(X,Z)，其中 Z 是新变量）</li>
+<li><strong>常量赋值</strong>：将变量绑定到特定常量</li>
+</ol>
+</blockquote>
+<blockquote>
+<p><strong>⚠️ 组合爆炸：一阶规则的搜索代价</strong></p>
+<p>一阶空间的搜索比命题空间<strong>大得多</strong>——不仅有属性值组合，还有变量绑定的各种排列。实践中需要强剪枝和启发式排序来控制复杂度。</p>
+</blockquote>
+<h3 id="⑤-归纳逻辑程序设计（ILP）"><a href="#⑤-归纳逻辑程序设计（ILP）" class="headerlink" title="⑤. 归纳逻辑程序设计（ILP）"></a>⑤. 归纳逻辑程序设计（ILP）</h3><p><em>在背景知识上做归纳——从经验中学逻辑程序</em></p>
+<p>🧬 ILP 的基本框架</p>
+<p>ILP 不仅要利用训练样例，还要利用<strong>背景知识</strong>（BK）。目标是从 BK + 样例中归纳出一阶规则：</p>
+<blockquote>
+<p><strong>📐 ILP 问题形式化</strong></p>
+</blockquote>
+<p>$$</p>
+<p>\text{BK} \land H \models E^+ \quad \text{且} \quad \text{BK} \land H \not\models E^-</p>
+<p>$$</p>
+<blockquote>
+<p>其中 BK &#x3D; 背景知识，H &#x3D; 待学习的规则（目标谓词），$E^+$ &#x3D; 正例，$E^-$ &#x3D; 负例。要求：<strong>BK+H 蕴含所有正例，且不蕴含任何负例</strong>。</p>
+</blockquote>
+<h3 id="θ-包容（θ-subsumption）"><a href="#θ-包容（θ-subsumption）" class="headerlink" title="θ-包容（θ-subsumption）"></a>θ-包容（θ-subsumption）</h3><p>子句 $C$ θ-包容 $D$，若存在替换 θ 使 $C\theta \subseteq D$。这是 ILP 中<strong>判断覆盖关系</strong>的核心工具。</p>
+<h3 id="最小一般泛化（LGG）"><a href="#最小一般泛化（LGG）" class="headerlink" title="最小一般泛化（LGG）"></a>最小一般泛化（LGG）</h3><p>两个子句的<strong>最小一般泛化</strong>（least general generalization），是它们最”紧”的共同泛化。ILP 中的理论工具。</p>
+<blockquote>
+<p><strong>🔄 逆蕴含（Inverse Entailment） — Progol 算法核心</strong></p>
+<p>普通的归纳是从”特殊”推”一般”。Progol 反过来：从一个正例 $e$ 出发，在<strong>模式声明（mode declaration）<strong>的约束下，反推出可能的最一般规则 $H$ 使得 $\text{BK} \land H \models e$。这大大</strong>缩小了搜索空间</strong>。</p>
+</blockquote>
+<h3 id="⑥-方法对比与总结"><a href="#⑥-方法对比与总结" class="headerlink" title="⑥. 方法对比与总结"></a>⑥. 方法对比与总结</h3><p><em>从命题到一阶，从简单到强大</em></p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>命题规则</th>
+<th>一阶规则 (FOIL)</th>
+<th>ILP (Progol)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>表达能力</td>
+<td>属性-值检验</td>
+<td>变量 + 谓词 + 关系</td>
+<td>变量 + 谓词 + 背景知识</td>
+</tr>
+<tr>
+<td>搜索空间</td>
+<td>小</td>
+<td>大</td>
+<td>非常大（但有模式约束）</td>
+</tr>
+<tr>
+<td>可解释性</td>
+<td>极高（人一眼看懂）</td>
+<td>高（类自然语言）</td>
+<td>中高（有逻辑符号）</td>
+</tr>
+<tr>
+<td>典型算法</td>
+<td>CN2、RIPPER</td>
+<td>FOIL</td>
+<td>Progol、Aleph</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>表格数据、医疗</td>
+<td>关系数据库、分子结构</td>
+<td>科学发现、知识图谱补全</td>
+</tr>
+<tr>
+<td>组合爆炸风险</td>
+<td>低</td>
+<td>中</td>
+<td>高（需强约束）</td>
+</tr>
+</tbody></table>
+<p>📝 规则学习 vs. 决策树</p>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>规则学习</th>
+<th>决策树</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>表示方式</td>
+<td>IF-THEN 规则集</td>
+<td>树形结构</td>
+</tr>
+<tr>
+<td>覆盖策略</td>
+<td>逐条序贯覆盖</td>
+<td>一次性递归划分</td>
+</tr>
+<tr>
+<td>可独立解释</td>
+<td>每条规则可独立理解</td>
+<td>需要整棵树一起看</td>
+</tr>
+<tr>
+<td>知识修改</td>
+<td>增删单条规则轻松</td>
+<td>修改节点影响子树</td>
+</tr>
+<tr>
+<td>可转写</td>
+<td>决策树可转规则 (C4.5Rules)</td>
+<td>规则不可逆向转为树</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>🧠 本章一句话总结</strong></p>
+<p><strong>规则学习</strong>的精髓在于**”从特殊到一般”<strong>的搜索范式。命题规则简单高效，一阶规则引入了变量与关系，ILP 更进一步在背景知识上做归纳。三者共享”序贯覆盖 + 精化搜索”的框架，只是表达的</strong>语言的复杂度**逐级提升——语言越强，搜索空间越大，需要用更精巧的剪枝和约束来控制。</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://chaichai438.github.io">Chaichai</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://chaichai438.github.io/2026/05/28/ML/ml-ch15-rule-learning/">https://chaichai438.github.io/2026/05/28/ML/ml-ch15-rule-learning/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://chaichai438.github.io" target="_blank">Click Start!</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><a class="post-meta__tags" href="/tags/%E8%A5%BF%E7%93%9C%E4%B9%A6/">西瓜书</a><a class="post-meta__tags" href="/tags/%E8%A7%84%E5%88%99%E5%AD%A6%E4%B9%A0/">规则学习</a><a class="post-meta__tags" href="/tags/%E5%BA%8F%E8%B4%AF%E8%A6%86%E7%9B%96/">序贯覆盖</a><a class="post-meta__tags" href="/tags/%E5%89%AA%E6%9E%9D%E4%BC%98%E5%8C%96/">剪枝优化</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/05/28/ML/ml-ch16-reinforcement-learning/" title="第16章：强化学习 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">第16章：强化学习 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第16章 强化学习（Reinforcement Learning）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  ①. 任务与框架：MDP马尔可夫决策过程：状态、动作、奖励、转移  🐕 生活类比：训狗学把戏 你不直接告诉狗狗”坐下”的精确肌肉指令，你只在它做对时给一根骨头（奖励），做错时不给。狗狗试了无数次后才隐约明白”哪种行为更容易拿到骨头”。它不知道全局最优策略是什么，只能在试错中逐渐逼近。  🎮 MDP 四要素   智能体 (Agent) 策略 π  环境 (Environment) 动态 P,R   动作 a_t   新状态 s_{t+1} + 奖励 r_t           要素 符号 含义    状态空间 $\mathcal{S}$ 所有可能的环境状态   动作空间 $\mathcal{A}$ 智能体可执行的动作   状态转移概率 $P(s’ s,a)$   奖励函数 $R(s,a)$ 或 $R(s,a,s’)$ 即时获得的标量奖励   策略 $\pi(a s)$   📐 核心概念：值函数与 Bellman ...</div></div></div></a><a class="pagination-related" href="/2026/05/28/ML/ml-ch14-probabilistic-graphical/" title="第14章：概率图模型 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">第14章：概率图模型 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第14章 概率图模型（Probabilistic Graphical）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  ①. 基本概念与模型分类有向图 vs. 无向图，概率图的两种范式  🗺️ 生活类比：家族族谱 vs. 朋友圈 **有向图（贝叶斯网络）**像家族族谱——你从父母到子女有明确的方向。”基因”沿有向边传递，父子关系带来因果依赖。**无向图（马尔可夫随机场）**像朋友圈——朋友之间没有方向，你们相互影响。”状态”通过无向连接相互约束。  📐 概率图模型 &#x3D; 图结构 + 概率分布 一个概率图模型就是用图 $\mathcal{G}&#x3D;(\mathcal{V},\mathcal{E})$ 描述随机变量集合 $\boldsymbol{X}&#x3D;{X_1,\ldots,X_n}$ 之间的依赖关系，用一套参数 $\boldsymbol{\Theta}$ 来量化这些关系。    有向图（贝叶斯网络） A B C D 父→子    局部条件概率表（CPT）   无向图（马尔可夫随机场） A B C D   ...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/05/28/ML/ml-ch08-ensemble-learning/" title="第8章：集成学习 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-28</div><div class="info-item-2">第8章：集成学习 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第8章 集成学习（Ensemble Learning）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  1个体与集成集成学习通过投票法（分类）或平均法（回归）将多个”基学习器”组合起来。 集成有效的必要条件 个体学习器要有一定的**”准确性”**（至少比随机猜测好） 个体学习器之间要**”多样性”**（犯不同的错误）  误差-分歧分解（直观版本）：  📐 公式  $$ E &#x3D; \bar{E} - \bar{A} $$ 其中 $E$ 是集成泛化误差，$\bar{E}$ 是个体泛化误差的加权平均，$\bar{A}$ 是分歧（个体之间有多不一致）。分歧越大，集成效果越好。   学习器1准确率 75%  学习器2准确率 75%  学习器3准确率 75% →  集成后 准确率 90%+ 只要错误不重叠，多数投票就能纠错！    🍉 通俗类比 三个独立考官各自有 75% 准确率，但他们犯错的时候不一样。当一个人判断错误，另外两个很可能判断正确，多数投票后错误就被纠正了。这就是”好而不同”的力量。  两大范式   范式 个体关系 ...</div></div></div></a><a class="pagination-related" href="/2026/05/28/ML/ml-ch05-neural-networks/" title="第5章：神经网络 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-28</div><div class="info-item-2">第5章：神经网络 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第5章 神经网络（Neural Networks）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  1神经元模型M-P 神经元神经网络的基本单元模拟了生物神经元：接收多个输入信号，加权求和，经激活函数后输出。  📐 公式  $$ y &#x3D; f\left(\sum_{i&#x3D;1}^n w_i x_i - \theta\right) $$ 其中 $f(\cdot)$ 为激活函数，$\theta$ 为偏置阈值。 常用激活函数   函数 表达式 特点    Sigmoid $\sigma(x)&#x3D;\frac{1}{1+e^{-x}}$ 输出 (0,1)，梯度饱和问题   Tanh $\tanh(x)$ 输出 (-1,1)，零中心，仍有饱和   ReLU $\max(0,x)$ 缓解梯度消失，计算简单，但”死神经元”问题   LeakyReLU $\max(\alpha x, x)$ 解决死神经元，$\alpha$ 通常很小    🍉 通俗类比 一个神经元就像公司里的决策者：听取各个下属（输入）的汇报，每个人说话分...</div></div></div></a><a class="pagination-related" href="/2026/05/28/ML/ml-ch07-bayesian/" title="第7章：贝叶斯分类器 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-28</div><div class="info-item-2">第7章：贝叶斯分类器 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第7章 贝叶斯分类器（Bayesian）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  1贝叶斯决策论贝叶斯决策论是概率框架下实施决策的基本方法。对于分类任务，在所有相关概率已知的理想情况下，最优分类器由贝叶斯公式给出：  📐 公式  $$ P(c \mid \boldsymbol{x}) &#x3D; \frac{P(\boldsymbol{x} \mid c) P(c)}{P(\boldsymbol{x})} $$  $P(c)$：先验概率（在不知道样本长相的时候，猜它是 $c$ 类的概率） $P(\boldsymbol{x}|c)$：类条件概率（也叫”似然”，已知是 $c$ 类，样本长 $\boldsymbol{x}$ 样的概率） $P(c|\boldsymbol{x})$：后验概率（看到样本 $\boldsymbol{x}$ 后，它是 $c$ 类的更新后的概率）  贝叶斯最优分类器选择后验概率最大的类：  📐 公式  $$ h^*(\boldsymbol{x}) &#x3D; \arg\max_{c \in \mat...</div></div></div></a><a class="pagination-related" href="/2026/05/28/ML/ml-ch01-introduction/" title="第1章：绪论 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-28</div><div class="info-item-2">第1章：绪论 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第1章 绪论（Introduction）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  1引言与基本术语机器学习致力于研究如何通过计算手段，利用经验来改善系统自身的性能。 核心术语速查   西瓜书用语 英文 含义（用西瓜举例）    数据集 data set 一筐西瓜的记录集合   样本 &#x2F; 示例 sample &#x2F; instance 一个具体的西瓜   属性 &#x2F; 特征 attribute &#x2F; feature 色泽、根蒂、敲声……   属性值 attribute value 青绿、蜷缩、浊响……   属性空间 &#x2F; 样本空间 attribute space 所有色泽×根蒂×敲声组合张成的 3 维空间   标记 &#x2F; 标签 label “好瓜”&#x2F;“坏瓜”   样例 example 样本 + 标记（一个有标签的西瓜记录）   三类学习任务  监督学习 有标记（分类/回归） 给出标准答案  无监督学习 无标记（聚类/降维） 没有标准答案  半监督学习 少量有标记 有部分提...</div></div></div></a><a class="pagination-related" href="/2026/05/27/ML/ml-ch10-dimensionality-reduction/" title="第10章：降维与度量学习 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-27</div><div class="info-item-2">第10章：降维与度量学习 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第10章 降维与度量学习（Dimensionality Reduction）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  01. k 近邻学习（kNN）最简单的”懒惰学习”算法 🔢 核心思想 **k近邻学习（k-Nearest Neighbor，kNN）是一种懒惰学习（lazy learning）**算法——它不构建显式的模型，而是在预测时直接找到训练集中最近的 $k$ 个样本，用它们的标记来决策。  🍎 通俗理解 你搬到一个新城市，不知道周围的餐厅好不好吃。怎么判断？看最近的几家邻居餐厅的口碑——大家都说好，这家大概也不错。这就是 kNN 的逻辑：我不认识你，但我知道你的邻居，通过邻居来判断你。   📐 kNN 分类规则 给定测试样本 $x$，找其最近的 $k$ 个训练样本构成集合 $N_k(x)$，通过投票决定类别：  $$ \hat{y} &#x3D; \underset{c \in \mathcal{Y}}{\arg\max} \sum_{x_i \in N_k(x)} \mathbb{1}(y_i &#x3D;...</div></div></div></a><a class="pagination-related" href="/2026/05/28/ML/ml-ch16-reinforcement-learning/" title="第16章：强化学习 — 西瓜书学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-28</div><div class="info-item-2">第16章：强化学习 — 西瓜书学习笔记</div></div><div class="info-2"><div class="info-item-1"> 本文是周志华《机器学习》（西瓜书）第16章 强化学习（Reinforcement Learning）的学习笔记，涵盖本章所有核心知识点，配有通俗类比与公式推导。  ①. 任务与框架：MDP马尔可夫决策过程：状态、动作、奖励、转移  🐕 生活类比：训狗学把戏 你不直接告诉狗狗”坐下”的精确肌肉指令，你只在它做对时给一根骨头（奖励），做错时不给。狗狗试了无数次后才隐约明白”哪种行为更容易拿到骨头”。它不知道全局最优策略是什么，只能在试错中逐渐逼近。  🎮 MDP 四要素   智能体 (Agent) 策略 π  环境 (Environment) 动态 P,R   动作 a_t   新状态 s_{t+1} + 奖励 r_t           要素 符号 含义    状态空间 $\mathcal{S}$ 所有可能的环境状态   动作空间 $\mathcal{A}$ 智能体可执行的动作   状态转移概率 $P(s’ s,a)$   奖励函数 $R(s,a)$ 或 $R(s,a,s’)$ 即时获得的标量奖励   策略 $\pi(a s)$   📐 核心概念：值函数与 Bellman ...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Chaichai</div><div class="author-info-description">Well begun is half-down</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">30</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">60</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Chaichai438"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Chaichai438" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="/1939327800@qq.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%91%A0-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%B8%8E%E2%80%9D%E8%A7%84%E5%88%99%E2%80%9D%E7%9A%84%E5%BD%A2%E5%BC%8F"><span class="toc-number">1.</span> <span class="toc-text">①. 基本概念与”规则”的形式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%84%E5%88%99%E9%9B%86%EF%BC%88Rule-Set%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">规则集（Rule Set）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%84%E5%88%99%E5%88%97%E8%A1%A8%EF%BC%88Rule-List%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">规则列表（Rule List）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%94%91-%E6%A0%B8%E5%BF%83%E8%AF%84%E4%BC%B0%E6%8C%87%E6%A0%87"><span class="toc-number">4.</span> <span class="toc-text">🔑 核心评估指标</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%91%A1-%E5%BA%8F%E8%B4%AF%E8%A6%86%E7%9B%96%EF%BC%88Sequential-Covering%EF%BC%89"><span class="toc-number">5.</span> <span class="toc-text">②. 序贯覆盖（Sequential Covering）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%91%A2-%E5%89%AA%E6%9E%9D%E4%BC%98%E5%8C%96"><span class="toc-number">6.</span> <span class="toc-text">③. 剪枝优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RIPPER-%E7%9A%84%E5%89%AA%E6%9E%9D%E7%AD%96%E7%95%A5%EF%BC%88k-%E6%8A%98%E4%BA%A4%E5%8F%89%E9%AA%8C%E8%AF%81%EF%BC%89"><span class="toc-number">7.</span> <span class="toc-text">RIPPER 的剪枝策略（k 折交叉验证）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%91%A3-%E4%B8%80%E9%98%B6%E8%A7%84%E5%88%99%E5%AD%A6%E4%B9%A0"><span class="toc-number">8.</span> <span class="toc-text">④. 一阶规则学习</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%91%A4-%E5%BD%92%E7%BA%B3%E9%80%BB%E8%BE%91%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%EF%BC%88ILP%EF%BC%89"><span class="toc-number">9.</span> <span class="toc-text">⑤. 归纳逻辑程序设计（ILP）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%CE%B8-%E5%8C%85%E5%AE%B9%EF%BC%88%CE%B8-subsumption%EF%BC%89"><span class="toc-number">10.</span> <span class="toc-text">θ-包容（θ-subsumption）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%B0%8F%E4%B8%80%E8%88%AC%E6%B3%9B%E5%8C%96%EF%BC%88LGG%EF%BC%89"><span class="toc-number">11.</span> <span class="toc-text">最小一般泛化（LGG）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E2%91%A5-%E6%96%B9%E6%B3%95%E5%AF%B9%E6%AF%94%E4%B8%8E%E6%80%BB%E7%BB%93"><span class="toc-number">12.</span> <span class="toc-text">⑥. 方法对比与总结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/28/ML/ml-ch01-introduction/" title="第1章：绪论 — 西瓜书学习笔记">第1章：绪论 — 西瓜书学习笔记</a><time datetime="2026-05-27T16:00:00.000Z" title="发表于 2026-05-28 00:00:00">2026-05-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/28/ML/ml-ch03-linear-models/" title="第3章：线性模型 — 西瓜书学习笔记">第3章：线性模型 — 西瓜书学习笔记</a><time datetime="2026-05-27T16:00:00.000Z" title="发表于 2026-05-28 00:00:00">2026-05-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/28/ML/ml-ch04-decision-trees/" title="第4章：决策树 — 西瓜书学习笔记">第4章：决策树 — 西瓜书学习笔记</a><time datetime="2026-05-27T16:00:00.000Z" title="发表于 2026-05-28 00:00:00">2026-05-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/28/ML/ml-ch02-evaluation-and-selection/" title="第2章：模型评估与选择 — 西瓜书学习笔记">第2章：模型评估与选择 — 西瓜书学习笔记</a><time datetime="2026-05-27T16:00:00.000Z" title="发表于 2026-05-28 00:00:00">2026-05-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/28/ML/ml-ch05-neural-networks/" title="第5章：神经网络 — 西瓜书学习笔记">第5章：神经网络 — 西瓜书学习笔记</a><time datetime="2026-05-27T16:00:00.000Z" title="发表于 2026-05-28 00:00:00">2026-05-28</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/neko.png);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Chaichai</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.3</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(async () => {
+  const showKatex = () => {
+    document.querySelectorAll('#article-container .katex').forEach(el => el.classList.add('katex-show'))
+  }
+
+  if (!window.katex_js_css) {
+    window.katex_js_css = true
+    await btf.getCSS('https://cdn.jsdelivr.net/npm/katex@0.16.27/dist/katex.min.css')
+    if (false) {
+      await btf.getScript('https://cdn.jsdelivr.net/npm/katex@0.16.27/dist/contrib/copy-tex.min.js')
+    }
+  }
+
+  showKatex()
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
