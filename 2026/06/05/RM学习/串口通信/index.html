@@ -1,0 +1,466 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>串口通信 | Click Start!</title><meta name="author" content="Chaichai"><meta name="copyright" content="Chaichai"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="你会看到，unsigned char的一万种用法(bushi)、串口通信的原理和操作方法、try-catch有什么用？虽然是AI生成的()，但是我们可以借助它来学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="串口通信">
+<meta property="og:url" content="https://chaichai438.github.io/2026/06/05/RM%E5%AD%A6%E4%B9%A0/%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1/index.html">
+<meta property="og:site_name" content="Click Start!">
+<meta property="og:description" content="你会看到，unsigned char的一万种用法(bushi)、串口通信的原理和操作方法、try-catch有什么用？虽然是AI生成的()，但是我们可以借助它来学习">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://chaichai438.github.io/assets/Pictures/cover/RMer.jpg">
+<meta property="article:published_time" content="2026-06-04T18:00:10.436Z">
+<meta property="article:modified_time" content="2025-09-19T13:03:25.389Z">
+<meta property="article:author" content="Chaichai">
+<meta property="article:tag" content="RMer">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://chaichai438.github.io/assets/Pictures/cover/RMer.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "串口通信",
+  "url": "https://chaichai438.github.io/2026/06/05/RM%E5%AD%A6%E4%B9%A0/%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1/",
+  "image": "https://chaichai438.github.io/assets/Pictures/cover/RMer.jpg",
+  "datePublished": "2026-06-04T18:00:10.436Z",
+  "dateModified": "2025-09-19T13:03:25.389Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Chaichai",
+      "url": "https://chaichai438.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/fruitcake.gif"><link rel="canonical" href="https://chaichai438.github.io/2026/06/05/RM%E5%AD%A6%E4%B9%A0/%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '串口通信',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" integrity="sha512-fHwaWebuwA7NSF5Qg/af4UeDx9XqUpYpOGgubo3yWu+b2IQR4UeQwbb42Ti7gVAjNtVoI/I9TEoYeu9omwcC6g==" crossorigin="anonymous" referrerpolicy="no-referrer" /><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body><div class="bg-animation" id="web_bg" style="background-color: #49B202;"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">31</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">48</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-compass"></i><span> 页面</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-microchip"></i><span> 408</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"><i class="fa-fw fas fa-brain"></i><span> 机器学习</span></a></li><li><a class="site-page child" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"><i class="fa-fw fas fa-laptop-code"></i><span> 操作系统</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://chaichai438.github.io/assets/Pictures/cover/RMer.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/fruitcake.gif" alt="Logo"><span class="site-name">Click Start!</span></a><a class="nav-page-title" href="/"><span class="site-name">串口通信</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-compass"></i><span> 页面</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-microchip"></i><span> 408</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"><i class="fa-fw fas fa-brain"></i><span> 机器学习</span></a></li><li><a class="site-page child" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"><i class="fa-fw fas fa-laptop-code"></i><span> 操作系统</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">串口通信</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-06-04T18:00:10.436Z" title="发表于 2026-06-05 02:00:10">2026-06-05</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-09-19T13:03:25.389Z" title="更新于 2025-09-19 21:03:25">2025-09-19</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/RMer/">RMer</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">3.3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>12分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><blockquote>
+<p>你会看到，unsigned char的一万种用法(bushi)、串口通信的原理和操作方法、try-catch有什么用？<br>虽然是AI生成的()，但是我们可以借助它来学习</p>
+</blockquote>
+<span id="more"></span>
+
+<h1 id="unsigned-char-解释"><a href="#unsigned-char-解释" class="headerlink" title="unsigned char 解释"></a>unsigned char 解释</h1><p><code>unsigned char</code> 是C&#x2F;C++中的一种基本数据类型，表示无符号字符型数据。以下是详细解释：</p>
+<h2 id="基本特性"><a href="#基本特性" class="headerlink" title="基本特性"></a>基本特性</h2><ul>
+<li><strong>无符号性</strong>：只能表示非负整数，范围是0到255（在大多数平台上）</li>
+<li><strong>大小</strong>：通常占用1字节（8位）内存空间</li>
+<li><strong>用途</strong>：<ul>
+<li>存储原始字节数据</li>
+<li>处理小范围的非负整数</li>
+<li>实现位操作和字节级操作</li>
+</ul>
+</li>
+</ul>
+<h2 id="与char和signed-char的区别"><a href="#与char和signed-char的区别" class="headerlink" title="与char和signed char的区别"></a>与char和signed char的区别</h2><ul>
+<li><code>char</code>：可能是signed或unsigned，取决于编译器实现</li>
+<li><code>signed char</code>：明确表示有符号字符，范围-128到127</li>
+<li><code>unsigned char</code>：明确表示无符号字符，范围0到255</li>
+</ul>
+<h2 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> byte = <span class="hljs-number">200</span>;  <span class="hljs-comment">// 有效</span><br><span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> max_val = <span class="hljs-number">255</span>;  <span class="hljs-comment">// 最大值</span><br><span class="hljs-comment">// unsigned char negative = -1;  // 错误，不能赋负值</span><br><br><span class="hljs-comment">// 常用于处理二进制数据</span><br><span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> buffer[<span class="hljs-number">1024</span>];<br></code></pre></td></tr></table></figure>
+
+<h2 id="特殊用途"><a href="#特殊用途" class="headerlink" title="特殊用途"></a>特殊用途</h2><ul>
+<li>在标准中，<code>unsigned char</code>是唯一保证没有填充位的类型</li>
+<li>可用于以字节为单位访问其他对象的内存表示</li>
+</ul>
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><ul>
+<li>当值超过255时会回绕（即256变为0，257变为1，依此类推）</li>
+<li>在算术运算中会被提升为int类型</li>
+</ul>
+<p><code>unsigned char</code>在处理网络协议、文件I&#x2F;O和低级编程时特别有用。</p>
+<hr>
+<h1 id="解释-unsigned-char-tmp-和数组赋值"><a href="#解释-unsigned-char-tmp-和数组赋值" class="headerlink" title="解释 unsigned char *tmp 和数组赋值"></a>解释 <code>unsigned char *tmp</code> 和数组赋值</h1><p>这段代码涉及到指针和内存操作，我来从一个初学者的角度逐步解释：</p>
+<h2 id="代码分解"><a href="#代码分解" class="headerlink" title="代码分解"></a>代码分解</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *tmp = (<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *)(&amp;_data_write-&gt;shootStatus);<br>msg[<span class="hljs-number">1</span>] = tmp[<span class="hljs-number">0</span>];<br></code></pre></td></tr></table></figure>
+
+<h2 id="第一部分：指针声明和赋值"><a href="#第一部分：指针声明和赋值" class="headerlink" title="第一部分：指针声明和赋值"></a>第一部分：指针声明和赋值</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *tmp = (<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *)(&amp;_data_write-&gt;shootStatus);<br></code></pre></td></tr></table></figure>
+
+<ol>
+<li><p><code>_data_write-&gt;shootStatus</code>：这是一个结构体成员变量，假设<code>shootStatus</code>可能是某种状态值（比如射击状态）</p>
+</li>
+<li><p><code>&amp;_data_write-&gt;shootStatus</code>：取这个变量的内存地址</p>
+</li>
+<li><p><code>(unsigned char *)</code>：这是一个强制类型转换，将地址转换为<code>unsigned char</code>类型的指针</p>
+</li>
+<li><p><code>unsigned char *tmp</code>：声明一个无符号字符指针变量<code>tmp</code>，并将转换后的地址赋给它</p>
+</li>
+</ol>
+<p><strong>通俗理解</strong>：把<code>shootStatus</code>的内存地址当作一个字节数组来看待</p>
+<h2 id="第二部分：数组赋值"><a href="#第二部分：数组赋值" class="headerlink" title="第二部分：数组赋值"></a>第二部分：数组赋值</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">msg[<span class="hljs-number">1</span>] = tmp[<span class="hljs-number">0</span>];<br></code></pre></td></tr></table></figure>
+
+<ol>
+<li><p><code>tmp[0]</code>：访问<code>tmp</code>指针指向的第一个字节（因为<code>tmp</code>被当作字节数组）</p>
+</li>
+<li><p><code>msg[1]</code>：<code>msg</code>数组的第二个元素（数组索引从0开始）</p>
+</li>
+</ol>
+<p><strong>通俗理解</strong>：把<code>shootStatus</code>的第一个字节复制到<code>msg</code>数组的第二个位置</p>
+<h2 id="为什么这样做？"><a href="#为什么这样做？" class="headerlink" title="为什么这样做？"></a>为什么这样做？</h2><p>这种操作通常用于：</p>
+<ul>
+<li>将复杂数据类型（如结构体）转换为原始字节数据</li>
+<li>提取数据的第一个字节（可能用于状态标志位）</li>
+<li>准备通过网络或串口发送数据（需要字节级别的操作）</li>
+</ul>
+<h2 id="实际例子"><a href="#实际例子" class="headerlink" title="实际例子"></a>实际例子</h2><p>假设：</p>
+<ul>
+<li><code>shootStatus</code>是一个32位整数，值为<code>0xAABBCCDD</code></li>
+<li>内存布局（小端模式）：<ul>
+<li>字节0: 0xDD</li>
+<li>字节1: 0xCC</li>
+<li>字节2: 0xBB</li>
+<li>字节3: 0xAA</li>
+</ul>
+</li>
+</ul>
+<p>那么：</p>
+<ul>
+<li><code>tmp[0]</code>就是0xDD</li>
+<li>执行后<code>msg[1]</code>就等于0xDD</li>
+</ul>
+<h2 id="注意事项-1"><a href="#注意事项-1" class="headerlink" title="注意事项"></a>注意事项</h2><ol>
+<li>这种操作依赖于具体的内存布局（大端&#x2F;小端）</li>
+<li>直接操作内存需要确保类型转换是安全的</li>
+<li>这种代码常见于嵌入式系统或底层编程中</li>
+</ol>
+<hr>
+<h3 id="串口通信的基本原理"><a href="#串口通信的基本原理" class="headerlink" title="串口通信的基本原理"></a><strong>串口通信的基本原理</strong></h3><h4 id="1-什么是串口通信？"><a href="#1-什么是串口通信？" class="headerlink" title="1. 什么是串口通信？"></a>1. <strong>什么是串口通信？</strong></h4><p>串口通信是一种<strong>逐位传输数据</strong>的方式。与并行通信（同时传输多个比特）不同，串口通信一次只传输一个比特。这种方式在长距离传输和低带宽需求的场景中非常有效。</p>
+<h4 id="2-串口通信的关键概念"><a href="#2-串口通信的关键概念" class="headerlink" title="2. 串口通信的关键概念"></a>2. <strong>串口通信的关键概念</strong></h4><ul>
+<li><p><strong>波特率（Baud Rate）</strong>：</p>
+<ul>
+<li>波特率表示每秒传输的符号数（或比特数）。常见的波特率有 9600、115200 等。</li>
+<li>例如，波特率为 9600 表示每秒传输 9600 个比特。</li>
+</ul>
+</li>
+<li><p><strong>数据位（Data Bits）</strong>：</p>
+<ul>
+<li>每个数据帧中实际传输的数据位数。通常为 7 位或 8 位。</li>
+</ul>
+</li>
+<li><p><strong>停止位（Stop Bits）</strong>：</p>
+<ul>
+<li>用于标记数据帧结束的位。通常为 1 位或 2 位。</li>
+</ul>
+</li>
+<li><p><strong>校验位（Parity Bit）</strong>：</p>
+<ul>
+<li>用于简单错误检测的位。可以是奇校验、偶校验或无校验。</li>
+</ul>
+</li>
+<li><p><strong>流控制（Flow Control）</strong>：</p>
+<ul>
+<li>用于控制数据传输速率的机制，防止数据溢出。常见的流控制方式有硬件流控制（RTS&#x2F;CTS）和软件流控制（XON&#x2F;XOFF）。</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-串口通信的数据帧格式"><a href="#3-串口通信的数据帧格式" class="headerlink" title="3. 串口通信的数据帧格式"></a>3. <strong>串口通信的数据帧格式</strong></h4><p>串口通信的数据通常以帧的形式传输，一个典型的数据帧包括以下几个部分：</p>
+<ol>
+<li><strong>起始位（Start Bit）</strong>：通常为一个低电平（0），表示数据帧的开始。</li>
+<li><strong>数据位（Data Bits）</strong>：实际传输的数据，通常为 7 位或 8 位。</li>
+<li><strong>校验位（Parity Bit）</strong>：可选，用于错误检测。</li>
+<li><strong>停止位（Stop Bits）</strong>：通常为 1 位或 2 位，表示数据帧的结束。</li>
+</ol>
+<h3 id="串口通信的操作方法"><a href="#串口通信的操作方法" class="headerlink" title="串口通信的操作方法"></a><strong>串口通信的操作方法</strong></h3><h4 id="1-硬件连接"><a href="#1-硬件连接" class="headerlink" title="1. 硬件连接"></a>1. <strong>硬件连接</strong></h4><p>串口通信通常使用 <strong>RS-232</strong> 或 <strong>TTL</strong> 电平的串口。常见的硬件接口有：</p>
+<ul>
+<li><strong>DB-9 或 DB-25 接口</strong>：用于 RS-232 串口。</li>
+<li><strong>GPIO 引脚</strong>：用于 TTL 串口，常见于单片机和嵌入式设备。</li>
+</ul>
+<h4 id="2-软件配置"><a href="#2-软件配置" class="headerlink" title="2. 软件配置"></a>2. <strong>软件配置</strong></h4><p>在软件中，你需要配置串口的参数，包括波特率、数据位、停止位和校验位等。以下是一个基于 <strong>Boost.Asio</strong> 的 C++ 示例代码，展示如何配置和使用串口：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;boost/asio.hpp&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">SerialPort</span><br>&#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">SerialPort</span>(<span class="hljs-type">const</span> std::string &amp;port_name, <span class="hljs-type">int</span> baud_rate)<br>    &#123;<br>        <span class="hljs-keyword">try</span><br>        &#123;<br>            <span class="hljs-comment">// 打开串口</span><br>            _serial_port = <span class="hljs-keyword">new</span> boost::asio::<span class="hljs-built_in">serial_port</span>(_io_service, port_name);<br><br>            <span class="hljs-comment">// 配置串口参数</span><br>            _serial_port-&gt;<span class="hljs-built_in">set_option</span>(boost::asio::serial_port::<span class="hljs-built_in">baud_rate</span>(baud_rate));<br>            _serial_port-&gt;<span class="hljs-built_in">set_option</span>(boost::asio::serial_port::<span class="hljs-built_in">flow_control</span>(boost::asio::serial_port::flow_control::none));<br>            _serial_port-&gt;<span class="hljs-built_in">set_option</span>(boost::asio::serial_port::<span class="hljs-built_in">parity</span>(boost::asio::serial_port::parity::none));<br>            _serial_port-&gt;<span class="hljs-built_in">set_option</span>(boost::asio::serial_port::<span class="hljs-built_in">stop_bits</span>(boost::asio::serial_port::stop_bits::one));<br>            _serial_port-&gt;<span class="hljs-built_in">set_option</span>(boost::asio::serial_port::<span class="hljs-built_in">character_size</span>(<span class="hljs-number">8</span>));<br>        &#125;<br>        <span class="hljs-built_in">catch</span> (<span class="hljs-type">const</span> std::exception &amp;e)<br>        &#123;<br>            std::cerr &lt;&lt; <span class="hljs-string">&quot;Error: &quot;</span> &lt;&lt; e.<span class="hljs-built_in">what</span>() &lt;&lt; std::endl;<br>            <span class="hljs-keyword">delete</span> _serial_port;<br>            _serial_port = <span class="hljs-literal">nullptr</span>;<br>        &#125;<br>    &#125;<br><br>    ~<span class="hljs-built_in">SerialPort</span>()<br>    &#123;<br>        <span class="hljs-keyword">delete</span> _serial_port;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">write</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">uint8_t</span> *data, <span class="hljs-type">size_t</span> size)</span></span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">if</span> (_serial_port)<br>        &#123;<br>            boost::asio::<span class="hljs-built_in">write</span>(*_serial_port, boost::asio::<span class="hljs-built_in">buffer</span>(data, size));<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">read</span><span class="hljs-params">(<span class="hljs-type">uint8_t</span> *data, <span class="hljs-type">size_t</span> size)</span></span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">if</span> (_serial_port)<br>        &#123;<br>            boost::asio::<span class="hljs-built_in">read</span>(*_serial_port, boost::asio::<span class="hljs-built_in">buffer</span>(data, size));<br>        &#125;<br>    &#125;<br><br><span class="hljs-keyword">private</span>:<br>    boost::asio::io_service _io_service;<br>    boost::asio::serial_port *_serial_port = <span class="hljs-literal">nullptr</span>;<br>&#125;;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-function">SerialPort <span class="hljs-title">serialPort</span><span class="hljs-params">(<span class="hljs-string">&quot;/dev/ttyUSB0&quot;</span>, <span class="hljs-number">115200</span>)</span></span>;<br><br>    <span class="hljs-comment">// 发送数据</span><br>    <span class="hljs-type">uint8_t</span> data_to_send[] = &#123;<span class="hljs-number">0x01</span>, <span class="hljs-number">0x02</span>, <span class="hljs-number">0x03</span>&#125;;<br>    serialPort.<span class="hljs-built_in">write</span>(data_to_send, <span class="hljs-built_in">sizeof</span>(data_to_send));<br><br>    <span class="hljs-comment">// 接收数据</span><br>    <span class="hljs-type">uint8_t</span> data_received[<span class="hljs-number">10</span>];<br>    serialPort.<span class="hljs-built_in">read</span>(data_received, <span class="hljs-built_in">sizeof</span>(data_received));<br><br>    <span class="hljs-comment">// 打印接收到的数据</span><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">size_t</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-built_in">sizeof</span>(data_received); ++i)<br>    &#123;<br>        std::cout &lt;&lt; std::hex &lt;&lt; <span class="hljs-built_in">static_cast</span>&lt;<span class="hljs-type">int</span>&gt;(data_received[i]) &lt;&lt; <span class="hljs-string">&quot; &quot;</span>;<br>    &#125;<br>    std::cout &lt;&lt; std::endl;<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="3-数据传输"><a href="#3-数据传输" class="headerlink" title="3. 数据传输"></a>3. <strong>数据传输</strong></h4><ul>
+<li><p><strong>发送数据</strong>：</p>
+<ul>
+<li>使用 <code>write</code> 方法将数据发送到串口。</li>
+<li>数据通常是一个字节数组。</li>
+</ul>
+</li>
+<li><p><strong>接收数据</strong>：</p>
+<ul>
+<li>使用 <code>read</code> 方法从串口读取数据。</li>
+<li>读取的数据同样是一个字节数组。</li>
+</ul>
+</li>
+</ul>
+<h4 id="4-错误处理"><a href="#4-错误处理" class="headerlink" title="4. 错误处理"></a>4. <strong>错误处理</strong></h4><ul>
+<li>在实际应用中，串口通信可能会遇到各种问题，如连接断开、数据错误等。</li>
+<li>你需要在代码中添加适当的错误处理逻辑，例如捕获异常并记录日志。</li>
+</ul>
+<h3 id="实际应用中的注意事项"><a href="#实际应用中的注意事项" class="headerlink" title="实际应用中的注意事项"></a><strong>实际应用中的注意事项</strong></h3><ol>
+<li><p><strong>波特率匹配</strong>：</p>
+<ul>
+<li>发送方和接收方的波特率必须一致，否则数据无法正确解析。</li>
+</ul>
+</li>
+<li><p><strong>硬件连接</strong>：</p>
+<ul>
+<li>确保硬件连接正确，例如使用正确的串口线或转换器。</li>
+</ul>
+</li>
+<li><p><strong>调试工具</strong>：</p>
+<ul>
+<li>使用串口调试工具（如 PuTTY、Minicom 或串口调试助手）可以帮助你测试和调试串口通信。</li>
+</ul>
+</li>
+<li><p><strong>线程安全</strong>：</p>
+<ul>
+<li>如果在多线程环境中使用串口，确保对串口操作的线程安全。</li>
+</ul>
+</li>
+<li><p><strong>超时处理</strong>：</p>
+<ul>
+<li>在读取数据时，设置适当的超时时间，避免程序卡住。</li>
+</ul>
+</li>
+</ol>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h3><p>串口通信是一种简单而有效的通信方式，适用于低速、长距离的数据传输。通过理解其基本原理和操作方法，你可以轻松地在你的项目中实现串口通信。</p>
+<hr>
+<p>这是一个很好的问题！在串口通信中，数据的字节序（Byte Order）是一个非常重要的概念。字节序决定了多字节数据（如 <code>int</code> 类型）在内存中的存储顺序。常见的字节序有两种：<strong>大端序（Big-Endian）</strong> 和 <strong>小端序（Little-Endian）</strong>。</p>
+<h3 id="大端序（Big-Endian）"><a href="#大端序（Big-Endian）" class="headerlink" title="大端序（Big-Endian）"></a><strong>大端序（Big-Endian）</strong></h3><ul>
+<li><strong>定义</strong>：最高有效字节（MSB，Most Significant Byte）存储在最低的内存地址，最低有效字节（LSB，Least Significant Byte）存储在最高的内存地址。</li>
+<li><strong>示例</strong>：假设有一个 4 字节的整数 <code>0x12345678</code>，在大端序中，它在内存中的存储顺序是：<ul>
+<li>地址 0: <code>0x12</code></li>
+<li>地址 1: <code>0x34</code></li>
+<li>地址 2: <code>0x56</code></li>
+<li>地址 3: <code>0x78</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="小端序（Little-Endian）"><a href="#小端序（Little-Endian）" class="headerlink" title="小端序（Little-Endian）"></a><strong>小端序（Little-Endian）</strong></h3><ul>
+<li><strong>定义</strong>：最低有效字节（LSB）存储在最低的内存地址，最高有效字节（MSB）存储在最高的内存地址。</li>
+<li><strong>示例</strong>：假设有一个 4 字节的整数 <code>0x12345678</code>，在小端序中，它在内存中的存储顺序是：<ul>
+<li>地址 0: <code>0x78</code></li>
+<li>地址 1: <code>0x56</code></li>
+<li>地址 2: <code>0x34</code></li>
+<li>地址 3: <code>0x12</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="为什么代码中是倒着的？"><a href="#为什么代码中是倒着的？" class="headerlink" title="为什么代码中是倒着的？"></a><strong>为什么代码中是倒着的？</strong></h3><p>在你的代码中，<code>yaw</code> 是一个 4 字节的整数，假设它是 <code>int</code> 类型。代码中通过 <code>tmp</code> 指针逐字节访问 <code>yaw</code> 的值，并将其存储到 <code>msg</code> 数组中。代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp">tmp = (<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *)(&amp;_data_write-&gt;yaw);<br>msg[<span class="hljs-number">4</span>] = tmp[<span class="hljs-number">3</span>];<br>msg[<span class="hljs-number">5</span>] = tmp[<span class="hljs-number">2</span>];<br>msg[<span class="hljs-number">6</span>] = tmp[<span class="hljs-number">1</span>];<br>msg[<span class="hljs-number">7</span>] = tmp[<span class="hljs-number">0</span>];<br></code></pre></td></tr></table></figure>
+
+<p>这里的关键是 <strong>字节序</strong>。假设你的系统是小端序（大多数现代计算机，如 x86 架构，都是小端序），那么 <code>yaw</code> 的字节在内存中的存储顺序是：</p>
+<ul>
+<li>地址 0: <code>0x78</code>（LSB）</li>
+<li>地址 1: <code>0x56</code></li>
+<li>地址 2: <code>0x34</code></li>
+<li>地址 3: <code>0x12</code>（MSB）</li>
+</ul>
+<p>当你通过 <code>tmp</code> 指针访问这些字节时：</p>
+<ul>
+<li><code>tmp[0]</code> 是 <code>0x78</code>（LSB）</li>
+<li><code>tmp[1]</code> 是 <code>0x56</code></li>
+<li><code>tmp[2]</code> 是 <code>0x34</code></li>
+<li><code>tmp[3]</code> 是 <code>0x12</code>（MSB）</li>
+</ul>
+<p>但是，如果你希望在 <code>msg</code> 数组中按照大端序存储这些字节（即 MSB 在前，LSB 在后），你需要将它们倒过来存储：</p>
+<ul>
+<li><code>msg[4]</code> 存储 <code>tmp[3]</code>（MSB）</li>
+<li><code>msg[5]</code> 存储 <code>tmp[2]</code></li>
+<li><code>msg[6]</code> 存储 <code>tmp[1]</code></li>
+<li><code>msg[7]</code> 存储 <code>tmp[0]</code>（LSB）</li>
+</ul>
+<p>这样，<code>msg</code> 数组中的字节顺序就是：</p>
+<ul>
+<li><code>msg[4]</code>: <code>0x12</code>（MSB）</li>
+<li><code>msg[5]</code>: <code>0x34</code></li>
+<li><code>msg[6]</code>: <code>0x56</code></li>
+<li><code>msg[7]</code>: <code>0x78</code>（LSB）</li>
+</ul>
+<h3 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a><strong>总结</strong></h3><ul>
+<li><strong>小端序</strong>：内存中存储的字节顺序是 <code>LSB -&gt; MSB</code>。</li>
+<li><strong>大端序</strong>：内存中存储的字节顺序是 <code>MSB -&gt; LSB</code>。</li>
+<li>在代码中，为了将小端序的字节转换为大端序，需要将字节倒过来存储。</li>
+</ul>
+<h3 id="实际应用"><a href="#实际应用" class="headerlink" title="实际应用"></a><strong>实际应用</strong></h3><p>在实际应用中，你需要根据通信协议的要求来决定使用哪种字节序。如果通信协议要求数据以大端序传输，而你的系统是小端序，就需要在发送数据前将字节顺序转换为大端序。反之亦然。</p>
+<hr>
+<h1 id="C-中try-catch的使用方法"><a href="#C-中try-catch的使用方法" class="headerlink" title="C++中try-catch的使用方法"></a>C++中try-catch的使用方法</h1><p><code>try-catch</code>是C++中异常处理的基本机制，用于捕获和处理程序运行时可能出现的异常。下面详细介绍其使用方法：</p>
+<h2 id="基本语法结构"><a href="#基本语法结构" class="headerlink" title="基本语法结构"></a>基本语法结构</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">try</span> &#123;<br>    <span class="hljs-comment">// 可能抛出异常的代码块</span><br>&#125; <span class="hljs-built_in">catch</span> (异常类型<span class="hljs-number">1</span> 变量名) &#123;<br>    <span class="hljs-comment">// 处理异常类型1的代码</span><br>&#125; <span class="hljs-built_in">catch</span> (异常类型<span class="hljs-number">2</span> 变量名) &#123;<br>    <span class="hljs-comment">// 处理异常类型2的代码</span><br>&#125; <span class="hljs-built_in">catch</span> (...) &#123;<br>    <span class="hljs-comment">// 处理所有其他未捕获异常的代码</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="具体使用方法"><a href="#具体使用方法" class="headerlink" title="具体使用方法"></a>具体使用方法</h2><h3 id="1-捕获特定类型异常"><a href="#1-捕获特定类型异常" class="headerlink" title="1. 捕获特定类型异常"></a>1. 捕获特定类型异常</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">try</span> &#123;<br>    <span class="hljs-type">int</span> a = <span class="hljs-number">10</span>, b = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">if</span> (b == <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-keyword">throw</span> std::<span class="hljs-built_in">runtime_error</span>(<span class="hljs-string">&quot;除数不能为零&quot;</span>);<br>    &#125;<br>    <span class="hljs-type">int</span> c = a / b;<br>&#125; <span class="hljs-built_in">catch</span> (<span class="hljs-type">const</span> std::runtime_error&amp; e) &#123;<br>    std::cerr &lt;&lt; <span class="hljs-string">&quot;捕获到运行时错误: &quot;</span> &lt;&lt; e.<span class="hljs-built_in">what</span>() &lt;&lt; std::endl;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-捕获多种类型异常"><a href="#2-捕获多种类型异常" class="headerlink" title="2. 捕获多种类型异常"></a>2. 捕获多种类型异常</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">try</span> &#123;<br>    <span class="hljs-comment">// 可能抛出多种异常的代码</span><br>&#125; <span class="hljs-built_in">catch</span> (<span class="hljs-type">const</span> std::invalid_argument&amp; e) &#123;<br>    <span class="hljs-comment">// 处理无效参数异常</span><br>&#125; <span class="hljs-built_in">catch</span> (<span class="hljs-type">const</span> std::out_of_range&amp; e) &#123;<br>    <span class="hljs-comment">// 处理越界异常</span><br>&#125; <span class="hljs-built_in">catch</span> (<span class="hljs-type">const</span> std::exception&amp; e) &#123;<br>    <span class="hljs-comment">// 处理所有标准异常的基类</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-捕获所有异常（catch-all）"><a href="#3-捕获所有异常（catch-all）" class="headerlink" title="3. 捕获所有异常（catch-all）"></a>3. 捕获所有异常（catch-all）</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">try</span> &#123;<br>    <span class="hljs-comment">// 可能抛出异常的代码</span><br>&#125; <span class="hljs-built_in">catch</span> (...) &#123;<br>    std::cerr &lt;&lt; <span class="hljs-string">&quot;捕获到未知异常&quot;</span> &lt;&lt; std::endl;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="在您提供的串口代码中的应用"><a href="#在您提供的串口代码中的应用" class="headerlink" title="在您提供的串口代码中的应用"></a>在您提供的串口代码中的应用</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">SerialPort::serialPortRead</span><span class="hljs-params">(<span class="hljs-type">uint8_t</span> *msg, <span class="hljs-type">uint8_t</span> max_len)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-built_in">read</span>(*_serial_port, boost::asio::<span class="hljs-built_in">buffer</span>(msg, max_len), _err);<br>    &#125; <span class="hljs-built_in">catch</span> (...) &#123;<br>        <span class="hljs-built_in">LOG</span>(ERROR) &lt;&lt; <span class="hljs-string">&quot;readData from serial port error! &quot;</span> &lt;&lt; _err.<span class="hljs-built_in">message</span>();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="异常处理的最佳实践"><a href="#异常处理的最佳实践" class="headerlink" title="异常处理的最佳实践"></a>异常处理的最佳实践</h2><ol>
+<li><p><strong>按从具体到一般的顺序捕获异常</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">catch</span> (<span class="hljs-type">const</span> MySpecificException&amp; e) &#123;...&#125;<br><span class="hljs-built_in">catch</span> (<span class="hljs-type">const</span> std::exception&amp; e) &#123;...&#125;<br><span class="hljs-built_in">catch</span> (...) &#123;...&#125;<br></code></pre></td></tr></table></figure>
+</li>
+<li><p><strong>避免空的catch块</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 不好的做法</span><br><span class="hljs-built_in">catch</span> (...) &#123;&#125;<br><br><span class="hljs-comment">// 好的做法</span><br><span class="hljs-built_in">catch</span> (...) &#123;<br>    <span class="hljs-comment">// 至少记录日志</span><br>    <span class="hljs-built_in">logError</span>(<span class="hljs-string">&quot;Unknown exception caught&quot;</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+</li>
+<li><p><strong>使用标准异常类</strong></p>
+<ul>
+<li><code>std::exception</code> - 所有标准异常的基类</li>
+<li><code>std::runtime_error</code> - 运行时错误</li>
+<li><code>std::logic_error</code> - 逻辑错误</li>
+<li><code>std::invalid_argument</code> - 无效参数</li>
+<li><code>std::out_of_range</code> - 超出范围</li>
+</ul>
+</li>
+<li><p><strong>自定义异常类</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SerialPortException</span> : <span class="hljs-keyword">public</span> std::runtime_error &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">SerialPortException</span>(<span class="hljs-type">const</span> std::string&amp; msg) <br>        : std::<span class="hljs-built_in">runtime_error</span>(msg) &#123;&#125;<br>&#125;;<br></code></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="在串口通信中的典型应用"><a href="#在串口通信中的典型应用" class="headerlink" title="在串口通信中的典型应用"></a>在串口通信中的典型应用</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">SerialPort::sendCommand</span><span class="hljs-params">(<span class="hljs-type">const</span> Command&amp; cmd)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">try</span> &#123;<br>        <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">isOpen</span>()) &#123;<br>            <span class="hljs-keyword">throw</span> <span class="hljs-built_in">SerialPortException</span>(<span class="hljs-string">&quot;Port not open&quot;</span>);<br>        &#125;<br>        <span class="hljs-comment">// 发送命令...</span><br>    &#125; <span class="hljs-built_in">catch</span> (<span class="hljs-type">const</span> SerialPortException&amp; e) &#123;<br>        <span class="hljs-built_in">LOG</span>(ERROR) &lt;&lt; <span class="hljs-string">&quot;Serial port error: &quot;</span> &lt;&lt; e.<span class="hljs-built_in">what</span>();<br>        <span class="hljs-keyword">throw</span>; <span class="hljs-comment">// 重新抛出给上层处理</span><br>    &#125; <span class="hljs-built_in">catch</span> (<span class="hljs-type">const</span> std::exception&amp; e) &#123;<br>        <span class="hljs-built_in">LOG</span>(ERROR) &lt;&lt; <span class="hljs-string">&quot;Standard exception: &quot;</span> &lt;&lt; e.<span class="hljs-built_in">what</span>();<br>        <span class="hljs-keyword">throw</span>;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="注意事项-2"><a href="#注意事项-2" class="headerlink" title="注意事项"></a>注意事项</h2><ol>
+<li>异常处理会有性能开销，不应替代常规错误检查</li>
+<li>不要在析构函数中抛出异常</li>
+<li>确保异常安全 - 即使抛出异常也不会泄漏资源</li>
+<li>考虑使用RAII(资源获取即初始化)技术管理资源</li>
+</ol>
+<p>通过合理使用try-catch，可以使您的串口通信代码更加健壮和可靠。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://chaichai438.github.io">Chaichai</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://chaichai438.github.io/2026/06/05/RM%E5%AD%A6%E4%B9%A0/%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1/">https://chaichai438.github.io/2026/06/05/RM%E5%AD%A6%E4%B9%A0/%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://chaichai438.github.io" target="_blank">Click Start!</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/RMer/">RMer</a></div><div class="post-share"><div class="social-share" data-image="https://chaichai438.github.io/assets/Pictures/cover/RMer.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/06/05/RM%E5%AD%A6%E4%B9%A0/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95(1)/" title="数据结构和算法(1)"><img class="cover" src="https://chaichai438.github.io/assets/Pictures/cover/算法.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">数据结构和算法(1)</div></div><div class="info-2"><div class="info-item-1"> 算法、大O记法    数据结构和算法(1)什么是算法？算法，即解决某个问题的一套流程。例如最简单的一个问题，如何把大象装进冰箱？第一步，打开冰箱；第二步，将大象装进冰箱；第三步，关上冰箱。而这整个的流程，就叫算法。但是每个人都有不同的方法，比如小明在装大象时，把大象切成块，多了一个步骤，现在小明需要四步才能把大象装进去，而之前的方法只需要三步，这就叫做时间复杂度。随着要装的大象越来越多，小明所用的步骤越来越多，即n*3步，在这里我们使用大O记法来描述步骤，即O(3n)。但是在大O记法中，我们忽略常数。所以，小明装大象的时间复杂度为O(n)。在程序设计中，我们会想方设法的优化我们的算法，以此来让程序运行相应得更快，发挥代码的极限性能。因此，学习算法是很有必要的。  大O记法的规则：1、忽略常数2、只关注最高阶的N  排序算法和其效率现在我们要对数组 int arr[5] = &#123;4, 2, 7, 1 ,3&#125;进行排序 冒泡排序123456789101112131415161718192021void BubbleSort()&#123;    for (int i...</div></div></div></a><a class="pagination-related" href="/2026/06/05/RM%E5%AD%A6%E4%B9%A0/250426/" title="多线程编程"><img class="cover" src="https://chaichai438.github.io/assets/Pictures/cover/RMer.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">多线程编程</div></div><div class="info-2"><div class="info-item-1">多线程编程(基于C++)目录 什么是多线程 创建线程 线程管理 线程的传参 线程的同步与互斥  什么是多线程首先我们需要了解什么是线程。 线程（Thread）是操作系统能够进行调度的最小单位，它比进程更小，是进程的一个子集。线程是程序执行的最小单位，用于实现并发执行。 多线程指的是一个程序中包含两个或者两个以上的线程，多线程的提出是为提高代码的执行效率，这就好比工厂中的流水线，只有一条称为单线程，有多条流水线就称为多线程。  我这里还有更形象一点的例子。AI生成  线程比喻：餐厅里的服务员  想象你走进一家餐厅，餐厅就像一个程序，而餐厅里的服务员就像线程。  餐厅（进程）   餐厅是整个程序的运行环境，它有自己的资源，比如厨房（内存）、餐具（文件句柄）、服务员（线程）等。 餐厅的资源是有限的，但它可以同时为多个顾客服务。   服务员（线程）   服务员是餐厅里的线程，他们负责完成各种任务，比如点菜、送餐、清理桌子等。 每个服务员可以独立完成任务，但他们共享餐厅的资源（比如厨房和餐具）。   顾客（任务）   餐厅里的顾客代表程序中的任务。每个顾客有不同的需求，比如点不同的菜或者要...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/06/05/RM%E5%AD%A6%E4%B9%A0/250426/" title="多线程编程"><img class="cover" src="https://chaichai438.github.io/assets/Pictures/cover/RMer.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-05</div><div class="info-item-2">多线程编程</div></div><div class="info-2"><div class="info-item-1">多线程编程(基于C++)目录 什么是多线程 创建线程 线程管理 线程的传参 线程的同步与互斥  什么是多线程首先我们需要了解什么是线程。 线程（Thread）是操作系统能够进行调度的最小单位，它比进程更小，是进程的一个子集。线程是程序执行的最小单位，用于实现并发执行。 多线程指的是一个程序中包含两个或者两个以上的线程，多线程的提出是为提高代码的执行效率，这就好比工厂中的流水线，只有一条称为单线程，有多条流水线就称为多线程。  我这里还有更形象一点的例子。AI生成  线程比喻：餐厅里的服务员  想象你走进一家餐厅，餐厅就像一个程序，而餐厅里的服务员就像线程。  餐厅（进程）   餐厅是整个程序的运行环境，它有自己的资源，比如厨房（内存）、餐具（文件句柄）、服务员（线程）等。 餐厅的资源是有限的，但它可以同时为多个顾客服务。   服务员（线程）   服务员是餐厅里的线程，他们负责完成各种任务，比如点菜、送餐、清理桌子等。 每个服务员可以独立完成任务，但他们共享餐厅的资源（比如厨房和餐具）。   顾客（任务）   餐厅里的顾客代表程序中的任务。每个顾客有不同的需求，比如点不同的菜或者要...</div></div></div></a><a class="pagination-related" href="/2026/06/05/RM%E5%AD%A6%E4%B9%A0/%E7%94%B5%E6%8E%A7%E8%80%83%E6%A0%B8/" title="电控组考核"><img class="cover" src="/assets/Pictures/cover/RMer.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-05</div><div class="info-item-2">电控组考核</div></div><div class="info-2"><div class="info-item-1">题目一 选择题1.若用数组名作为函数调用的实参，传递给形参的是(     )A.数组的首地址B.数组第一个元素的值C.数组中全部元素的值D.数组元素的个数 2.使用值传递方式将实参传给形参，下列说法正确的是(     )A.形参是实参的备份B.实参是形参的备份C.形参和实参是同一对象D.形参和实参无联系 3.以下说法正确的是(     )A.下列函数调用语句中含有2个实参:fun((a1,a2),(a3,a4,a5));B.在函数中未指定存储类别的变量，其隐含的存储类别是void类型C.若调用一个函数，且此函数中没有return语句，则该函数没有返回值D.全局变量的作用域一定比局部变量的作用域范围大 4.以下说法错误的是(     )A.continue语句只能用于循环语句中B.在分支结构switch中，case后面跟的一定是常量C.在不同函数中可以使用相同名字的变量D.int num[3]=&#123;1,2,3&#125;,使用num++来让数组下标后移 5.char ch[]=&quot;abcd&quot;在内存中所占的字节数是()A.4B.5C.8D.10 6.该程序段...</div></div></div></a><a class="pagination-related" href="/2026/06/05/RM%E5%AD%A6%E4%B9%A0/%E7%94%9F%E4%BA%A7%E8%80%85%E4%B8%8E%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%9E%8B/" title="生产者与消费者模型"><img class="cover" src="https://chaichai438.github.io/assets/Pictures/cover/RMer.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-05</div><div class="info-item-2">生产者与消费者模型</div></div><div class="info-2"><div class="info-item-1"> 多线程编程的一个经典模型    一、生产者与消费者模型生产者与消费者模型（Producer - Consumer Model）是一种经典的多线程同步问题模型，用于描述生产者和消费者之间对共享资源（如缓冲区）的交互过程。它在计算机科学中被广泛应用于解决多线程编程中的线程同步、资源竞争和数据共享等问题。 （一）模型的基本组成 生产者（Producer） 生产者的作用是生成数据并将其放入共享缓冲区。生产者不断地生产数据，例如在实际应用场景中，它可以是一个数据采集线程，从传感器采集数据后放入缓冲区。   消费者（Consumer） 消费者从共享缓冲区中取出数据并进行处理。消费者不断地消费数据，比如一个数据分析线程从缓冲区取出数据进行分析处理。   共享缓冲区（Shared Buffer） 这是生产者和消费者之间共享的资源。它可以是一个队列、数组或其他数据结构。缓冲区的大小是有限的，它存储着生产者生产的、尚未被消费者消费的数据。    （二）模型的核心问题 同步问题 生产者和消费者需要协调工作。如果缓冲区满了，生产者不能继续生产，否则会导致数据丢失或覆盖；如果缓冲区空了，消费者不能继续消...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Chaichai</div><div class="author-info-description">Well begun is half-down</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">31</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">48</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Chaichai438"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Chaichai438" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="/1939327800@qq.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#unsigned-char-%E8%A7%A3%E9%87%8A"><span class="toc-number">1.</span> <span class="toc-text">unsigned char 解释</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%89%B9%E6%80%A7"><span class="toc-number">1.1.</span> <span class="toc-text">基本特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8Echar%E5%92%8Csigned-char%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.2.</span> <span class="toc-text">与char和signed char的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81"><span class="toc-number">1.3.</span> <span class="toc-text">示例代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%B9%E6%AE%8A%E7%94%A8%E9%80%94"><span class="toc-number">1.4.</span> <span class="toc-text">特殊用途</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">1.5.</span> <span class="toc-text">注意事项</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%A7%A3%E9%87%8A-unsigned-char-tmp-%E5%92%8C%E6%95%B0%E7%BB%84%E8%B5%8B%E5%80%BC"><span class="toc-number">2.</span> <span class="toc-text">解释 unsigned char *tmp 和数组赋值</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%88%86%E8%A7%A3"><span class="toc-number">2.1.</span> <span class="toc-text">代码分解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%EF%BC%9A%E6%8C%87%E9%92%88%E5%A3%B0%E6%98%8E%E5%92%8C%E8%B5%8B%E5%80%BC"><span class="toc-number">2.2.</span> <span class="toc-text">第一部分：指针声明和赋值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86%EF%BC%9A%E6%95%B0%E7%BB%84%E8%B5%8B%E5%80%BC"><span class="toc-number">2.3.</span> <span class="toc-text">第二部分：数组赋值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E6%A0%B7%E5%81%9A%EF%BC%9F"><span class="toc-number">2.4.</span> <span class="toc-text">为什么这样做？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E4%BE%8B%E5%AD%90"><span class="toc-number">2.5.</span> <span class="toc-text">实际例子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9-1"><span class="toc-number">2.6.</span> <span class="toc-text">注意事项</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="toc-number">2.6.1.</span> <span class="toc-text">串口通信的基本原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1%EF%BC%9F"><span class="toc-number">2.6.1.1.</span> <span class="toc-text">1. 什么是串口通信？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1%E7%9A%84%E5%85%B3%E9%94%AE%E6%A6%82%E5%BF%B5"><span class="toc-number">2.6.1.2.</span> <span class="toc-text">2. 串口通信的关键概念</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1%E7%9A%84%E6%95%B0%E6%8D%AE%E5%B8%A7%E6%A0%BC%E5%BC%8F"><span class="toc-number">2.6.1.3.</span> <span class="toc-text">3. 串口通信的数据帧格式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1%E7%9A%84%E6%93%8D%E4%BD%9C%E6%96%B9%E6%B3%95"><span class="toc-number">2.6.2.</span> <span class="toc-text">串口通信的操作方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%A1%AC%E4%BB%B6%E8%BF%9E%E6%8E%A5"><span class="toc-number">2.6.2.1.</span> <span class="toc-text">1. 硬件连接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E8%BD%AF%E4%BB%B6%E9%85%8D%E7%BD%AE"><span class="toc-number">2.6.2.2.</span> <span class="toc-text">2. 软件配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93"><span class="toc-number">2.6.2.3.</span> <span class="toc-text">3. 数据传输</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="toc-number">2.6.2.4.</span> <span class="toc-text">4. 错误处理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8%E4%B8%AD%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">2.6.3.</span> <span class="toc-text">实际应用中的注意事项</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">2.6.4.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%A7%E7%AB%AF%E5%BA%8F%EF%BC%88Big-Endian%EF%BC%89"><span class="toc-number">2.6.5.</span> <span class="toc-text">大端序（Big-Endian）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E7%AB%AF%E5%BA%8F%EF%BC%88Little-Endian%EF%BC%89"><span class="toc-number">2.6.6.</span> <span class="toc-text">小端序（Little-Endian）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BB%A3%E7%A0%81%E4%B8%AD%E6%98%AF%E5%80%92%E7%9D%80%E7%9A%84%EF%BC%9F"><span class="toc-number">2.6.7.</span> <span class="toc-text">为什么代码中是倒着的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-1"><span class="toc-number">2.6.8.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8"><span class="toc-number">2.6.9.</span> <span class="toc-text">实际应用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#C-%E4%B8%ADtry-catch%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-number">3.</span> <span class="toc-text">C++中try-catch的使用方法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95%E7%BB%93%E6%9E%84"><span class="toc-number">3.1.</span> <span class="toc-text">基本语法结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-number">3.2.</span> <span class="toc-text">具体使用方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%8D%95%E8%8E%B7%E7%89%B9%E5%AE%9A%E7%B1%BB%E5%9E%8B%E5%BC%82%E5%B8%B8"><span class="toc-number">3.2.1.</span> <span class="toc-text">1. 捕获特定类型异常</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%8D%95%E8%8E%B7%E5%A4%9A%E7%A7%8D%E7%B1%BB%E5%9E%8B%E5%BC%82%E5%B8%B8"><span class="toc-number">3.2.2.</span> <span class="toc-text">2. 捕获多种类型异常</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%8D%95%E8%8E%B7%E6%89%80%E6%9C%89%E5%BC%82%E5%B8%B8%EF%BC%88catch-all%EF%BC%89"><span class="toc-number">3.2.3.</span> <span class="toc-text">3. 捕获所有异常（catch-all）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E6%82%A8%E6%8F%90%E4%BE%9B%E7%9A%84%E4%B8%B2%E5%8F%A3%E4%BB%A3%E7%A0%81%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-number">3.3.</span> <span class="toc-text">在您提供的串口代码中的应用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E7%9A%84%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="toc-number">3.4.</span> <span class="toc-text">异常处理的最佳实践</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1%E4%B8%AD%E7%9A%84%E5%85%B8%E5%9E%8B%E5%BA%94%E7%94%A8"><span class="toc-number">3.5.</span> <span class="toc-text">在串口通信中的典型应用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9-2"><span class="toc-number">3.6.</span> <span class="toc-text">注意事项</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/08/OS/%E7%AC%AC%E4%B9%9D%E7%AB%A0%20%E7%A3%81%E7%9B%98%E5%AD%98%E5%82%A8%E5%99%A8%E7%AE%A1%E7%90%86/%E7%A3%81%E7%9B%98%E5%AD%98%E5%82%A8%E5%99%A8%E7%AE%A1%E7%90%86/" title="第9章：磁盘存储器管理">第9章：磁盘存储器管理</a><time datetime="2026-06-07T16:00:00.000Z" title="发表于 2026-06-08 00:00:00">2026-06-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/06/05/%E7%AE%97%E6%B3%95/%E9%98%B6%E4%B9%98%E6%B1%82%E5%92%8C/" title="高精度计算"><img src="https://chaichai438.github.io/assets/Pictures/cover/算法.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="高精度计算"/></a><div class="content"><a class="title" href="/2026/06/05/%E7%AE%97%E6%B3%95/%E9%98%B6%E4%B9%98%E6%B1%82%E5%92%8C/" title="高精度计算">高精度计算</a><time datetime="2026-06-04T18:00:10.465Z" title="发表于 2026-06-05 02:00:10">2026-06-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/06/05/%E7%AE%97%E6%B3%95/%E5%9B%9E%E6%96%87%E8%B4%A8%E6%95%B0/" title="回文质数"><img src="https://chaichai438.github.io/assets/Pictures/cover/算法.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="回文质数"/></a><div class="content"><a class="title" href="/2026/06/05/%E7%AE%97%E6%B3%95/%E5%9B%9E%E6%96%87%E8%B4%A8%E6%95%B0/" title="回文质数">回文质数</a><time datetime="2026-06-04T18:00:10.463Z" title="发表于 2026-06-05 02:00:10">2026-06-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/06/05/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%84%9F%E7%9F%A5%E6%9C%BA%E5%92%8C%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" title="感知机"><img src="https://chaichai438.github.io/assets/Pictures/cover/Neural_Network.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="感知机"/></a><div class="content"><a class="title" href="/2026/06/05/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%84%9F%E7%9F%A5%E6%9C%BA%E5%92%8C%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" title="感知机">感知机</a><time datetime="2026-06-04T18:00:10.458Z" title="发表于 2026-06-05 02:00:10">2026-06-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/06/05/RM%E5%AD%A6%E4%B9%A0/%E7%94%B5%E6%8E%A7%E8%80%83%E6%A0%B8/" title="电控组考核"><img src="/assets/Pictures/cover/RMer.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="电控组考核"/></a><div class="content"><a class="title" href="/2026/06/05/RM%E5%AD%A6%E4%B9%A0/%E7%94%B5%E6%8E%A7%E8%80%83%E6%A0%B8/" title="电控组考核">电控组考核</a><time datetime="2026-06-04T18:00:10.449Z" title="发表于 2026-06-05 02:00:10">2026-06-05</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(https://chaichai438.github.io/assets/Pictures/cover/RMer.jpg);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Chaichai</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.3</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(async () => {
+  const showKatex = () => {
+    document.querySelectorAll('#article-container .katex').forEach(el => el.classList.add('katex-show'))
+  }
+
+  if (!window.katex_js_css) {
+    window.katex_js_css = true
+    await btf.getCSS('https://cdn.jsdelivr.net/npm/katex@0.16.27/dist/katex.min.css')
+    if (false) {
+      await btf.getScript('https://cdn.jsdelivr.net/npm/katex@0.16.27/dist/contrib/copy-tex.min.js')
+    }
+  }
+
+  showKatex()
+})()</script></div><span id="busuanzi_site_uv" style="display:none"></span>
+<span id="busuanzi_site_pv" style="display:none"></span>
+<span id="busuanzi_page_pv" style="display:none"></span>
+<script>
+(function(){
+  var map={'busuanzi_site_uv':'busuanzi_value_site_uv','busuanzi_site_pv':'busuanzi_value_site_pv','busuanzi_page_pv':'busuanzi_value_page_pv'};
+  var iv=setInterval(function(){
+    for(var k in map){
+      var s=document.getElementById(k),t=document.getElementById(map[k]);
+      if(s&&t&&s.textContent&&t.textContent!==s.textContent) t.textContent=s.textContent;
+    }
+  },500);
+  setTimeout(function(){clearInterval(iv);},15000);
+})();
+</script>
+<script async data-pjax src="https://cdn.busuanzi.cc/busuanzi/3.6.9/busuanzi.min.js"></script></div></body></html>
