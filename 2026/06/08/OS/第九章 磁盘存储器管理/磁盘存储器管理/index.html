@@ -179,7 +179,7 @@
 <blockquote>
 <p>对于外部碎片，这个概念还是有些抽象，换一个更形象的例子：想象有一个非常大的自助储物柜，你在存很多东西时，系统会给你连续的几个柜子（比如10~15号）。取放东西时，走到那片柜子区域就能快速存取。但如果你后来多了一个小包想塞进去，相邻的16号柜子可能已经被别人占了，你就没法扩展。而且，如果大家存的大小不一，退租后会出现很多零散空位，后来的大行李箱放不进去。</p>
 </blockquote>
-<p>从图片我们可以得知，为了定位一个文件的位置我们需要知道它的起始盘块号和它的长度，类似于数组的定义，我们要知道它在内存中的起始位置和长度。<br><img src="/Screenshot_20260607_215904.jpg" alt="alt text"></p>
+<p>从图片我们可以得知，为了定位一个文件的位置我们需要知道它的起始盘块号和它的长度，类似于数组的定义，我们要知道它在内存中的起始位置和长度。<br><img src="/%E8%BF%9E%E7%BB%AD%E7%BB%84%E7%BB%87%E6%96%B9%E5%BC%8F.jpg" alt="alt text"></p>
 <h3 id="1-1-2-链接组织方式"><a href="#1-1-2-链接组织方式" class="headerlink" title="1.1.2 链接组织方式"></a>1.1.2 链接组织方式</h3><p>类似于链表，一个盘块里有着数据和指向下一个盘块的指针，文件目录项记录着头指针或尾指针。</p>
 <ol>
 <li><p>隐式链接<br>指针直接存放在每个数据块的末尾或开头，对用户透明。要访问第N块，必须从第一块开始逐个沿着指针链查找。<br>缺点是只能顺序访问，随机访问效率极低，而且任何一个中间的指针损坏都会导致文件后续数据全部丢失。</p>
@@ -256,7 +256,7 @@
 </ol>
 </li>
 </ol>
-<p><img src="/Screenshot_20260607_215016_com_newskyer_draw_PadActivity_edit_300434331259354.jpg" alt="MS-DOS系统"><br>这张表打重点，万一考你画表了呢？</p>
+<p><img src="/MS-DOS%E7%B3%BB%E7%BB%9F.jpg" alt="MS-DOS"><br>这张表打重点，万一考你画表了呢？</p>
 <p><strong>共同优点</strong>：</p>
 <ol>
 <li>没有外部碎片，磁盘空间利用率高。</li>
@@ -298,7 +298,7 @@
 </ul>
 <p>这样，小文件访问效率高，大文件又能通过多级索引扩展，兼顾了性能与灵活性。</p>
 <p><strong>思考题</strong>：假设有一个含有 100 万条记录的文本文件，每条记录均包括：姓名（长度为 2～64 个汉字，平均长度为 4 个汉字）、年龄、性别、家庭地址和身份证号码。对该文件的操作主要是根据姓名进行记录查询，请思考为该文件设计哪种组织方式可使其具有访问效率高和所需存储空间少的优点。</p>
-<h2 id="1-2-文件存储空间的管理"><a href="#1-2-文件存储空间的管理" class="headerlink" title="1.2 文件存储空间的管理"></a>1.2 文件存储空间的管理</h2><h3 id="1-2-1-空闲区表法和空闲链表法"><a href="#1-2-1-空闲区表法和空闲链表法" class="headerlink" title="1.2.1 空闲区表法和空闲链表法"></a>1.2.1 空闲区表法和空闲链表法</h3><h4 id="1-空闲区表法"><a href="#1-空闲区表法" class="headerlink" title="1. 空闲区表法"></a>1. 空闲区表法</h4><p><strong>原理</strong>：系统维护一张空闲表，表中每一项记录一组连续空闲块的起始块号和块数。类似于内存管理中的“可变分区”方式。<br><img src="/Screenshot_20260606_213720_com_newskyer_draw_PadActivity_edit_289907515598188-1.jpg" alt="alt text"><br><strong>分配与回收</strong>：</p>
+<h2 id="1-2-文件存储空间的管理"><a href="#1-2-文件存储空间的管理" class="headerlink" title="1.2 文件存储空间的管理"></a>1.2 文件存储空间的管理</h2><h3 id="1-2-1-空闲区表法和空闲链表法"><a href="#1-2-1-空闲区表法和空闲链表法" class="headerlink" title="1.2.1 空闲区表法和空闲链表法"></a>1.2.1 空闲区表法和空闲链表法</h3><h4 id="1-空闲区表法"><a href="#1-空闲区表法" class="headerlink" title="1. 空闲区表法"></a>1. 空闲区表法</h4><p><strong>原理</strong>：系统维护一张空闲表，表中每一项记录一组连续空闲块的起始块号和块数。类似于内存管理中的“可变分区”方式。<br><img src="/%E7%A9%BA%E9%97%B2%E5%8C%BA%E8%A1%A8.jpg" alt="alt text"><br><strong>分配与回收</strong>：</p>
 <ul>
 <li>分配时，扫描空闲表，找到第一组足够大的连续空闲块，从中分割所需块数（剩余部分仍作为一项）。</li>
 <li>回收时，检查回收块与前后空闲块是否相邻，若相邻则合并为一项。</li>
@@ -310,7 +310,7 @@
 <li>回收时，将回收块插入链表头部（或尾部）。</li>
 </ul>
 <p><strong>优点</strong>：简单，无需额外表格，只需一个头指针。<br><strong>缺点</strong>：无法获得连续的空闲块（每次只能取一个块），容易造成文件碎片（文件被分散到不连续的块中）；分配&#x2F;回收效率低（如果一次需要多个块，就需要多次操作链表；链表遍历较慢，但通常只操作头部）。</p>
-<h3 id="1-2-2-位示图法"><a href="#1-2-2-位示图法" class="headerlink" title="1.2.2 位示图法"></a>1.2.2 位示图法</h3><p><strong>原理</strong>：用一张二进制位图（Bitmap）来表示每个盘块（或簇）的状态。每个盘块对应一个位（bit）：0表示空闲，1表示已分配。位示图可以存放在内存中，也可以存放在磁盘上（定期保存）。<br><img src="/Screenshot_20260606_213804_com_newskyer_draw_PadActivity_edit_289937257473036-1.jpg" alt="alt text"></p>
+<h3 id="1-2-2-位示图法"><a href="#1-2-2-位示图法" class="headerlink" title="1.2.2 位示图法"></a>1.2.2 位示图法</h3><p><strong>原理</strong>：用一张二进制位图（Bitmap）来表示每个盘块（或簇）的状态。每个盘块对应一个位（bit）：0表示空闲，1表示已分配。位示图可以存放在内存中，也可以存放在磁盘上（定期保存）。<br><img src="/%E4%BD%8D%E7%A4%BA%E5%9B%BE.jpg" alt="alt text"></p>
 <p><strong>分配与回收</strong>：</p>
 <ul>
 <li>分配时，扫描位图找到连续的0位（如果要求连续块），或将多个0位逐个分配。通常从第一个空闲位开始。</li>
@@ -607,7 +607,7 @@
 </blockquote>
 <hr>
 <h3 id="1-4-2-第二级容错技术（SFT-II）"><a href="#1-4-2-第二级容错技术（SFT-II）" class="headerlink" title="1.4.2 第二级容错技术（SFT-II）"></a>1.4.2 第二级容错技术（SFT-II）</h3><p>第二级容错技术（SFT-II）主要用于防止系统因<strong>磁盘驱动器</strong>和<strong>磁盘控制器故障</strong>而无法正常工作这一情况的发生。此级容错技术具体可分为<strong>磁盘镜像</strong>和<strong>磁盘双工</strong>。</p>
-<h4 id="1-磁盘镜像（Disk-Mirroring）"><a href="#1-磁盘镜像（Disk-Mirroring）" class="headerlink" title="1. 磁盘镜像（Disk Mirroring）"></a>1. 磁盘镜像（Disk Mirroring）</h4><p>为了避免因磁盘驱动器发生故障而丢失数据，系统增设了磁盘镜像功能。为实现该功能，须在<strong>同一磁盘控制器</strong>下增设一个完全相同的磁盘驱动器。<br><img src="/Screenshot_20260607_200823_com_newskyer_draw_PadActivity_edit_294378623783301.jpg" alt="alt text"></p>
+<h4 id="1-磁盘镜像（Disk-Mirroring）"><a href="#1-磁盘镜像（Disk-Mirroring）" class="headerlink" title="1. 磁盘镜像（Disk Mirroring）"></a>1. 磁盘镜像（Disk Mirroring）</h4><p>为了避免因磁盘驱动器发生故障而丢失数据，系统增设了磁盘镜像功能。为实现该功能，须在<strong>同一磁盘控制器</strong>下增设一个完全相同的磁盘驱动器。<br><img src="/%E7%A3%81%E7%9B%98%E9%95%9C%E5%83%8F.jpg" alt="alt text"></p>
 <p><strong>工作原理</strong>：</p>
 <ul>
 <li>每次向主磁盘写入数据后，都需要将数据再写到备份磁盘上，使两个磁盘上具有完全相同的位像图。</li>
@@ -623,7 +623,7 @@
 <p><strong>生活例子</strong>：你在两个本子上同时记笔记——一本丢了还有另一本，但浪费了一半纸。</p>
 </blockquote>
 <h4 id="2-磁盘双工（Disk-Duplexing）"><a href="#2-磁盘双工（Disk-Duplexing）" class="headerlink" title="2. 磁盘双工（Disk Duplexing）"></a>2. 磁盘双工（Disk Duplexing）</h4><p>如果控制上述两台磁盘驱动器的<strong>磁盘控制器</strong>发生故障，或主机到磁盘控制器之间的<strong>通道</strong>发生故障，则磁盘镜像功能就起不到保护数据的作用了。</p>
-<p>因此，在第二级容错技术中又增加了<strong>磁盘双工</strong>功能：将两台磁盘驱动器<strong>分别接到两个磁盘控制器</strong>上，同样使这两个磁盘控制器镜像成对。<br><img src="/Screenshot_20260607_200848_com_newskyer_draw_PadActivity_edit_294401582311302.jpg" alt="alt text"></p>
+<p>因此，在第二级容错技术中又增加了<strong>磁盘双工</strong>功能：将两台磁盘驱动器<strong>分别接到两个磁盘控制器</strong>上，同样使这两个磁盘控制器镜像成对。<br><img src="/%E7%A3%81%E7%9B%98%E5%8F%8C%E5%B7%A5.jpg" alt="alt text"></p>
 <p><strong>磁盘双工的优点</strong>：</p>
 <ul>
 <li>文件服务器同时将数据写到两个处于不同控制器下的磁盘上，使两者有完全相同的位像图。</li>
