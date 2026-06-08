@@ -1,0 +1,1261 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>第9章：磁盘存储器管理 | Click Start!</title><meta name="author" content="Chaichai"><meta name="copyright" content="Chaichai"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="从外存组织方式到文件存储空间管理，从RAID各级别到SFT容错技术，再到DAS&#x2F;NAS&#x2F;SAN和数据一致性控制。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第9章：磁盘存储器管理">
+<meta property="og:url" content="https://chaichai438.github.io/2026/06/08/OS/%E7%AC%AC%E4%B9%9D%E7%AB%A0%20%E7%A3%81%E7%9B%98%E5%AD%98%E5%82%A8%E5%99%A8%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:site_name" content="Click Start!">
+<meta property="og:description" content="从外存组织方式到文件存储空间管理，从RAID各级别到SFT容错技术，再到DAS&#x2F;NAS&#x2F;SAN和数据一致性控制。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://chaichai438.github.io/img/avatar.jpg">
+<meta property="article:published_time" content="2026-06-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-07T16:00:00.000Z">
+<meta property="article:author" content="Chaichai">
+<meta property="article:tag" content="操作系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://chaichai438.github.io/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "第9章：磁盘存储器管理",
+  "url": "https://chaichai438.github.io/2026/06/08/OS/%E7%AC%AC%E4%B9%9D%E7%AB%A0%20%E7%A3%81%E7%9B%98%E5%AD%98%E5%82%A8%E5%99%A8%E7%AE%A1%E7%90%86/",
+  "image": "https://chaichai438.github.io/img/avatar.jpg",
+  "datePublished": "2026-06-07T16:00:00.000Z",
+  "dateModified": "2026-06-07T16:00:00.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Chaichai",
+      "url": "https://chaichai438.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/fruitcake.gif"><link rel="canonical" href="https://chaichai438.github.io/2026/06/08/OS/%E7%AC%AC%E4%B9%9D%E7%AB%A0%20%E7%A3%81%E7%9B%98%E5%AD%98%E5%82%A8%E5%99%A8%E7%AE%A1%E7%90%86/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '第9章：磁盘存储器管理',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><style>#web_bg{background:transparent!important}</style><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" integrity="sha512-fHwaWebuwA7NSF5Qg/af4UeDx9XqUpYpOGgubo3yWu+b2IQR4UeQwbb42Ti7gVAjNtVoI/I9TEoYeu9omwcC6g==" crossorigin="anonymous" referrerpolicy="no-referrer" /><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body><div class="bg-animation" id="web_bg" style="background-color: #49B202;"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">31</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">48</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-compass"></i><span> 页面</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-microchip"></i><span> 408</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"><i class="fa-fw fas fa-brain"></i><span> 机器学习</span></a></li><li><a class="site-page child" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"><i class="fa-fw fas fa-laptop-code"></i><span> 操作系统</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/neko.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/fruitcake.gif" alt="Logo"><span class="site-name">Click Start!</span></a><a class="nav-page-title" href="/"><span class="site-name">第9章：磁盘存储器管理</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-compass"></i><span> 页面</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-microchip"></i><span> 408</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"><i class="fa-fw fas fa-brain"></i><span> 机器学习</span></a></li><li><a class="site-page child" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"><i class="fa-fw fas fa-laptop-code"></i><span> 操作系统</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">第9章：磁盘存储器管理</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-06-07T16:00:00.000Z" title="发表于 2026-06-08 00:00:00">2026-06-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-07T16:00:00.000Z" title="更新于 2026-06-08 00:00:00">2026-06-08</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">20.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>62分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="0-学完本章-你会："><a href="#0-学完本章-你会：" class="headerlink" title="0 学完本章 你会："></a>0 学完本章 你会：</h2><p>在此之前，我们需要知道几个关键概念：</p>
+<ul>
+<li>盘块（物理块）<br>是操作系统对外存（如硬盘、U盘）进行读写和管理的最小逻辑单位。一个盘块通常对应一个或多个连续的物理扇区（扇区是硬件层面的最小读写单元，传统硬盘一个扇区512字节，现在也有4KB的）。</li>
+</ul>
+<h2 id="1-1-外存的组织方式"><a href="#1-1-外存的组织方式" class="headerlink" title="1.1 外存的组织方式"></a>1.1 外存的组织方式</h2><h3 id="1-1-1-连续组织方式"><a href="#1-1-1-连续组织方式" class="headerlink" title="1.1.1 连续组织方式"></a>1.1.1 连续组织方式</h3><p>原理：就像数组在内存中占用连续空间一样，文件被存放在磁盘上一组连续的物理块中。文件目录项中只需要记录该文件的起始块号和总块数即可。</p>
+<p><strong>优点</strong>：</p>
+<ol>
+<li>实现简单，目录项信息极少。</li>
+<li>顺序访问速度非常快，磁头不需要大幅度移动。</li>
+<li>既支持顺序存取，也支持直接存取（随机访问），你可以通过起始块号加上偏移量直接计算出目标物理地址。</li>
+</ol>
+<p><strong>缺点</strong>：</p>
+<ol>
+<li>会产生外部碎片。随着文件的不断创建和删除，磁盘上会出现许多零散的小空闲区，虽然总和很大，但无法分配给需要连续空间的大文件。 </li>
+<li>文件长度难以动态增长。创建文件时必须预先知道并声明文件最大长度，否则后续没有相邻空间就无法扩展。</li>
+<li>和数组类似，不能灵活地删除和插入记录。</li>
+</ol>
+<blockquote>
+<p>对于外部碎片，这个概念还是有些抽象，换一个更形象的例子：想象有一个非常大的自助储物柜，你在存很多东西时，系统会给你连续的几个柜子（比如10~15号）。取放东西时，走到那片柜子区域就能快速存取。但如果你后来多了一个小包想塞进去，相邻的16号柜子可能已经被别人占了，你就没法扩展。而且，如果大家存的大小不一，退租后会出现很多零散空位，后来的大行李箱放不进去。</p>
+</blockquote>
+<p>从图片我们可以得知，为了定位一个文件的位置我们需要知道它的起始盘块号和它的长度，类似于数组的定义，我们要知道它在内存中的起始位置和长度。<br><img src="/img/%E8%BF%9E%E7%BB%AD%E7%BB%84%E7%BB%87%E6%96%B9%E5%BC%8F.jpg" alt="alt text"></p>
+<h3 id="1-1-2-链接组织方式"><a href="#1-1-2-链接组织方式" class="headerlink" title="1.1.2 链接组织方式"></a>1.1.2 链接组织方式</h3><p>类似于链表，一个盘块里有着数据和指向下一个盘块的指针，文件目录项记录着头指针或尾指针。</p>
+<ol>
+<li><p>隐式链接<br>指针直接存放在每个数据块的末尾或开头，对用户透明。要访问第N块，必须从第一块开始逐个沿着指针链查找。<br>缺点是只能顺序访问，随机访问效率极低，而且任何一个中间的指针损坏都会导致文件后续数据全部丢失。</p>
+</li>
+<li><p>显式链接</p>
+<ul>
+<li>把所有的链接指针从数据块中提取出来，集中存放在内存的一张表里面，这张表叫做<strong>文件分配表</strong>（FAT，File Allocation Table）。</li>
+<li>磁盘上每个物理块在FAT中对应一个表项，记录了下一块的块号。文件目录项只需记录文件的首块号。</li>
+<li>访问时先在内存中查FAT表，确定物理块号后再去磁盘读取数据。</li>
+<li><strong>优点</strong>：查找速度快，不需要读磁盘就能确定块的链接关系；</li>
+<li><strong>缺点</strong>：FAT表需要占用内存空间，磁盘容量越大，FAT表越大。</li>
+</ul>
+<ol>
+<li><p>FAT文件系统<br>  FAT引入了”卷”的概念，这也是我们Windows上C盘、D盘等磁盘的雏形。一个物理磁盘被分成若干个逻辑磁盘（卷），每个卷都是一个能够被单独格式化和使用的逻辑单元。在我们现代OS上，一个物理磁盘不仅可以被划分为多个卷，一个卷也可以由多个物理磁盘组成。<br>  <strong>核心思想</strong>：用一张全局的FAT，来记录每个文件占用了哪些盘块，以及它们之间的链接关系。<br>  <strong>簇</strong>：一组连续扇区组成的分配单位。引入簇是为了缩小FAT表大小、提高I&#x2F;O性能，代价是可能产生内部碎片。</p>
+<blockquote>
+<p>为什么引入簇？<br>假设一个20MB的磁盘，扇区大小512字节，总扇区数 ≈ 20MB &#x2F; 512B &#x3D; 40960个。每个FAT表项需要16位（2字节）来记录下一个扇区号（因为2^16&#x3D;65536，足够）。那么一张FAT表的大小 &#x3D; 40960 × 2B &#x3D; 80KB。两张就是160KB。对于当时只有640KB内存的DOS系统，这个开销还能接受。<br>但如果磁盘容量增加到1GB（1990年代），扇区数 &#x3D; 1GB &#x2F; 512B ≈ 2百万个。每个表项至少需要4字节（32位）才能表示2百万个号，一张FAT表 &#x3D; 2M × 4B &#x3D; 8MB，两张就是16MB。而当时用户内存可能只有4-8MB，根本装不下整个FAT表。FAT表太大，无法全部加载到内存，严重降低性能。</p>
+</blockquote>
+<blockquote>
+<p>引入簇的好处：</p>
+<ol>
+<li>显著减小FAT表大小<br>例如，1GB的磁盘，如果簇大小为8KB（即16个扇区），那么总簇数 &#x3D; 1GB &#x2F; 8KB &#x3D; 131072个。每个表项仍用4字节（FAT32），FAT表大小 &#x3D; 131072 × 4B &#x3D; 512KB。两张表也只占1MB，可以轻松放入内存。</li>
+<li>减少文件碎片，提高I&#x2F;O性能<br>因为一次读写一个簇，相当于一次传输多个连续扇区，减少了磁头移动次数。对于大文件，顺序读取的吞吐量更高。</li>
+</ol>
+</blockquote>
+<p>  下面我们来直观的感受一下过程：</p>
+<blockquote>
+<ul>
+<li>文件存储过程（假设簇大小为4KB）<ol>
+<li>创建一个文件a.txt，内容占用12KB。</li>
+<li>文件系统从FAT表中查找空闲簇，假设找到簇#100、#150、#200。</li>
+<li>目录项中记录：文件名为a.txt，起始簇号为100。</li>
+<li>在FAT表中：</li>
+</ol>
+<ul>
+<li>第100项的值设为150（表示下一簇是150）</li>
+<li>第150项的值设为200</li>
+<li>第200项的值设为0x0FFFFFFF（FAT32的结束标志）</li>
+</ul>
+<ol start="3">
+<li>读取文件时，从目录拿到起始簇100，然后查FAT表依次得到150、200，再到数据区读取这些簇的内容。</li>
+</ol>
+</li>
+</ul>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>版本</th>
+<th>簇号位数</th>
+<th>最大分区容量</th>
+<th>主要应用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>FAT12</td>
+<td>12-bit</td>
+<td>最大约 32 MB</td>
+<td>早期软盘</td>
+</tr>
+<tr>
+<td>FAT16</td>
+<td>16-bit</td>
+<td>最大 2 GB</td>
+<td>MS-DOS、早期Windows、老旧U盘</td>
+</tr>
+<tr>
+<td>FAT32</td>
+<td>32-bit（实际使用28-bit,因为首四位不用）</td>
+<td>理论 8 TB，Windows系统限制格式化最大 32 GB</td>
+<td>U盘、SD卡、绝大多数移动设备</td>
+</tr>
+</tbody></table>
+</li>
+</ol>
+</li>
+</ol>
+<p><img src="/img/MS-DOS%E7%B3%BB%E7%BB%9F.jpg" alt="MS-DOS"><br>这张表打重点，万一考你画表了呢？</p>
+<p><strong>共同优点</strong>：</p>
+<ol>
+<li>没有外部碎片，磁盘空间利用率高。</li>
+<li>文件可以很方便地动态增长。</li>
+<li>能够灵活的进行插入和删除操作</li>
+</ol>
+<p><strong>共同缺点</strong>：</p>
+<ol>
+<li>随机访问能力差</li>
+<li>两者都需要额外的内存开销存放指针或FAT</li>
+<li>可靠性差，链接指针出现问题会造成数据丢失</li>
+</ol>
+<h3 id="1-1-3-索引组织方式"><a href="#1-1-3-索引组织方式" class="headerlink" title="1.1.3 索引组织方式"></a>1.1.3 索引组织方式</h3><p>为每个文件建立一张索引表，索引表中记录了该文件所有数据块对应的物理块号。文件目录项中记录的是索引表所在的物理块号（称为索引块）。<br>访问文件时，先读出索引块，根据其中的地址映射表再读取具体的数据块。</p>
+<ol>
+<li>单级索引组织方式：一个索引块直接指向所有数据块。适合小型文件。</li>
+<li>多级索引组织方式：用第一层索引块指向第二层索引块，第二层再指向数据块，以此类推。比如两级索引、三级索引。适合大型文件，但访问需要多次读磁盘。</li>
+</ol>
+<p><strong>优点</strong>：</p>
+<ol>
+<li><p>既支持顺序访问，也支持高效的随机访问（通过索引表直接计算目标块号）。</p>
+</li>
+<li><p>没有外部碎片，文件可以动态增长（只需在索引表中增加新记录）。</p>
+</li>
+<li><p>能够灵活地进行插入、修改和删除等操作<br><strong>缺点</strong>：</p>
+</li>
+<li><p>需要额外空间存储索引块（对于小文件，索引块开销相对较大）。</p>
+</li>
+<li><p>增加了寻道次数和寻道时间。</p>
+</li>
+<li><p><strong>增量式索引组织方式</strong>：<br>实际操作系统往往综合使用上述方式<br>以UNIX系统为例：</p>
+</li>
+</ol>
+<ul>
+<li>文件控制块（inode）中有13个地址项。</li>
+<li>前10项是直接索引（直接指向数据块），适合小文件。</li>
+<li>第11项是一级间接索引（指向一个索引块，该块再指向数据块）。</li>
+<li>第12项是二级间接索引。</li>
+<li>第13项是三级间接索引。</li>
+</ul>
+<p>这样，小文件访问效率高，大文件又能通过多级索引扩展，兼顾了性能与灵活性。</p>
+<p><strong>思考题</strong>：假设有一个含有 100 万条记录的文本文件，每条记录均包括：姓名（长度为 2～64 个汉字，平均长度为 4 个汉字）、年龄、性别、家庭地址和身份证号码。对该文件的操作主要是根据姓名进行记录查询，请思考为该文件设计哪种组织方式可使其具有访问效率高和所需存储空间少的优点。</p>
+<h2 id="1-2-文件存储空间的管理"><a href="#1-2-文件存储空间的管理" class="headerlink" title="1.2 文件存储空间的管理"></a>1.2 文件存储空间的管理</h2><h3 id="1-2-1-空闲区表法和空闲链表法"><a href="#1-2-1-空闲区表法和空闲链表法" class="headerlink" title="1.2.1 空闲区表法和空闲链表法"></a>1.2.1 空闲区表法和空闲链表法</h3><h4 id="1-空闲区表法"><a href="#1-空闲区表法" class="headerlink" title="1. 空闲区表法"></a>1. 空闲区表法</h4><p><strong>原理</strong>：系统维护一张空闲表，表中每一项记录一组连续空闲块的起始块号和块数。类似于内存管理中的“可变分区”方式。<br><img src="/img/%E7%A9%BA%E9%97%B2%E5%8C%BA%E8%A1%A8.jpg" alt="alt text"><br><strong>分配与回收</strong>：</p>
+<ul>
+<li>分配时，扫描空闲表，找到第一组足够大的连续空闲块，从中分割所需块数（剩余部分仍作为一项）。</li>
+<li>回收时，检查回收块与前后空闲块是否相邻，若相邻则合并为一项。</li>
+</ul>
+<p><strong>优点</strong>：简单，适合连续分配方式的文件系统（如早期的FAT之前的一些系统）。<br><strong>缺点</strong>：会产生外部碎片；空闲表本身可能较大（如果磁盘很零碎，表项很多）；分配时需要扫描表。</p>
+<h4 id="2-空闲链表法"><a href="#2-空闲链表法" class="headerlink" title="2. 空闲链表法"></a>2. 空闲链表法</h4><p><strong>原理</strong>：把所有空闲盘块（或簇）用链表串起来。系统保存一个头指针指向第一个空闲块。每个空闲块里存放指向下一个空闲块的指针。<br><strong>分配与回收</strong>：</p>
+<ul>
+<li>分配时，从链表头取下一个空闲块，头指针后移。</li>
+<li>回收时，将回收块插入链表头部（或尾部）。</li>
+</ul>
+<p><strong>优点</strong>：简单，无需额外表格，只需一个头指针。<br><strong>缺点</strong>：无法获得连续的空闲块（每次只能取一个块），容易造成文件碎片（文件被分散到不连续的块中）；分配&#x2F;回收效率低（如果一次需要多个块，就需要多次操作链表；链表遍历较慢，但通常只操作头部）。</p>
+<h3 id="1-2-2-位示图法"><a href="#1-2-2-位示图法" class="headerlink" title="1.2.2 位示图法"></a>1.2.2 位示图法</h3><p><strong>原理</strong>：用一张二进制位图（Bitmap）来表示每个盘块（或簇）的状态。每个盘块对应一个位（bit）：0表示空闲，1表示已分配。位示图可以存放在内存中，也可以存放在磁盘上（定期保存）。<br><img src="/img/%E4%BD%8D%E7%A4%BA%E5%9B%BE.jpg" alt="alt text"></p>
+<p><strong>分配与回收</strong>：</p>
+<ul>
+<li>分配时，扫描位图找到连续的0位（如果要求连续块），或将多个0位逐个分配。通常从第一个空闲位开始。</li>
+<li>回收时，将对应位清零。</li>
+</ul>
+<p><strong>优点</strong>：</p>
+<ol>
+<li>简单高效，位图可完全放入内存（例如1TB硬盘，4KB块，共2.5亿个块，位图大小≈30MB），内存可接受。</li>
+<li>容易找到连续的空闲块（只需在内存中扫描连续0位）。</li>
+<li>位图操作可以通过位运算加速。</li>
+</ol>
+<p><strong>缺点</strong>：</p>
+<ol>
+<li>位图本身需要占用存储空间（但比空闲表小很多）。</li>
+<li>如果磁盘很大，扫描整个位图找连续块可能耗时（但可用“前导零”优化或分组）。</li>
+</ol>
+<p><strong>实际应用</strong>：很多现代文件系统（如ext2&#x2F;3&#x2F;4、NTFS）都使用位示图来管理空闲块。例如ext4中的块位图（block bitmap）。</p>
+<h3 id="1-2-3-成组链接法"><a href="#1-2-3-成组链接法" class="headerlink" title="1.2.3 成组链接法"></a>1.2.3 成组链接法</h3><p><strong>原理</strong>：此方法主要用于Unix系统的空闲块管理（如早期的FFS）。它结合了空闲表和空闲链表的优点，把空闲块分成若干组，每组内的块号存放在一个“组描述块”中，组间再用链接方式串起来。</p>
+<p><strong>具体做法（以Unix为例）</strong>：</p>
+<ul>
+<li>系统启动时，将磁盘中第一个空闲管理块读入内存（称为空闲块栈）。</li>
+<li>该管理块中包含：一个计数器（记录本组内还有多少空闲块号），以及这些空闲块号（最多100个）。</li>
+<li>当这些空闲块被分配完毕后，把下一个组的管理块读入内存（通过最后一项记录的指针）。</li>
+<li>回收时，若当前组的空闲块栈未满，直接将回收块号压入栈；若已满，则将当前栈内容写入磁盘，再以回收块为新组的第一个块，并建立新栈。</li>
+</ul>
+<p><strong>优点</strong>：</p>
+<ol>
+<li>既支持分配连续块（组内可以是任意块号，不一定连续，但分配时可以一次取多个块）。</li>
+<li>效率高，因为内存中有一个栈，分配&#x2F;回收主要操作内存，只有组切换时才读写磁盘。</li>
+<li>节省磁盘空间（不需要像位示图那样单独保存大位图，而是借用空闲块本身来存储管理信息）。</li>
+</ol>
+<p><strong>生活例子</strong>：<br>学校图书管理员有多个“取书卡柜”。每个卡柜里放100张卡片，每张卡片上写着一本书的编号（空闲书）。取书时，从第一个卡柜里拿卡片；这个卡柜的卡片用完，就打开第二个卡柜，把里面100张卡片倒入第一个卡柜（即换组）。还书时，把书编号写回卡片，放回当前卡柜；如果当前卡柜已满，就把整个卡柜封存，换一个空卡柜（新组）来放新卡片。</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>核心数据结构</th>
+<th>连续分配支持</th>
+<th>内存开销</th>
+<th>磁盘I&#x2F;O频率</th>
+<th>实现复杂度</th>
+<th>典型应用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>空闲表法</td>
+<td>表（起始块号，长度）</td>
+<td>强</td>
+<td>较大（表项多）</td>
+<td>分配&#x2F;回收时读写表</td>
+<td>简单</td>
+<td>早期系统，连续文件</td>
+</tr>
+<tr>
+<td>空闲链表法</td>
+<td>链表（每个空闲块存指针）</td>
+<td>弱</td>
+<td>很小（仅头指针）</td>
+<td>每次分配&#x2F;回收都读写块</td>
+<td>简单</td>
+<td>某些嵌入式系统</td>
+</tr>
+<tr>
+<td>位示图法</td>
+<td>二进制位数组</td>
+<td>较强（可扫描连续位）</td>
+<td>固定，约磁盘容量&#x2F;8K</td>
+<td>分配&#x2F;回收时改位图（可缓存）</td>
+<td>中等</td>
+<td>ext、NTFS 等主流系统</td>
+</tr>
+<tr>
+<td>成组链接法</td>
+<td>多级组 + 内存栈</td>
+<td>中等（组内块可不连续，但可一次取多块）</td>
+<td>小（内存栈）</td>
+<td>组切换时才写盘</td>
+<td>复杂</td>
+<td>传统 Unix、System V</td>
+</tr>
+</tbody></table>
+<h2 id="1-3-提高磁盘-I-O-速度的途径"><a href="#1-3-提高磁盘-I-O-速度的途径" class="headerlink" title="1.3 提高磁盘 I&#x2F;O 速度的途径"></a>1.3 提高磁盘 I&#x2F;O 速度的途径</h2><p>磁盘的 I&#x2F;O 速度远低于对内存的访问速度，通常要低上 <strong>4～6 个数量级</strong>，已成为计算机系统的瓶颈。提高磁盘 I&#x2F;O 速度可从三方面着手：① 改进文件目录结构及检索方法；② 选取好的文件存储结构；③ 提高磁盘 I&#x2F;O 速度本身。前两方面已在第 8 章和 9.1 节阐述，本节重点介绍第三种途径，最主要的技术就是——<strong>磁盘高速缓存</strong>。</p>
+<blockquote>
+<p><strong>生活类比</strong>：你去图书馆借书，每次都要走到书架上翻找，非常耗时。如果图书馆在前台备了一个”热门书目展示架”（缓存），常借的书直接在前台拿，就快多了。</p>
+</blockquote>
+<h3 id="1-3-1-磁盘高速缓存（Disk-Cache）"><a href="#1-3-1-磁盘高速缓存（Disk-Cache）" class="headerlink" title="1.3.1 磁盘高速缓存（Disk Cache）"></a>1.3.1 磁盘高速缓存（Disk Cache）</h3><p><strong>定义</strong>：磁盘高速缓存是指在<strong>内存</strong>中为磁盘盘块设置的一个缓冲区，保存某些盘块的副本。它不同于 CPU 与内存之间的硬件高速缓存（Cache），它是利用内存空间来暂存磁盘数据，属于软件层面的缓存机制。</p>
+<p><strong>工作流程</strong>：</p>
+<ol>
+<li>当出现磁盘访问请求时，内核先去查看所请求的盘块内容是否已在磁盘高速缓存中。</li>
+<li><strong>命中</strong>：直接从磁盘高速缓存获取，省去启动磁盘的操作，速度提高几个数量级。</li>
+<li><strong>缺失</strong>：启动磁盘将所需盘块内容读入，并送到磁盘高速缓存中，以便后续再次访问时直接命中。</li>
+</ol>
+<p>设计磁盘高速缓存需要考虑三个问题：① 如何将数据传送给请求进程（数据交付方式）；② 采用何种置换算法；③ 已修改的盘块数据何时写回磁盘。</p>
+<hr>
+<h4 id="1-数据交付方式"><a href="#1-数据交付方式" class="headerlink" title="1. 数据交付方式"></a>1. 数据交付方式</h4><p>数据交付（Data Delivery）是指将磁盘高速缓存中的数据传送给请求进程。系统有两种方式：</p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>做法</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>数据交付</strong></td>
+<td>直接将磁盘高速缓存中的数据复制到请求进程的内存工作区</td>
+<td>安全性好，但需额外复制开销</td>
+</tr>
+<tr>
+<td><strong>指针交付</strong></td>
+<td>只将指向磁盘高速缓存中某区域的<strong>指针</strong>传给请求进程</td>
+<td>传送数据量少、速度快，但存在安全隐患</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>生活例子</strong>：你想借一本书。数据交付 &#x3D; 管理员复印一本给你（安全，但费纸）；指针交付 &#x3D; 管理员告诉你书在哪排哪列，你自己去看（快，但书可能被别人拿走）。</p>
+</blockquote>
+<hr>
+<h4 id="2-置换算法"><a href="#2-置换算法" class="headerlink" title="2. 置换算法"></a>2. 置换算法</h4><p>当磁盘高速缓存已满、需要腾出空间时，须决定将哪些盘块数据换出。常用置换算法有 <strong>LRU</strong>（最近最久未使用）、<strong>Clock</strong>（时钟算法）、<strong>LFU</strong>（最少使用）等。</p>
+<p>但磁盘高速缓存与请求调页中的联想存储器工作特性不同，在设计置换算法时还需额外考虑以下因素：</p>
+<ul>
+<li><strong>访问频率</strong>：对联想存储器的访问频率基本与指令执行频率相当（极高），而对磁盘高速缓存的访问频率仅与磁盘 I&#x2F;O 频率相当（低得多）。</li>
+<li><strong>可预见性</strong>：磁盘高速缓存中的某些盘块数据，可预知其访问模式。例如，二次间址块、目录块被访问一次后，可能很久不再被访问；而正在写入数据的未满盘块，可能很快又会被访问。</li>
+<li><strong>数据一致性</strong>：磁盘高速缓存在内存中，内存是易失性存储器，一旦系统故障，其中已被修改但尚未写回磁盘的数据就会丢失。</li>
+</ul>
+<p>基于上述考虑，有的系统将磁盘高速缓存中的所有盘块数据拉成一条 <strong>LRU 链</strong>：</p>
+<ul>
+<li>将那些会严重影响数据一致性的盘块数据，以及很久都可能不再使用的数据，放在 <strong>LRU 链头部</strong>，使其被优先写回磁盘，尽早腾出空间。</li>
+<li>将那些可能不久后要再使用的数据，挂在 <strong>LRU 链尾部</strong>，以便需要时直接从链中找到。</li>
+</ul>
+<blockquote>
+<p><strong>生活例子</strong>：书桌上放常用书，把”借来的图书馆书”（修改后须尽快还）放在最顺手的位置优先归还，自己的书可以放远一点慢慢看。</p>
+</blockquote>
+<hr>
+<h4 id="3-周期性地写回磁盘"><a href="#3-周期性地写回磁盘" class="headerlink" title="3. 周期性地写回磁盘"></a>3. 周期性地写回磁盘</h4><p>根据 LRU 算法，经常被访问的盘块数据可能一直保留在高速缓存中，长期不被写回磁盘（因为每次被访问就会被挂到链尾）。为解决此问题，<strong>UNIX 系统</strong>专门增设了一个 <strong>修改程序（update）</strong> 在后台运行，该程序会周期性地调用 <strong>SYNC</strong> 系统调用，强制性地将所有在磁盘高速缓存中已修改的盘块数据写回磁盘。一般将两次调用 SYNC 的时间间隔定为 <strong>30 秒</strong>——这样，即使系统发生故障，最多也只损失 30 秒的工作量。</p>
+<blockquote>
+<p><strong>生活例子</strong>：写论文时，Word 每隔几分钟自动保存一次——这就是”周期性写回”。即使电脑突然死机，你也只损失最近几分钟的内容。</p>
+</blockquote>
+<hr>
+<h3 id="1-3-2-提高磁盘-I-O-速度的其他方法"><a href="#1-3-2-提高磁盘-I-O-速度的其他方法" class="headerlink" title="1.3.2 提高磁盘 I&#x2F;O 速度的其他方法"></a>1.3.2 提高磁盘 I&#x2F;O 速度的其他方法</h3><p>除了磁盘高速缓存外，教材还介绍了四种有效方法：提前读、延迟写、优化物理块的分布、虚拟盘。</p>
+<h4 id="1-提前读（Read-Ahead）"><a href="#1-提前读（Read-Ahead）" class="headerlink" title="1. 提前读（Read-Ahead）"></a>1. 提前读（Read-Ahead）</h4><p><strong>原理</strong>：如果采用顺序访问方式，系统可预知下一次要读的盘块。在读取当前盘块时，同时要求将下一个盘块的数据也读入缓冲区。这样，下次需要该盘块时可直接从缓冲区获取，无需再次启动磁盘 I&#x2F;O。</p>
+<blockquote>
+<p><strong>生活例子</strong>：你在连续翻看一本小说，图书馆员工预测你下一页要看，提前帮你翻好。</p>
+</blockquote>
+<p><strong>适用场景</strong>：顺序读取的大文件（视频播放、数据库全表扫描等）。”提前读”已被广泛采用。</p>
+<h4 id="2-延迟写（Deferred-Write）"><a href="#2-延迟写（Deferred-Write）" class="headerlink" title="2. 延迟写（Deferred Write）"></a>2. 延迟写（Deferred Write）</h4><p><strong>原理</strong>：缓冲区中的数据本应立即写回磁盘，但考虑到该数据可能很快又会被本进程或其他进程访问，于是并不立即写回，而是将该缓冲区挂在空闲缓冲区队列的末尾。随着空闲缓冲区的使用，缓冲区缓缓前移，当再有进程申请到该缓冲区时，才将其数据写回磁盘并分配给新进程。</p>
+<p>只要缓冲区仍在队列中，任何进程都可以直接从中读取数据而不必访问磁盘，进一步减少了磁盘 I&#x2F;O 时间。</p>
+<blockquote>
+<p><strong>生活例子</strong>：快递站不是收到一个包裹就立刻送上楼，而是攒一批再一起送，省时省力。</p>
+</blockquote>
+<p><strong>风险</strong>：系统崩溃时，延迟写缓冲区中未写回磁盘的数据会丢失——这也是为什么需要”安全弹出”U 盘的原因。</p>
+<p><strong>应用</strong>：延迟写同样已被广泛采用。</p>
+<h4 id="3-优化物理块的分布"><a href="#3-优化物理块的分布" class="headerlink" title="3. 优化物理块的分布"></a>3. 优化物理块的分布</h4><p><strong>原理</strong>：在链接组织方式和索引组织方式下，文件可分散存储在磁盘的任意位置。但如果过于分散，磁头移动距离就会很大。例如，将文件的第一盘块安排在最里侧磁道、第二盘块安排在最外侧磁道，读完后需要磁头从最里侧移到最外侧。</p>
+<p>因此，应将同属一个文件的盘块安排在同一条磁道或相邻磁道上：</p>
+<ul>
+<li>采用<strong>位示图</strong>管理空闲空间时，很容易找到相邻接的多个空闲盘块。</li>
+<li>采用<strong>线性表（链）法</strong>时，可将同一条磁道上的若干盘块组成一个<strong>簇</strong>（如一簇含 4 个盘块），以簇为单位分配，保证簇内盘块的物理相邻性。</li>
+</ul>
+<h4 id="4-虚拟盘（RAM-Disk）"><a href="#4-虚拟盘（RAM-Disk）" class="headerlink" title="4. 虚拟盘（RAM Disk）"></a>4. 虚拟盘（RAM Disk）</h4><p><strong>原理</strong>：利用内存空间去<strong>仿真</strong>磁盘，形成所谓的”虚拟盘”（又称 RAM 盘）。该盘的设备驱动程序接受所有标准的磁盘操作，但这些操作在内存中执行。对用户而言完全透明——用户不会发现这与真正的磁盘操作有何不同，只是更快而已。</p>
+<p><strong>虚拟盘与磁盘高速缓存的主要区别</strong>：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>虚拟盘（RAM Disk）</th>
+<th>磁盘高速缓存（Disk Cache）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>内容控制</td>
+<td>完全由<strong>用户</strong>控制</td>
+<td>由<strong>OS</strong>控制</td>
+</tr>
+<tr>
+<td>初始状态</td>
+<td>空，用户创建文件后才有内容</td>
+<td>OS 自动管理缓存内容</td>
+</tr>
+</tbody></table>
+<p><strong>主要问题</strong>：虚拟盘是易失性存储器，一旦系统或电源发生故障，或系统重启，其中的数据就会丢失。因此，虚拟盘通常用于存放<strong>临时文件</strong>，如编译程序产生的目标程序等。</p>
+<blockquote>
+<p><strong>生活例子</strong>：虚拟盘 &#x3D; 你在草稿纸上做演算，速度快但纸一扔就没了；磁盘高速缓存 &#x3D; 图书管理员帮你找书，放前台的是常借书目，管理员决定放什么。</p>
+</blockquote>
+<hr>
+<h3 id="1-3-3-廉价磁盘冗余阵列（RAID）"><a href="#1-3-3-廉价磁盘冗余阵列（RAID）" class="headerlink" title="1.3.3 廉价磁盘冗余阵列（RAID）"></a>1.3.3 廉价磁盘冗余阵列（RAID）</h3><p><strong>设计思想</strong>：如果仅使用一个组件对系统性能进行改进会受到很大限制，那么通过使用多个相同的组件来获得系统性能的大幅度提升。正是在这种思想的推动下，1987 年开发出了 <strong>RAID</strong>（Redundant Array of Inexpensive Disks，廉价磁盘冗余阵列，后改称”独立磁盘冗余阵列”）。</p>
+<p>RAID 利用一台<strong>磁盘阵列控制器</strong>统一管理和控制一组磁盘驱动器，组成一个大型磁盘系统。它不仅大幅增加了磁盘容量，而且极大地提高了磁盘 I&#x2F;O 速度和整个磁盘系统的可靠性。</p>
+<h4 id="并行交叉存取"><a href="#并行交叉存取" class="headerlink" title="并行交叉存取"></a>并行交叉存取</h4><p>把在大、中型计算机中用于提高访问内存速度的<strong>并行交叉存取</strong>技术应用到磁盘存储系统中，以提高磁盘的 I&#x2F;O 速度：</p>
+<ul>
+<li>将每一盘块中的数据分为若干子盘块数据，分别存储到不同磁盘中的<strong>相同位置</strong>上。</li>
+<li>当需要将盘块数据传送到内存时，采取并行传输方式，将各磁盘中的子盘块数据同时向内存传输，使传输时间大大减少。</li>
+<li>例如：将文件的第 1 个数据子块放在磁盘 1 上，第 2 个子块放在磁盘 2 上……第 N 个子块放在磁盘 N 上。读取时从第 1~N 个磁盘中并行读出，磁盘 I&#x2F;O 速度提高了 <strong>N−1 倍</strong>。</li>
+</ul>
+<h4 id="RAID-分级"><a href="#RAID-分级" class="headerlink" title="RAID 分级"></a>RAID 分级</h4><p>RAID 刚推出时分为 6 级（RAID 0～5），后来又增加了 RAID 6 和 RAID 7。以下是各级的教材原文详解：</p>
+<hr>
+<p><strong>（1）RAID 0 级 —— 仅并行交叉存取</strong></p>
+<ul>
+<li>仅提供并行交叉存取功能，数据被分成条带交替写入多块磁盘。</li>
+<li><strong>优点</strong>：高效传输、高速 I&#x2F;O 请求。</li>
+<li><strong>缺点</strong>：<strong>无冗余校验功能</strong>，只要阵列中有一个磁盘损坏，便会造成不可弥补的数据丢失。较少使用。</li>
+</ul>
+<blockquote>
+<p><strong>生活例子</strong>：一张门需要两把钥匙才能打开，如果其中一个钥匙丢失了，那么这张门就打不开了。</p>
+</blockquote>
+<hr>
+<p><strong>（2）RAID 1 级 —— 磁盘镜像</strong></p>
+<ul>
+<li>具有磁盘镜像功能。例如，阵列有 8 个盘时，可将 4 个作为数据盘，另外 4 个作为镜像盘。</li>
+<li>每次访问磁盘时，利用并行读&#x2F;写特性将数据分块同时写入<strong>数据盘和镜像盘</strong>。</li>
+<li><strong>优点</strong>：可靠性好，从故障中恢复简单。</li>
+<li><strong>缺点</strong>：磁盘容量利用率只有 <strong>50%</strong>。RAID 1 级的优点是以牺牲磁盘容量为代价换取的。</li>
+</ul>
+<blockquote>
+<p><strong>生活例子</strong>：你在两个本子上同时记笔记（镜像），一本丢了还有另一本，但浪费了一半纸。</p>
+</blockquote>
+<hr>
+<p><strong>（3）RAID 2 级 —— 内存方式的差错纠正组织</strong></p>
+<ul>
+<li>基于内存系统中的奇偶位错误检测思想：内存中每个字节关联一个奇偶位，记录字节中为 1 的个数是偶数还是奇数。如果某一位损坏，奇偶校验位就会改变，与存储的奇偶校验位不匹配，从而检测出单个位的差错。</li>
+<li>实际应用较少。</li>
+</ul>
+<hr>
+<p><strong>（4）RAID 3 级 —— 具有并行传输功能的磁盘阵列</strong></p>
+<ul>
+<li>只利用<strong>一个奇偶校验盘</strong>实现数据校验。例如，阵列有 7 个盘时，6 个作为数据盘，1 个作为校验盘。</li>
+<li>磁盘利用率为 6&#x2F;7（约 <strong>85.7%</strong>）。</li>
+</ul>
+<hr>
+<p><strong>（5）RAID 4 级 —— 块交错奇偶校验</strong></p>
+<ul>
+<li>与 RAID 0 一样采用<strong>块级分条</strong>。</li>
+<li>在<strong>一个单独的磁盘</strong>上保存其他 N 个磁盘的块的奇偶校验块。</li>
+<li>如果有一个磁盘故障，可通过奇偶校验块和其他磁盘的相应块恢复故障磁盘的块。</li>
+</ul>
+<p><strong>RAID 3 与 RAID 4 的区别</strong>：RAID 3 采用位&#x2F;字节级分条，RAID 4 采用块级分条。RAID 4 允许独立读操作，但校验盘成为写操作的瓶颈。</p>
+<hr>
+<p><strong>（6）RAID 5 级 —— 具有独立传送功能的磁盘阵列</strong></p>
+<ul>
+<li>每个驱动器都有各自独立的数据通路，独立地进行读&#x2F;写。</li>
+<li><strong>无专门的校验盘</strong>——用来纠错的校验信息以<strong>螺旋（spiral）方式散布在所有数据盘上</strong>，避免了校验盘成为瓶颈。</li>
+<li><strong>容错</strong>：允许任意一块磁盘损坏，可通过剩余磁盘上的数据和校验信息重建。</li>
+<li><strong>空间利用率</strong>：(N−1)&#x2F;N。</li>
+</ul>
+<blockquote>
+<p><strong>生活例子</strong>：3 人搬砖，2 人搬数据，1 人拿一个”校验签”（奇偶校验），任何一人出事，可根据其他人的信息恢复数据。关键是：校验签不是固定一个人拿，而是大家轮流拿（分布式校验）。</p>
+</blockquote>
+<hr>
+<p><strong>（7）RAID 6 级和 RAID 7 级</strong></p>
+<ul>
+<li><strong>RAID 6 级</strong>：设置了一个专用的、可快速访问的异步校验盘。该盘具有独立数据通路，具有比 RAID 3&#x2F;5 更好的性能，但<strong>性能改进有限且代价较大</strong>。</li>
+<li><strong>RAID 7 级</strong>：对 RAID 6 的改进，所有磁盘都具有较高的传输速率和优异的性能，是目前最高档次的磁盘阵列，但<strong>价格较高</strong>。</li>
+</ul>
+<hr>
+<h4 id="RAID-的优点"><a href="#RAID-的优点" class="headerlink" title="RAID 的优点"></a>RAID 的优点</h4><p>教材总结了 RAID 的三个显著优点：</p>
+<ol>
+<li><strong>可靠性高</strong>：除 RAID 0 级外，其余各级都采用了容错技术。当阵列中某一磁盘损坏时，并不会造成数据丢失，可根据其他未损坏磁盘中的数据来恢复已损坏磁盘中的数据。可靠性比单磁盘高出一个数量级。</li>
+<li><strong>磁盘 I&#x2F;O 速度快</strong>：由于采取了并行交叉存取方式，磁盘 I&#x2F;O 速度提高了 N−1 倍。</li>
+<li><strong>性价比高</strong>：RAID 的体积与具有相同容量和速度的大型磁盘系统相比，只是后者的 1&#x2F;3，价格也只是后者的 1&#x2F;3，且可靠性高。换言之，它仅以牺牲 1&#x2F;N 的容量为代价，换取了高可靠性。</li>
+</ol>
+<hr>
+<h2 id="1-4-提高磁盘可靠性的技术"><a href="#1-4-提高磁盘可靠性的技术" class="headerlink" title="1.4 提高磁盘可靠性的技术"></a>1.4 提高磁盘可靠性的技术</h2><p>在实际应用中，经常会在多个文件中包含同一个数据。所谓<strong>数据一致性问题</strong>，是指保存在多个文件中的同一个数据，在任何情况下都必须保证相同。例如，当我们发现某种商品的进价有错时，我们必须同时修改流水账、付费账、分类账以及总账等一系列文件中关于该商品的价格，如此才能保证数据的一致性。但如果在修改途中系统突然发生故障，则会造成各个账目中该数据的不一致性，进而就会使多个账目不一致。为了保证数据的一致性，在现代 OS 中都配置了能保证数据一致性的软件。</p>
+<p>磁盘容错技术可分成三个级别：</p>
+<ul>
+<li><strong>第一级容错技术（SFT-I）</strong>：低级磁盘容错技术</li>
+<li><strong>第二级容错技术（SFT-II）</strong>：中级磁盘容错技术</li>
+<li><strong>第三级容错技术（SFT-III）</strong>：基于集群系统的容错技术，也被称为系统容错（System Fault Tolerant）技术</li>
+</ul>
+<h3 id="1-4-1-第一级容错技术（SFT-I）"><a href="#1-4-1-第一级容错技术（SFT-I）" class="headerlink" title="1.4.1 第一级容错技术（SFT-I）"></a>1.4.1 第一级容错技术（SFT-I）</h3><p>第一级容错技术（SFT-I）是最基本的一种磁盘容错技术，主要用于防止因<strong>磁盘表面缺陷</strong>所造成的数据丢失。它包含<strong>双份目录、双份 FAT、热修复重定向以及写后读校验</strong>等措施。</p>
+<h4 id="1-双份目录和双份-FAT"><a href="#1-双份目录和双份-FAT" class="headerlink" title="1. 双份目录和双份 FAT"></a>1. 双份目录和双份 FAT</h4><p>在磁盘上存放的<strong>文件目录</strong>和 <strong>FAT</strong>，是管理文件时所用的重要数据结构。为了防止这些表格被破坏，可以在不同的磁盘上或磁盘的不同区域中分别建立（双份）文件目录和 FAT：</p>
+<ul>
+<li>一份为<strong>主文件目录</strong>及<strong>主 FAT</strong></li>
+<li>另一份为<strong>备份文件目录</strong>及<strong>备份 FAT</strong></li>
+</ul>
+<p>一旦由于磁盘表面缺陷而造成主文件目录或主 FAT 损坏，系统便会自动启用备份文件目录或备份 FAT，从而保证磁盘上的数据仍可访问。</p>
+<blockquote>
+<p><strong>生活例子</strong>：你去办事时随身带了身份证原件＋复印件。如果原件丢了，用复印件也能证明身份。双份目录就是给文件管理的关键信息做个”复印件”。</p>
+</blockquote>
+<h4 id="2-热修复重定向和写后读校验"><a href="#2-热修复重定向和写后读校验" class="headerlink" title="2. 热修复重定向和写后读校验"></a>2. 热修复重定向和写后读校验</h4><p>由于磁盘价格昂贵，当磁盘表面有少量缺陷时，可在采取某种补救措施后继续使用。主要有以下两种补救措施：</p>
+<p><strong>（1）热修复重定向（Hot Fix Redirection）</strong>：</p>
+<ul>
+<li>系统将磁盘容量的很小一部分（如 <strong>2%～3%</strong>）划为<strong>热修复重定向区</strong>。</li>
+<li>当发现磁盘有缺陷时，将待写数据写入热修复重定向区。</li>
+<li>对所有写入该区的数据进行<strong>登记</strong>，以便今后快速访问。</li>
+</ul>
+<p><strong>（2）写后读校验（Read-After-Write Verification）</strong>：</p>
+<ul>
+<li>每次向磁盘中写入一个数据块后，<strong>立即将它读出来</strong>，送至另一缓冲区中。</li>
+<li>将该缓冲区的内容与内存缓冲区中写后仍保留的数据进行<strong>比较</strong>。</li>
+<li>若两者<strong>一致</strong>，则认为此次写入成功。</li>
+<li>若两者<strong>不一致</strong>（即写入失败），则<strong>重写</strong>。</li>
+<li>若重写后两者仍不一致，则认为该盘块有缺陷，此时将数据写入<strong>热修复重定向区</strong>。</li>
+</ul>
+<blockquote>
+<p><strong>生活例子</strong>：邮递员投递信件后，会打电话确认是否收到（写后读校验）。如果没收到（不一致），就再投一次。如果连续多次都没收到，就送到另一个备用地（热修复重定向区）。</p>
+</blockquote>
+<hr>
+<h3 id="1-4-2-第二级容错技术（SFT-II）"><a href="#1-4-2-第二级容错技术（SFT-II）" class="headerlink" title="1.4.2 第二级容错技术（SFT-II）"></a>1.4.2 第二级容错技术（SFT-II）</h3><p>第二级容错技术（SFT-II）主要用于防止系统因<strong>磁盘驱动器</strong>和<strong>磁盘控制器故障</strong>而无法正常工作这一情况的发生。此级容错技术具体可分为<strong>磁盘镜像</strong>和<strong>磁盘双工</strong>。</p>
+<h4 id="1-磁盘镜像（Disk-Mirroring）"><a href="#1-磁盘镜像（Disk-Mirroring）" class="headerlink" title="1. 磁盘镜像（Disk Mirroring）"></a>1. 磁盘镜像（Disk Mirroring）</h4><p>为了避免因磁盘驱动器发生故障而丢失数据，系统增设了磁盘镜像功能。为实现该功能，须在<strong>同一磁盘控制器</strong>下增设一个完全相同的磁盘驱动器。<br><img src="/img/%E7%A3%81%E7%9B%98%E9%95%9C%E5%83%8F.jpg" alt="alt text"></p>
+<p><strong>工作原理</strong>：</p>
+<ul>
+<li>每次向主磁盘写入数据后，都需要将数据再写到备份磁盘上，使两个磁盘上具有完全相同的位像图。</li>
+<li>备份磁盘就像主磁盘的一面”镜子”。</li>
+</ul>
+<p><strong>优点</strong>：当主磁盘驱动器发生故障时，由于有备份磁盘的存在，进行切换后主机仍能正常工作。</p>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>磁盘容量利用率降至原来的 <strong>50%</strong>。</li>
+<li>未能使服务器的磁盘 I&#x2F;O 速度得到提高。</li>
+</ul>
+<blockquote>
+<p><strong>生活例子</strong>：你在两个本子上同时记笔记——一本丢了还有另一本，但浪费了一半纸。</p>
+</blockquote>
+<h4 id="2-磁盘双工（Disk-Duplexing）"><a href="#2-磁盘双工（Disk-Duplexing）" class="headerlink" title="2. 磁盘双工（Disk Duplexing）"></a>2. 磁盘双工（Disk Duplexing）</h4><p>如果控制上述两台磁盘驱动器的<strong>磁盘控制器</strong>发生故障，或主机到磁盘控制器之间的<strong>通道</strong>发生故障，则磁盘镜像功能就起不到保护数据的作用了。</p>
+<p>因此，在第二级容错技术中又增加了<strong>磁盘双工</strong>功能：将两台磁盘驱动器<strong>分别接到两个磁盘控制器</strong>上，同样使这两个磁盘控制器镜像成对。<br><img src="/img/%E7%A3%81%E7%9B%98%E5%8F%8C%E5%B7%A5.jpg" alt="alt text"></p>
+<p><strong>磁盘双工的优点</strong>：</p>
+<ul>
+<li>文件服务器同时将数据写到两个处于不同控制器下的磁盘上，使两者有完全相同的位像图。</li>
+<li>如果某个通道或磁盘控制器发生故障，另一通道上的磁盘仍能正常工作，不会造成数据丢失。</li>
+<li>由于每个磁盘都有自己独立的通道，故可**同时（并行地）**将数据写入磁盘或从磁盘中读出，提高了 I&#x2F;O 速度。</li>
+</ul>
+<blockquote>
+<p><strong>生活例子（双工 vs 镜像）</strong>：镜像 &#x3D; 两个硬盘用同一根数据线（坏控制器全完蛋）；双工 &#x3D; 两个硬盘各自独立的数据线和控制器，坏一个不影响另一个。</p>
+</blockquote>
+<hr>
+<h3 id="1-4-3-基于集群系统的容错技术（SFT-III）"><a href="#1-4-3-基于集群系统的容错技术（SFT-III）" class="headerlink" title="1.4.3 基于集群系统的容错技术（SFT-III）"></a>1.4.3 基于集群系统的容错技术（SFT-III）</h3><p>在进入 20 世纪 90 年代后，为了进一步增强服务器的可用性，采用了多台对称多处理机服务器来实现<strong>集群系统</strong>服务器的功能。所谓<strong>集群</strong>，是指由一组互连的自主计算机组成统一的计算机系统，给人们的感觉是它们是一台机器。利用集群系统不仅可提高系统的并行处理能力，还可提高系统的可用性。</p>
+<p>当前使用最广泛的集群容错功能主要工作模式有三种：<strong>双机热备份模式、双机互为备份模式、公用磁盘模式</strong>。</p>
+<h4 id="1-双机热备份模式"><a href="#1-双机热备份模式" class="headerlink" title="1. 双机热备份模式"></a>1. 双机热备份模式</h4><p>在双机热备份模式的系统中，备有两台服务器，两者的处理能力通常完全相同：</p>
+<ul>
+<li>一台作为<strong>主服务器</strong>，另一台作为<strong>备份服务器</strong>。</li>
+<li>平时主服务器运行，备份服务器则时刻<strong>监视</strong>着主服务器的运行情况。</li>
+<li>一旦主服务器出现故障，备份服务器便立即<strong>接替</strong>主服务器的工作而成为系统中新的主服务器。</li>
+<li>修复后的原来的主服务器会被作为备份服务器。</li>
+</ul>
+<p>为使两台服务器之间保持镜像关系，需在各服务器上各装入一块网卡，并通过一条<strong>镜像服务器链路（Mirrored Server Link，MSL）</strong> 将两台服务器连接起来。若配置 FDDI 单模光纤，两台服务器间的距离可达 <strong>20 km</strong>。</p>
+<p>此外，还须在系统中设置某种机制以检测主服务器中数据的改变——一旦检测到主服务器中有数据变化，便立即通过通信系统将修改后的数据传送到备份服务器的相应数据文件中。</p>
+<p><strong>切换过程</strong>：一旦主服务器发生故障，系统能自动将主要业务的用户切换到备份服务器上。为保证切换时间足够快（通常为数分钟），要求在系统中配置用于切换硬件的开关设备，在备份服务器上事先建立好通信配置。</p>
+<p><strong>优点</strong>：提高了系统的可用性，易于实现，主&#x2F;备份服务器完全独立，可支持<strong>远程热备份</strong>，能消除由于火灾、爆炸等非计算机因素所造成的隐患。</p>
+<p><strong>缺点</strong>：备份服务器处于被动等待状态，整个系统的使用效率只有 <strong>50%</strong>。</p>
+<blockquote>
+<p><strong>生活例子</strong>：飞机的正副驾驶员——正驾驶开飞机，副驾驶始终监控。正驾驶出状况，副驾驶立刻接手。这就是”热备份”。</p>
+</blockquote>
+<h4 id="2-双机互为备份模式"><a href="#2-双机互为备份模式" class="headerlink" title="2. 双机互为备份模式"></a>2. 双机互为备份模式</h4><p>在双机互为备份模式中，两台服务器在平时<strong>均为在线服务器</strong>（如一台作为数据库服务器，另一台作为电子邮件服务器），它们各自完成自己的任务，同时互为备份。</p>
+<p><strong>实现方式</strong>：</p>
+<ul>
+<li>通过某种<strong>专线</strong>将两台服务器连接起来（远距离可用 FDDI 单模光纤，并最好再通过路由器作为备份通信线路）。</li>
+<li>最好在每台服务器内都配置<strong>两块硬盘</strong>：一块用于装载系统&#x2F;应用程序，另一块用于接收由另一台服务器发来的备份数据（即作为另一台服务器的<strong>镜像盘</strong>）。正常运行时镜像盘对本地用户锁死。</li>
+<li>如果仅有一块硬盘，可通过建立虚拟盘或分区方式分别存放系统程序和备份数据。</li>
+</ul>
+<p><strong>故障切换</strong>：当通过专线链接检查到某台服务器发生故障后，再通过路由器去验证。如果故障被证实，则由正常服务器向故障服务器的客户机发出广播信息，表明要进行切换。切换成功后，客户机无须重新登录便可继续使用网络提供的服务。当故障服务器修复并重新联网后，已被迁移的服务功能将返回到修复后的服务器上。</p>
+<p><strong>优点</strong>：两台服务器都可用于处理任务，系统效率较高。现已从两台增加到 4 台、8 台、16 台甚至更多，所有服务器都可用于处理任务，当其中一台发生故障时，系统可指定另一台来接替。</p>
+<blockquote>
+<p><strong>生活例子</strong>：两位医生各看各的病人，但都知道对方的病例。一位医生请假了，另一位可以临时顶上帮他看病人。两位都在工作——不像热备份那样一个人闲着。</p>
+</blockquote>
+<h4 id="3-公用磁盘模式"><a href="#3-公用磁盘模式" class="headerlink" title="3. 公用磁盘模式"></a>3. 公用磁盘模式</h4><p>为了减少信息复制的开销，可以将多台计算机连接到一个<strong>公用磁盘</strong>上：</p>
+<ul>
+<li>该公用磁盘被划分为若干个<strong>卷</strong>，每台计算机使用一个卷。</li>
+<li>如果某台计算机发生故障，系统将重新配置，根据某种调度策略选择另一台机器进行替代。</li>
+<li>替代者对故障机器的卷拥有所有权，从而接替故障计算机来承担其任务。</li>
+</ul>
+<p><strong>优点</strong>：消除了信息的复制时间，从而减少了网络和服务器的开销。</p>
+<hr>
+<h3 id="1-4-4-后备系统"><a href="#1-4-4-后备系统" class="headerlink" title="1.4.4 后备系统"></a>1.4.4 后备系统</h3><p>在一个完整的系统中必须配置后备系统，原因有二：</p>
+<ol>
+<li>磁盘系统不够大，不可能将系统在运行过程中产生的所有数据都装在磁盘中，应把暂时不需要但仍然有用的数据存放在后备系统中并保存起来。</li>
+<li>为防止系统发生故障或被计算机病毒感染，进而将系统中的数据弄错或丢失，同时也可以将比较重要的数据存放在后备系统中。</li>
+</ol>
+<p>目前常用作后备系统的设备（后备设备）有<strong>磁带机、硬盘和光盘驱动器</strong>等。</p>
+<h4 id="1-磁带机"><a href="#1-磁带机" class="headerlink" title="1. 磁带机"></a>1. 磁带机</h4><p>磁带机是最早作为计算机系统外部存储器的设备，但由于它只适合存储顺序文件，故现在主要把它作为后备设备。</p>
+<ul>
+<li><strong>优点</strong>：容量大（一般可达数 GB 至数十 GB），价格便宜。在许多大、中型系统中都配置了磁带机。</li>
+<li><strong>缺点</strong>：只能顺序存取且速度比较慢（一般为数百 KB&#x2F;s 到数 MB&#x2F;s），因此将一个大容量磁盘上的数据复制到磁带机上需要花费很多时间。</li>
+</ul>
+<h4 id="2-硬盘"><a href="#2-硬盘" class="headerlink" title="2. 硬盘"></a>2. 硬盘</h4><p><strong>（1）移动磁盘</strong>：</p>
+<ul>
+<li>小型系统和个人计算机常将移动磁盘作为后备系统。</li>
+<li><strong>优点</strong>：速度快，脱机保存方便，且保存时间较长，可比磁带机长出 3～5 年。</li>
+<li><strong>缺点</strong>：单位容量的费用较高。</li>
+<li>近年来移动磁盘的价格已明显下降，且体积也非常小，应用日益广泛。</li>
+</ul>
+<p><strong>（2）固定硬盘驱动器</strong>：</p>
+<ul>
+<li>在大、中型系统中可使用大容量硬盘兼作后备系统，需在一个系统中配置<strong>两个大容量硬盘</strong>。</li>
+<li>每个硬盘都被划分为两个分区：一个为<strong>数据区</strong>，另一个为<strong>备份区</strong>，如图 9-16 所示。</li>
+<li>可在每天晚上将硬盘 0 中的”数据 0”复制到硬盘 1 中的备份区中保存；同样也将硬盘 1 中的”数据 1”复制到硬盘 0 中的备份区中保存。</li>
+<li><strong>优点</strong>：不仅复制速度非常快，而且还具有容错功能——当其中任何一个硬盘驱动器发生故障时，都不会引起系统瘫痪。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">大容量硬盘兼作后备系统示意：<br><br>    CPU<br>     ├─── 硬盘0：［数据0│数据1的备份区］<br>     └─── 硬盘1：［数据1│数据0的备份区］<br>     <br>     每晚：硬盘0的数据0 → 硬盘1的备份区<br>           硬盘1的数据1 → 硬盘0的备份区<br></code></pre></td></tr></table></figure>
+
+<h4 id="3-光盘驱动器"><a href="#3-光盘驱动器" class="headerlink" title="3. 光盘驱动器"></a>3. 光盘驱动器</h4><p>光盘驱动器是现在最流行的多媒体设备，可分为两类：</p>
+<p><strong>（1）只读光盘驱动器</strong>：</p>
+<ul>
+<li>如 CD-ROM 和 DVD-ROM。</li>
+<li>只能播放（读）而不能刻录（写），故难以用作后备设备。</li>
+</ul>
+<p><strong>（2）可读写光盘驱动器（刻录机）</strong>：</p>
+<ul>
+<li>既能播放（读）又能刻录（写），可用作后备设备。</li>
+<li>三类刻录机：<ul>
+<li><strong>CD-RW 刻录机</strong>：能播放和刻录 CD、VCD 等。</li>
+<li><strong>COMBO 刻录机</strong>：能播放 DVD，但只能刻录 CD、VCD 等。</li>
+<li><strong>DVD 刻录机</strong>：能播放和刻录 CD、VCD 和 DVD 等。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="1-5-存储新技术"><a href="#1-5-存储新技术" class="headerlink" title="1.5 存储新技术"></a>1.5 存储新技术</h2><p>纵观数据存储技术的发展，从 20 世纪 50 年代发明硬盘、使用直连式存储开始，到 20 世纪 70—80 年代发明网络附加存储、存储区域网络，再到 2006 年发明对象存储，数据存储领域正发生着剧烈变化，而且这种变化具有长期发展下去的趋势。</p>
+<h3 id="1-5-1-传统存储系统"><a href="#1-5-1-传统存储系统" class="headerlink" title="1.5.1 传统存储系统"></a>1.5.1 传统存储系统</h3><p>传统存储系统的三种主要架构分别是<strong>直连式存储（DAS）、网络附加存储（NAS）<strong>和</strong>存储区域网络（SAN）</strong>。</p>
+<h4 id="1-直连式存储（DAS，Direct-Attached-Storage）"><a href="#1-直连式存储（DAS，Direct-Attached-Storage）" class="headerlink" title="1. 直连式存储（DAS，Direct-Attached Storage）"></a>1. 直连式存储（DAS，Direct-Attached Storage）</h4><p>直连式存储是一种通过总线适配器直接将硬盘等存储介质连接到主机上的存储方式，也称为主机连接存储。在存储设备和主机之间通常没有任何网络设备的参与。</p>
+<p><strong>DAS 是最原始、最基本的存储架构</strong>，在个人计算机、服务器上最为常见。</p>
+<p><strong>连接技术</strong>：</p>
+<ul>
+<li>典型台式计算机采用 I&#x2F;O 总线架构，如 IDE（ATA）、SATA、SCSI 等。</li>
+<li>高端工作站和服务器通常采用更复杂的 I&#x2F;O 总线架构，如光纤通道（FC）等。</li>
+</ul>
+<p><strong>DAS 设备</strong>：硬盘驱动器、RAID、CD、DVD、磁带驱动器、磁盘簇（JBOD）等。</p>
+<p><strong>优点</strong>：架构简单、成本低廉、读写效率高。<br><strong>缺点</strong>：容量有限、难以共享，因此容易形成”信息孤岛”（Islands of Information）。</p>
+<blockquote>
+<p><strong>生活例子</strong>：普通台式机&#x2F;笔记本电脑里的内置硬盘，就是典型 DAS——这台电脑的硬盘只能这台电脑用，别人没法直接访问。</p>
+</blockquote>
+<h4 id="2-网络附加存储（NAS，Network-Attached-Storage）"><a href="#2-网络附加存储（NAS，Network-Attached-Storage）" class="headerlink" title="2. 网络附加存储（NAS，Network-Attached Storage）"></a>2. 网络附加存储（NAS，Network-Attached Storage）</h4><p>网络附加存储是一种提供<strong>文件级别</strong>访问接口的网络存储系统架构，通常采用 <strong>NFS、SMB&#x2F;CIFS</strong> 等网络文件共享协议进行文件存取。</p>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>可以直接连接在计算机网络（如以太网等）上，对不同类型 OS 的使用者提供集中式资料存取服务。</li>
+<li>支持多客户端同时访问，为服务器提供大容量的集中式存储，方便服务器间的数据共享。</li>
+<li>使用者可以通过某种方式（如 Linux 系统中的 <code>mount</code> 命令）将存储服务挂载到本地进行访问，在本地呈现的就是一个文件目录树。</li>
+</ul>
+<p><strong>优点</strong>：管理方便，成本较低，多客户端共享。<br><strong>缺点</strong>：存储数据通过普通数据网络进行传输，会消耗数据网络的带宽，加重网络通信的延迟，这对大型客户机-服务器环境可能影响较大。</p>
+<blockquote>
+<p><strong>生活例子</strong>：家庭 NAS（如群晖）——连接到家里路由器，电视、手机、电脑都能访问里面的电影和照片。</p>
+</blockquote>
+<h4 id="3-存储区域网络（SAN，Storage-Area-Network）"><a href="#3-存储区域网络（SAN，Storage-Area-Network）" class="headerlink" title="3. 存储区域网络（SAN，Storage Area Network）"></a>3. 存储区域网络（SAN，Storage Area Network）</h4><p>存储区域网络是一种通过光纤交换机等高速网络设备在服务器和磁盘阵列等存储设备间搭设<strong>专门的存储网络</strong>，从而提供高性能存储系统的架构。</p>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>SAN 的优势在于灵活性：多个主机和多个存储阵列可以连接到同一个 SAN 上，存储任务可以被动态地分配到各个主机上。</li>
+<li><strong>SAN 与 NAS 的区别</strong>：SAN 提供<strong>块级别</strong>的访问接口，一般不会同时提供一个文件系统级别的访问接口。通常情况下，服务器需要通过 SCSI 等 I&#x2F;O 总线架构将 SAN 映射到本地磁盘，然后在其上创建文件系统后进行使用。</li>
+</ul>
+<p><strong>典型容量</strong>：目前主流的企业级 NAS 或 SAN 存储产品一般都可以提供 TB 级的存储容量，高端的存储产品甚至可以提供高达几个 PB（1 PB &#x3D; 1024 TB）的存储容量。</p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>DAS</th>
+<th>NAS</th>
+<th>SAN</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>连接方式</td>
+<td>总线直连</td>
+<td>以太网</td>
+<td>专用存储网络（FC&#x2F;iSCSI）</td>
+</tr>
+<tr>
+<td>访问单位</td>
+<td>数据块</td>
+<td><strong>文件</strong></td>
+<td><strong>数据块</strong></td>
+</tr>
+<tr>
+<td>共享性</td>
+<td>无（单机独享）</td>
+<td>多客户端共享</td>
+<td>多主机共享块设备</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>高</td>
+<td>中（受网络带宽影响）</td>
+<td>极高</td>
+</tr>
+<tr>
+<td>成本</td>
+<td>低</td>
+<td>低～中</td>
+<td>高</td>
+</tr>
+<tr>
+<td>缺点</td>
+<td>信息孤岛</td>
+<td>加重网络延迟</td>
+<td>造价昂贵、管理复杂</td>
+</tr>
+<tr>
+<td>典型场景</td>
+<td>个人 PC</td>
+<td>文件共享&#x2F;备份</td>
+<td>数据库&#x2F;虚拟化</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="1-5-2-新型存储系统"><a href="#1-5-2-新型存储系统" class="headerlink" title="1.5.2 新型存储系统"></a>1.5.2 新型存储系统</h3><p>大数据时代的到来，使得数据量呈现出指数级的增长趋势。此时，传统的集中式存储（如 NAS、SAN 等）在容量和性能等各方面都无法较好地满足大数据对存储的需求。在此背景下，具有优秀的可扩展能力的<strong>分布式存储系统</strong>成了存储大数据的主流存储系统。</p>
+<h4 id="1-分布式存储系统"><a href="#1-分布式存储系统" class="headerlink" title="1. 分布式存储系统"></a>1. 分布式存储系统</h4><p>分布式存储系统多采用普通的硬件设备作为基础设施，因此<strong>单位容量的存储成本得以大大降低</strong>。另外，分布式存储系统在性能、维护性和容灾性等方面，相比传统存储系统也具有不同程度的优势。</p>
+<p><strong>需要解决的关键技术问题</strong>：可扩展性、数据冗余、数据一致性、全局命名空间缓存等。</p>
+<p><strong>两种架构</strong>：</p>
+<p><strong>（1）C&#x2F;S（Client&#x2F;Server）架构</strong>：</p>
+<ul>
+<li>传统客户端-服务器模式：中心元数据服务器管理所有文件的元数据信息，存储节点负责实际数据的存储和读取。</li>
+<li><strong>代表</strong>：HDFS（Hadoop 分布式文件系统）、GFS（Google File System）。</li>
+</ul>
+<p><strong>（2）P2P（Peer-to-Peer）架构</strong>：</p>
+<ul>
+<li>无中心节点，所有节点平等，通过分布式哈希表（DHT）等技术实现数据定位。</li>
+<li><strong>代表</strong>：GlusterFS、Ceph（CRUSH 算法）。</li>
+</ul>
+<p>分布式存储系统面临的一个共性问题是，如何组织和管理成员节点，以及如何建立数据与节点之间的映射关系。成员节点的动态增加或删除，在分布式存储系统中基本上可以算是一种常态。</p>
+<blockquote>
+<p><strong>生活例子</strong>：百度网盘的底层——你上传的 1GB 文件可能被分成很多小块，分散存在数百台服务器上，读取时从多台服务器并行汇聚，速度极快。即使某台服务器宕机也不影响。</p>
+</blockquote>
+<h4 id="2-云存储系统"><a href="#2-云存储系统" class="headerlink" title="2. 云存储系统"></a>2. 云存储系统</h4><p>云存储系统是由<strong>第三方运营商</strong>提供的在线存储系统，例如面向个人用户的在线网盘，面向企业的文件、块或对象存储系统等。</p>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>运营商负责数据中心的部署、运营和维护等工作，将数据存储<strong>包装成服务</strong>的形式提供给用户。</li>
+<li>作为云计算的延伸和重要组件之一，为云计算的实现提供了”<strong>按需分配、按量计费</strong>“的数据存储服务。</li>
+<li>用户不需要搭建自己的数据中心和基础架构，也不需要关心底层存储系统的管理与维护，同时还可以根据业务需求动态地扩大或减少对存储容量的需求。</li>
+</ul>
+<hr>
+<h3 id="1-5-3-硬盘新技术"><a href="#1-5-3-硬盘新技术" class="headerlink" title="1.5.3 硬盘新技术"></a>1.5.3 硬盘新技术</h3><p>硬盘是计算机中非常重要的存储器之一。近几年来在个人计算机上，除了使用传统的<strong>机械硬盘（HDD）<strong>外，还会使用</strong>固态硬盘（SSD）</strong>，且固态硬盘的风头正盛，大有赶超机械硬盘之势。这是因为固态硬盘和机械硬盘相比，在速度、功耗、噪声等方面均有优势。不过在存储容量、写入耐久度和价格等方面，机械硬盘仍然有着不可比拟的优势。</p>
+<h4 id="1-机械硬盘（HDD）技术革新"><a href="#1-机械硬盘（HDD）技术革新" class="headerlink" title="1. 机械硬盘（HDD）技术革新"></a>1. 机械硬盘（HDD）技术革新</h4><p>从 1956 年发明第一个机械硬盘开始，存储技术的发展走过了很长的一段路。机械硬盘从 5 MB 发展到现在的 20 TB，容量大幅增加，读&#x2F;写速度也逐步提升。在固态硬盘大量使用的情况下，机械硬盘也在加快技术革新的步伐。以希捷公司为代表的技术路线如下：</p>
+<p><strong>（1）传统磁记录（CMR，Conventional Magnetic Recording）→ 叠瓦式磁记录（SMR，Shingled Magnetic Recording）</strong>：</p>
+<ul>
+<li><strong>CMR</strong>：传统方式，磁道之间有空隙，写入不干扰相邻磁道。</li>
+<li><strong>SMR</strong>：磁道像屋瓦一样<strong>互相叠加</strong>，只露出最上层的写入区域。存储密度更高、容量更大。但随机写性能差——改写一个磁道中的数据会影响到相邻的”瓦片”。</li>
+<li>适用场景：适合顺序写入、较少改写的场景（如归档存储、冷数据存储）。</li>
+</ul>
+<p><strong>（2）热辅助磁记录（HAMR，Heat-Assisted Magnetic Recording）</strong>：</p>
+<ul>
+<li>用<strong>激光</strong>瞬时加热磁性介质至高温（约 400°C），使其暂时失去磁性稳定性，在冷却过程中用磁头写入数据。</li>
+<li>极大限度地扩大了机械硬盘的容量，是 HDD 未来高容量化的重要方向。</li>
+</ul>
+<p><strong>（3）双磁头驱动臂技术</strong>：</p>
+<ul>
+<li>在一个硬盘中使用<strong>两个独立的磁头驱动臂</strong>，可同时读写不同的盘片区域。</li>
+<li>大大提升了机械硬盘的读&#x2F;写速度，接近将 I&#x2F;O 性能翻倍。</li>
+</ul>
+<h4 id="2-固态硬盘（SSD）"><a href="#2-固态硬盘（SSD）" class="headerlink" title="2. 固态硬盘（SSD）"></a>2. 固态硬盘（SSD）</h4><p>固态硬盘是用固态电子存储芯片阵列所制成的硬盘。固态硬盘在接口的规范与定义、功能以及使用方法上与普通硬盘完全相同，在产品的外形和尺寸上也基本与普通硬盘一致。但是，新兴的 U.2、M.2 等接口形式的固态硬盘，其尺寸与外形与 SATA 架构的机械硬盘完全不同。</p>
+<p>固态硬盘被广泛应用于军事、医疗、航空、交通（导航设备）、通信（网络监控）等领域。</p>
+<p>根据存储介质的不同，可将固态硬盘分为三类：</p>
+<p><strong>（1）基于闪存（Flash）的固态硬盘</strong>：</p>
+<ul>
+<li>将 Flash 芯片作为存储介质，是固态硬盘的<strong>主要类别</strong>（即通常所说的 SSD）。</li>
+<li>外观可以被制作成多种样式：笔记本硬盘、微硬盘、存储卡、优盘等。</li>
+<li><strong>优点</strong>：可移动，数据保护不受电源控制，能适应各种环境，适合个人用户使用。</li>
+<li><strong>可靠性</strong>：高品质的家用固态硬盘的故障率可轻松保持在普通家用机械硬盘故障率的十分之一甚至更低。</li>
+<li><strong>缺点</strong>：使用寿命根据不同的闪存介质而有所不同（写入次数有限）。</li>
+</ul>
+<p><strong>（2）基于 DRAM 的固态硬盘</strong>：</p>
+<ul>
+<li>将 DRAM 作为存储介质，应用范围较窄。</li>
+<li>效仿了机械硬盘的设计，可被绝大部分 OS 的文件系统工具进行卷设置和卷管理，能提供 PCI 标准接口和 FC 标准接口。</li>
+<li><strong>优点</strong>：高性能存储器，理论上可以无限写入。</li>
+<li><strong>缺点</strong>：需要<strong>独立电源</strong>来保护数据安全（DRAM 断电即丢失数据），属于非主流存储设备。</li>
+</ul>
+<p><strong>（3）基于 XPoint 类的固态硬盘</strong>：</p>
+<ul>
+<li>采用了英特尔公司提出的 <strong>XPoint 颗粒技术</strong>（如 Optane，已停产）。</li>
+<li>原理上接近基于 DRAM 的固态硬盘，但属于<strong>非易失性存储器</strong>。</li>
+<li><strong>优点</strong>：读取时延极低，可轻松达到现有固态硬盘的<strong>百分之一</strong>，接近无限的存储寿命。</li>
+<li><strong>缺点</strong>：密度相对于基于闪存的固态硬盘较低，成本极高，多用于发烧级台式计算机和数据中心。</li>
+</ul>
+<hr>
+<h2 id="1-6-数据一致性控制"><a href="#1-6-数据一致性控制" class="headerlink" title="1.6 数据一致性控制"></a>1.6 数据一致性控制</h2><p>在实际应用中，经常会在多个文件中包含同一个数据。所谓<strong>数据一致性问题</strong>，是指保存在多个文件中的同一个数据，在任何情况下都必须保证相同。例如，当我们发现某种商品的进价有错时，我们必须同时修改流水账、付费账、分类账以及总账等一系列文件中关于该商品的价格，如此才能保证数据的一致性。但如果在修改途中系统突然发生故障，则会造成各个账目中该数据的不一致性，进而就会使多个账目不一致。为了保证数据的一致性，在现代 OS 中都配置了能保证数据一致性的软件。</p>
+<h3 id="1-6-1-事务（Transaction）"><a href="#1-6-1-事务（Transaction）" class="headerlink" title="1.6.1 事务（Transaction）"></a>1.6.1 事务（Transaction）</h3><h4 id="1-事务的定义"><a href="#1-事务的定义" class="headerlink" title="1. 事务的定义"></a>1. 事务的定义</h4><p><strong>事务</strong>是用于访问和修改各种数据项的一个程序单位。事务也可被看作一系列读&#x2F;写操作。被访问的数据可以分散地存放在同一文件的不同记录中，也可以存放在多个文件中。</p>
+<ul>
+<li>只有对分布在不同位置的同一数据进行的读&#x2F;写操作（含修改）<strong>全部完成时</strong>，才能通过<strong>托付操作（Commit Operation）</strong> 来终止事务。</li>
+<li>只要有一个读&#x2F;写操作失败，便须执行<strong>夭折操作（Abort Operation）</strong>。</li>
+<li>读&#x2F;写操作的失败可能是由逻辑错误或系统故障导致的。</li>
+</ul>
+<p>一个被”夭折”的事务，通常已执行了一些操作，因而可能已对某些数据做了修改。为了使”夭折”的事务不会引起数据的不一致性，须将该事务内刚被修改的数据项恢复成原来的情况，以使系统中各数据项与该事务未执行时系统中各数据项的内容完全相同。此时，可以说该事务”<strong>已被退回（Rolled Back）</strong>“。</p>
+<blockquote>
+<p>📌 <strong>关键特性（原子性）</strong>：一个事务在对一批数据执行修改操作时，要么<strong>全部完成</strong>并用修改后的数据代替原来的数据，要么<strong>一个也不修改</strong>。这就是本书第 1 章中曾讲过的”原子性”。</p>
+</blockquote>
+<blockquote>
+<p><strong>生活例子（银行转账）</strong>：<br>从 A 账户转 100 元到 B 账户，包含两个操作：① A 减 100；② B 加 100。<br>如果操作 ① 成功但 ② 因系统崩溃失败，100 元就”凭空消失”了。<br>事务的原子性保证：要么两步都完成，要么 A 账户扣款操作也被撤销，100 元原封不动。</p>
+</blockquote>
+<h4 id="2-事务记录"><a href="#2-事务记录" class="headerlink" title="2. 事务记录"></a>2. 事务记录</h4><p>为了实现上述”原子性”修改，通常须借助于称为”<strong>事务记录（Transaction Record）</strong>“的数据结构。</p>
+<p>这些数据结构被放在一个非常可靠的存储器（又称<strong>稳定存储器</strong>）中，用于记录在事务运行过程中与数据项修改相关的全部信息。这些信息又被称为”<strong>运行记录（Log）</strong>“。</p>
+<p>该记录中包含下列字段：</p>
+<ul>
+<li><strong>事务名</strong>：用于标志该事务的唯一名字。</li>
+<li><strong>数据项名</strong>：它是被修改数据项的唯一名字。</li>
+<li><strong>旧值</strong>：修改前数据项的值。</li>
+<li><strong>新值</strong>：修改后数据项将具有的值。</li>
+</ul>
+<p>在事务记录表中的每一项记录，都描述了在事务运行过程中的重要事务操作，如修改操作、开始操作、托付操作、夭折操作等。</p>
+<ul>
+<li>在一个事务 Ti 开始执行时，<code>〈Ti 开始〉</code> 记录被写入事务记录表中。</li>
+<li>在 Ti 执行期间，在 Ti 的任何写（修改）操作之前，均须先在事务记录表中写一项适当的<strong>新记录</strong>。</li>
+<li>当 Ti 进行托付时，要把一个 <code>〈Ti 托付〉</code> 记录写入事务记录表中。</li>
+</ul>
+<h4 id="3-恢复算法"><a href="#3-恢复算法" class="headerlink" title="3. 恢复算法"></a>3. 恢复算法</h4><p>由于一组被事务 Ti 修改的数据以及它们被修改前后的值，都能在事务记录表中找到，因此，系统利用事务记录表可以处理任何故障而不会使故障造成非易失性存储器中信息的丢失。</p>
+<p>恢复算法可通过以下两个过程实现：</p>
+<table>
+<thead>
+<tr>
+<th>过程</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>undo〈Ti〉</strong></td>
+<td>把所有被事务 Ti 修改过的数据恢复为修改前的值</td>
+</tr>
+<tr>
+<td><strong>redo〈Ti〉</strong></td>
+<td>把所有被事务 Ti 修改过的数据设置为新值</td>
+</tr>
+</tbody></table>
+<p><strong>故障后的处理</strong>：</p>
+<ul>
+<li>如果系统发生故障，系统应对以前所发生的事务进行清理。</li>
+<li>通过查找事务记录表，可以把尚未清理的事务分成两类：<ul>
+<li><strong>第一类</strong>：所包含的各类操作都已完成的事务（在事务记录表中**既包含 <code>〈Ti 开始〉</code> 记录，又包含 <code>〈Ti 托付〉</code> 记录）。此时系统会利用 <strong>redo〈Ti〉</strong> 过程把所有已被修改的数据设置成新值。</li>
+<li><strong>第二类</strong>：所包含的各个操作<strong>并未全部完成</strong>的事务（在事务记录表中只有 <code>〈Ti 开始〉</code> 记录而无 <code>〈Ti 托付〉</code> 记录）。此时系统会利用 <strong>undo〈Ti〉</strong> 过程将所有已被修改的数据恢复为修改前的值。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><strong>生活例子（undo&#x2F;redo）</strong>：<br>你正在抄写一份重要文件，一边抄一边记”抄写日志”（事务记录）。如果突然停电：</p>
+<ul>
+<li>如果整份文件已经抄完并记录”已托付”—— redo：确保最终版本已保存。</li>
+<li>如果抄到一半停电—— undo：把已抄的部分全部擦掉，恢复原文件，等下次重新抄。</li>
+</ul>
+</blockquote>
+<hr>
+<h3 id="1-6-2-检查点（Checkpoint）"><a href="#1-6-2-检查点（Checkpoint）" class="headerlink" title="1.6.2 检查点（Checkpoint）"></a>1.6.2 检查点（Checkpoint）</h3><h4 id="1-检查点的作用"><a href="#1-检查点的作用" class="headerlink" title="1. 检查点的作用"></a>1. 检查点的作用</h4><p>如前所述，当系统发生故障时，必须去检查整个事务记录表，以确定哪些事务需要利用 redo〈Ti〉过程去设置新值，而哪些事务又需要利用 undo〈Ti〉过程去恢复旧值。</p>
+<p>由于在系统中可能存在许多<strong>并发执行</strong>的事务，因而在事务记录表中会有许多事务执行操作的记录。随着时间的推移，记录的数据会越来越多。因此，一旦系统发生故障，事务记录表中的记录清理起来就会<strong>非常费时</strong>。</p>
+<p><strong>引入检查点（Check Point）的主要目的是</strong>，使事务记录表中事务记录的清理工作<strong>经常化</strong>。</p>
+<p><strong>检查点执行的工作</strong>（每隔一定时间执行一次）：</p>
+<ol>
+<li>将驻留在易失性存储器（内存）中的当前事务记录表中的<strong>所有记录</strong>输出到稳定存储器中。</li>
+<li>将驻留在易失性存储器中的所有<strong>已修改数据</strong>输出到稳定存储器中。</li>
+<li>将事务记录表中的 <code>〈检查点〉</code> 记录输出到稳定存储器中。</li>
+<li>每当出现一个 <code>〈检查点〉</code> 记录，系统便执行一次恢复操作（利用 redo〈Ti〉和 undo〈Ti〉过程实现数据恢复）。</li>
+</ol>
+<blockquote>
+<p>📌 <strong>检查点的重要效果</strong>：<br>如果一个事务 Ti 在检查点前就做了托付，则在事务记录表中便会出现一个在检查点记录前的 <code>〈Ti 托付〉</code> 记录。在这种情况下，所有被 Ti 修改过的数据，都会在检查点前写入稳定存储器（或者是作为检查点记录自身的一部分写入稳定存储器）。因此，以后在系统出现故障时，就不必再执行 redo〈Ti〉过程了。</p>
+</blockquote>
+<h4 id="2-新的恢复算法"><a href="#2-新的恢复算法" class="headerlink" title="2. 新的恢复算法"></a>2. 新的恢复算法</h4><p>在引入检查点后，大大减少了恢复处理的开销。因为在发生故障后，并不需要对事务记录表中的所有事务记录都进行处理，而<strong>只需要对最后一个检查点之后的事务记录进行处理</strong>。</p>
+<p><strong>具体恢复步骤</strong>：</p>
+<ol>
+<li>恢复例程首先会查找事务记录表，确定最近检查点以前开始执行的最后事务 Ti。</li>
+<li>在找到这样的事务后，返回去搜索事务记录表，此时便可找到<strong>第一个检查点记录</strong>。</li>
+<li>恢复例程<strong>从该检查点开始</strong>，返回搜索各个事务的记录，并利用 redo〈Ti〉和 undo〈Ti〉过程对它们进行处理。</li>
+</ol>
+<p><strong>恢复规则</strong>（设将所有在事务 Ti 以后开始执行的事务表示为事务集 T）：</p>
+<ul>
+<li>对所有在 T 中的事务 Tk，如果在事务记录表中出现了 <code>〈Tk 托付〉</code> 记录，则执行 <strong>redo〈Tk〉</strong> 过程。</li>
+<li>如果在事务记录表中<strong>并未出现</strong> <code>〈Tk 托付〉</code> 记录，则执行 <strong>undo〈Tk〉</strong> 过程。</li>
+</ul>
+<blockquote>
+<p><strong>生活例子</strong>：<br>你打游戏不停存档（检查点），如果闯关失败（系统崩溃），不需要从游戏开头重来，只需要从<strong>上一个存档点</strong>开始重玩即可。检查点之前的已保存进度不需要再做一遍。</p>
+</blockquote>
+<hr>
+<h3 id="1-6-3-并发控制（Concurrent-Control）"><a href="#1-6-3-并发控制（Concurrent-Control）" class="headerlink" title="1.6.3 并发控制（Concurrent Control）"></a>1.6.3 并发控制（Concurrent Control）</h3><p>在多用户系统和计算机网络环境下，可能有多个用户在同时执行事务。由于事务具有原子性，这使各个事务必然会按某种次序依次执行（即各事务对数据项的修改是<strong>互斥</strong>的）。我们把这种特性称为<strong>顺序性</strong>，而把用于实现事务顺序性的技术称为<strong>并发控制</strong>。</p>
+<p>并发控制技术在数据库系统中已被广泛应用，现也广泛应用于 OS 中。</p>
+<p>虽然可以利用第 4 章所介绍的信号量机制来保证事务顺序性，但在数据库系统和文件服务器中，应用最多的还是较简单、较灵活的同步机制——<strong>锁</strong>。</p>
+<h4 id="1-利用互斥锁实现顺序性"><a href="#1-利用互斥锁实现顺序性" class="headerlink" title="1. 利用互斥锁实现顺序性"></a>1. 利用互斥锁实现顺序性</h4><p>实现顺序性最简单的方法是，设置一种用于实现互斥的锁，简称<strong>互斥锁（Exclusive Lock）</strong>。</p>
+<p><strong>工作方式</strong>：</p>
+<ul>
+<li>在利用互斥锁实现顺序性时，应为每个共享对象设置一把互斥锁。</li>
+<li>当某一事务 Ti 要去访问某个对象时，应先获得该对象的互斥锁。</li>
+<li>若成功，则用该锁将该对象锁住，此时事务 Ti 便可对该对象执行读&#x2F;写操作。</li>
+<li>其他事务由于未获得该锁，故<strong>不能访问该对象</strong>。</li>
+</ul>
+<p><strong>若事务 Ti 需要对一批对象进行访问</strong>：</p>
+<ul>
+<li>为了保证事务操作的原子性，Ti 应先获得这一批对象的互斥锁，以将这一批对象全部锁住。</li>
+<li>若成功，则可对这一批对象执行读&#x2F;写操作；操作完成后再将所有这些锁释放。</li>
+<li>但如果这一批对象中的<strong>某个对象已被其他事务锁住</strong>，则此时事务 Ti 应对此前已被 Ti 锁住的其他对象进行<strong>开锁</strong>，宣布此次事务运行失败，但这不会引起数据变化。</li>
+</ul>
+<blockquote>
+<p><strong>缺点</strong>：互斥锁方法虽然简单易行，但<strong>效率不高</strong>——因为一个共享文件虽然只允许一个事务去写，但却允许多个事务同时去读；而互斥锁锁住文件后，只允许一个事务去读。</p>
+</blockquote>
+<h4 id="2-利用互斥锁和共享锁实现顺序性"><a href="#2-利用互斥锁和共享锁实现顺序性" class="headerlink" title="2. 利用互斥锁和共享锁实现顺序性"></a>2. 利用互斥锁和共享锁实现顺序性</h4><p>为了提高运行效率，又引入了另一种形式的锁——<strong>共享锁（Shared Lock）</strong>。</p>
+<p><strong>共享锁与互斥锁的区别</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>锁类型</th>
+<th>读操作</th>
+<th>写操作</th>
+<th>并发性</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>互斥锁</strong></td>
+<td>仅一个事务可读</td>
+<td>仅一个事务可写</td>
+<td>低</td>
+</tr>
+<tr>
+<td><strong>共享锁</strong></td>
+<td><strong>多个事务可同时读</strong></td>
+<td>不允许任何事务写</td>
+<td>高（读多写少场景）</td>
+</tr>
+</tbody></table>
+<p><strong>工作流程</strong>：</p>
+<ul>
+<li>如果事务 Ti 要对对象 Q 执行<strong>读操作</strong>，则只须获得对象 Q 的<strong>共享锁</strong>。<ul>
+<li>如果对象 Q 已被互斥锁锁住 → Ti 必须等待。</li>
+<li>否则 → 即可获得共享锁而对 Q 执行读操作。</li>
+</ul>
+</li>
+<li>如果 Ti 要对 Q 执行<strong>写操作</strong>，则 Ti 还须获得 Q 的<strong>互斥锁</strong>。<ul>
+<li>若失败 → 须等待。</li>
+<li>否则 → 即可获得互斥锁而对 Q 执行写操作。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>📌 利用共享锁和互斥锁实现顺序性的方法，非常类似于本书第 4 章中所介绍的<strong>读者-写者问题的解法</strong>。</p>
+</blockquote>
+<hr>
+<h3 id="1-6-4-重复数据的一致性问题"><a href="#1-6-4-重复数据的一致性问题" class="headerlink" title="1.6.4 重复数据的一致性问题"></a>1.6.4 重复数据的一致性问题</h3><p>为了保证数据的安全性，最常见的做法是把关键文件或数据结构<strong>复制多份</strong>，分别存储在不同的地方，当主文件（数据结构）失效时，还有备份文件（数据结构）可以使用，因此不会造成数据丢失，也不会影响系统工作。</p>
+<p>显然，<strong>主文件（数据结构）中的数据应与各备份文件中的对应数据相一致</strong>。此外，有些数据结构（如空闲盘块表等）在系统运行过程中总是会被不断地修改，因此，同样应保证不同处的同一数据结构中（可能已被修改的）数据的一致性。</p>
+<h4 id="1-重复文件的一致性"><a href="#1-重复文件的一致性" class="headerlink" title="1. 重复文件的一致性"></a>1. 重复文件的一致性</h4><p>这里以 UNIX 类型的文件系统为例，来说明如何保证重复文件的一致性。</p>
+<p><strong>UNIX 类型目录结构</strong>：</p>
+<ul>
+<li>每个目录项中均含有一个 ASCII 的文件名和一个<strong>索引节点编号</strong>，后者指向一个索引节点。</li>
+<li>当有<strong>重复文件</strong>时，一个目录项可由一个文件名和<strong>若干个索引节点编号</strong>组成，每个索引节点编号都会指向各自的索引节点。</li>
+</ul>
+<p><img src="/img/Screenshot_20260607_204517_com_newskyer_draw_PadActivity_edit_296538972016353.jpg" alt="alt text"></p>
+<p><strong>保证重复文件一致性的两种方法</strong>：</p>
+<p><strong>方法一（修改时同步更新）</strong>：</p>
+<ul>
+<li>当一个文件被修改后，可查找文件目录以得到其他几个文件复制的索引节点编号。</li>
+<li>再利用这些索引节点编号找到各文件复制的物理位置。</li>
+<li>然后对这些文件复制做<strong>同样的修改</strong>。</li>
+</ul>
+<p><strong>方法二（替换法）</strong>：</p>
+<ul>
+<li>为新修改的文件<strong>建立几个文件复制</strong>，并用新文件复制去<strong>取代原来的文件复制</strong>。</li>
+</ul>
+<h4 id="2-链接数一致性检查"><a href="#2-链接数一致性检查" class="headerlink" title="2. 链接数一致性检查"></a>2. 链接数一致性检查</h4><p>在 UNIX 类型的目录中，每个目录项内都含有一个索引节点编号，用于指向该文件的索引节点。</p>
+<p><strong>链接计数的工作原理</strong>：</p>
+<ul>
+<li>对于一个<strong>共享文件</strong>，其索引节点编号会在目录中出现多次。</li>
+<li>例如，当有 5 个用户（进程）共享某文件时，该文件的索引节点编号会在目录中出现 <strong>5 次</strong>。</li>
+<li>在该共享文件的索引节点中还有一个<strong>链接计数值 count</strong>，用于指出共享本文件的用户（进程）数。</li>
+</ul>
+<p><strong>正常情况下</strong>：索引节点中的链接计数值 <strong>count</strong> 与目录中该索引节点编号出现的次数<strong>应该一致</strong>。否则就会出现数据不一致性差错。</p>
+<p><strong>检查一致性差错的步骤</strong>：</p>
+<ol>
+<li>需要配置一张<strong>计数器表</strong>，并且应为每个文件建立一个表项，其中含有各文件索引节点编号的计数值。</li>
+<li>在进行检查时，从<strong>根目录</strong>开始查找，每当在目录中遇到该索引节点编号时，便在该计数器表中相应文件的表项上加 1。</li>
+<li>当把所有目录都检查完后，便可将该计数器表中每个表项中的索引节点编号计数值与该文件索引节点中的链接计数值 <strong>count</strong> 进行比较：<ul>
+<li>如果两者一致 → 数据正确 ✓</li>
+<li>否则 → 发生了数据不一致性差错 ✗</li>
+</ul>
+</li>
+</ol>
+<p><strong>两种不一致错误及其修复</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>错误类型</th>
+<th>现象</th>
+<th>后果</th>
+<th>修复方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>count &gt; 计数器值</strong></td>
+<td>索引节点中的链接计数值大于实际引用次数</td>
+<td>即使所有用户都不再使用此文件，其 count 仍不为 0，该文件不会被删除，<strong>浪费存储空间</strong>（性质不严重）</td>
+<td>用计数器表中正确的计数值去为 count 重新赋值</td>
+</tr>
+<tr>
+<td><strong>count &lt; 计数器值</strong></td>
+<td>索引节点中的链接计数值小于实际引用次数</td>
+<td>一旦其中一个用户不再需要此文件，count 就会减为 0，系统将此文件删除并释放其索引节点及文件所占用的盘块，导致另一个需要共享此文件的用户无法访问</td>
+<td>将 count 置为正确值</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>生活例子（链接数一致性）</strong>：<br>一间会议室有几把钥匙（count），分给不同的人（目录项中的索引节点引用）。如果钥匙数 &gt; 实际持有人的数量——多出来的钥匙对应的”虚拟持有人”不存在，会议室永远不会被释放（浪费空间）。如果钥匙数 &lt; 实际持有人——有一个人退还钥匙时，系统以为所有人都还了，就把会议室收走了，剩下的人就没会议室用了。</p>
+</blockquote>
+<hr>
+<h2 id="1-7-总结"><a href="#1-7-总结" class="headerlink" title="1.7 总结"></a>1.7 总结</h2><p>磁盘驱动器是大多数计算机系统的主要外存 I&#x2F;O 设备，大多数外存设备均为磁盘或磁带。现代磁盘驱动结构是一个大的<strong>一维的逻辑盘块数组</strong>，一般来说，这些逻辑盘块的大小为 <strong>512 B</strong>。磁盘连接到计算机系统的方式有两种：① 通过主机的本地 I&#x2F;O 接口连接；② 通过网络连接。</p>
+<p>磁盘存储器管理的任务主要有三方面：</p>
+<p><strong>任务一：有效利用存储空间</strong></p>
+<ul>
+<li>采用合适的<strong>文件组织方式</strong>为文件分配存储空间，以改善存储空间的利用率。</li>
+<li>文件组织方式与外存组织方式密切相关，常用的外存组织方式包括：<strong>连续组织方式、链接组织方式和索引组织方式</strong>。</li>
+<li>在现代 OS 中，由于存在多种类型的文件，因此对文件可能会采取多种类型的组织方式。</li>
+<li>存储空间的管理方法有：<strong>空闲区表法、空闲链表法、位示图法、成组链接法</strong>等。</li>
+</ul>
+<p><strong>任务二：提高磁盘的 I&#x2F;O 速度</strong></p>
+<ul>
+<li>通过采用<strong>磁盘高速缓存、提前读、延迟写、优化物理块分布、RAID</strong> 等途径来显著提高磁盘的 I&#x2F;O 速度。</li>
+<li>其中 RAID 技术利用并行交叉存取原理，将多块磁盘组合成磁盘阵列，不仅提高了 I&#x2F;O 速度，还大幅提升了可靠性。</li>
+</ul>
+<p><strong>任务三：提高磁盘的可靠性</strong></p>
+<ul>
+<li>通过采用各种<strong>容错技术</strong>（SFT-I、SFT-II、SFT-III&#x2F;集群系统）和<strong>后备系统</strong>（磁带机、硬盘、光盘驱动器）来提高磁盘的可靠性。</li>
+<li>容错技术可防止因系统因素造成的数据不安全，后备系统可防止因自然因素造成的数据丢失。</li>
+</ul>
+<p><strong>存储技术的发展趋势</strong></p>
+<ul>
+<li>磁盘发展至今，已形成多种存储技术且在不断革新中。</li>
+<li>固态硬盘（SSD）在存储领域的地位也在日渐提升。</li>
+<li>除了传统的 <strong>DAS、NAS、SAN</strong> 存储系统外，正在发展的新型存储系统有<strong>分布式存储系统、云存储系统</strong>等。</li>
+</ul>
+<hr>
+<h3 id="本章知识框架梳理"><a href="#本章知识框架梳理" class="headerlink" title="本章知识框架梳理"></a>本章知识框架梳理</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">磁盘存储器管理<br>│<br>├── 1.1 外存的组织方式（如何存放文件）<br>│   ├── 连续组织：支持顺序访问和直接访问；产生外部碎片；须事先知道文件长度<br>│   ├── 链接组织：隐式链接（只支持顺序访问）；显式链接（FAT，支持随机访问）<br>│   └── 索引组织：单级索引/FAT表；多级索引（unix混合索引）；增量式索引<br>│<br>├── 1.2 文件存储空间的管理（如何记录哪些块空闲）<br>│   ├── 空闲区表法：适合连续分配，类似内存可变分区<br>│   ├── 空闲链表法：分配简单，但难以分配连续块<br>│   ├── 位示图法：每 bit 对应一块；适合内存中操作；ext4/NTFS 使用<br>│   └── 成组链接法：UNIX 传统方法；内存栈（100块号）；组切换才写盘<br>│<br>├── 1.3 提高磁盘 I/O 速度的途径<br>│   ├── 磁盘高速缓存（Disk Cache）<br>│   │   ├── 数据交付方式：数据交付 vs 指针交付<br>│   │   ├── 置换算法：LRU、Clock、LFU（需考虑访问频率、可预见性、数据一致性）<br>│   │   └── 周期性写回：UNIX update 程序，每 30 秒调用 SYNC<br>│   ├── 其他提高 I/O 速度的方法<br>│   │   ├── 提前读（Read-Ahead）：顺序访问场景有效；延迟写存在系统崩溃时数据丢失风险<br>│   │   ├── 延迟写（Deferred Write）：缓冲区挂到队列末尾，延迟写回<br>│   │   ├── 优化物理块的分布：同文件盘块安排在相邻磁道<br>│   │   └── 虚拟盘（RAM Disk）：内容由用户控制；磁盘高速缓存由 OS 控制<br>│   └── 廉价磁盘冗余阵列（RAID）<br>│       ├── 设计思想：多组件并行 → 性能大幅提升<br>│       ├── 并行交叉存取：各磁盘并行传输子盘块数据<br>│       └── RAID 分级（0～7 级）：0(无冗余)、1(镜像,50%)、3(位级分条)、4(块级分条)、5(分布式校验)<br>│<br>├── 1.4 提高磁盘可靠性的技术<br>│   ├── 第一级容错技术（SFT-I）<br>│   │   ├── 双份目录和双份 FAT<br>│   │   ├── 热修复重定向（Hot Fix Redirection）：坏块重定向到备用区<br>│   │   └── 写后读校验（Read-After-Write）：写入后立即读出比较<br>│   ├── 第二级容错技术（SFT-II）<br>│   │   ├── 磁盘镜像（Disk Mirroring）：同一控制器下两块磁盘，利用率 50%<br>│   │   └── 磁盘双工（Disk Duplexing）：两块控制器+两块磁盘，可并行 I/O<br>│   ├── 基于集群系统的容错技术（SFT-III）<br>│   │   ├── 双机热备份模式：主/备服务器，备份服务器被动等待，效率 50%<br>│   │   ├── 双机互为备份模式：两台均在线，效率高，可扩展至多台<br>│   │   └── 公用磁盘模式：多机连公用磁盘，消除信息复制开销<br>│   └── 后备系统<br>│       ├── 磁带机：容量大、价格低，但顺序存取、速度慢<br>│       ├── 硬盘（移动硬盘 / 固定硬盘兼作后备）：速度快、保存时间长<br>│       └── 光盘驱动器：CD-RW / COMBO / DVD 刻录机<br>│<br>├── 1.5 存储新技术<br>│   ├── 传统存储系统<br>│   │   ├── DAS（直连式存储）：简单、低成本，但形成&quot;信息孤岛&quot;<br>│   │   ├── NAS（网络附加存储）：文件级访问，通过以太网，多客户端共享<br>│   │   └── SAN（存储区域网络）：块级访问，通过专用网络，高性能<br>│   ├── 新型存储系统<br>│   │   ├── 分布式存储系统：C/S 架构（HDFS/GFS）或 P2P 架构（GlusterFS/Ceph）<br>│   │   └── 云存储系统：第三方运营商提供，按需分配、按量计费<br>│   └── 硬盘新技术<br>│       ├── 机械硬盘（HDD）技术革新：CMR → SMR（叠瓦式，密度高）→ HAMR（热辅助，容量更大）；双磁头驱动臂<br>│       └── 固态硬盘（SSD）分类：基于闪存 / 基于 DRAM / 基于 XPoint<br>│<br>└── 1.6 数据一致性控制<br>    ├── 事务（Transaction）<br>    │   ├── 定义：一组读/写操作的集合，具有原子性（全部完成或全部退回）<br>    │   ├── 事务记录（Transaction Record）：事务名、数据项名、旧值、新值<br>    │   └── 恢复算法：undo〈Ti〉（恢复旧值）；redo〈Ti〉（设置新值）<br>    ├── 检查点（Checkpoint）<br>    │   ├── 作用：使事务记录表的清理工作经常化，减少恢复开销<br>    │   ├── 工作内容：记录输出到稳定存储器 + 已修改数据输出到稳定存储器<br>    │   └── 新的恢复算法：只需从最后一个检查点之后开始处理事务记录<br>    ├── 并发控制（Concurrent Control）<br>    │   ├── 利用互斥锁实现顺序性：每个共享对象一把互斥锁，效率低<br>    │   └── 利用互斥锁+共享锁实现顺序性：类似读者-写者问题解法，效率高<br>    └── 重复数据的一致性问题<br>        ├── 重复文件的一致性（UNIX 类型目录）：同步修改法 / 替换法<br>        └── 链接数一致性检查：计数器表 vs 索引节点中的 count 值<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="核心考点速记"><a href="#核心考点速记" class="headerlink" title="核心考点速记"></a>核心考点速记</h3><table>
+<thead>
+<tr>
+<th>考点</th>
+<th>关键词 &#x2F; 要点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>连续分配特点</td>
+<td>顺序访问快、支持直接访问；外部碎片；须事先声明文件最大长度</td>
+</tr>
+<tr>
+<td>FAT 文件系统</td>
+<td>显式链接；内存中存放全局 FAT；引入”簇”减小 FAT 大小</td>
+</tr>
+<tr>
+<td>UNIX 混合索引</td>
+<td>10 个直接地址 + 1 个一次间接 + 1 个二次间接 + 1 个三次间接</td>
+</tr>
+<tr>
+<td>位示图法</td>
+<td>每 bit 对应一个盘块；适合在内存中操作；ext4&#x2F;NTFS 使用</td>
+</tr>
+<tr>
+<td>成组链接法</td>
+<td>UNIX 传统方法；内存中存放当前组的 100 个盘块号；组切换才写盘</td>
+</tr>
+<tr>
+<td>磁盘高速缓存</td>
+<td>数据交付 vs 指针交付；LRU 链；周期性写回（UNIX update&#x2F;SYNC）</td>
+</tr>
+<tr>
+<td>提前读 &#x2F; 延迟写</td>
+<td>顺序访问场景有效；延迟写存在系统崩溃时数据丢失风险</td>
+</tr>
+<tr>
+<td>虚拟盘 vs 磁盘高速缓存</td>
+<td>虚拟盘内容由用户控制；磁盘高速缓存由 OS 控制</td>
+</tr>
+<tr>
+<td>RAID 分级</td>
+<td>0(无冗余)、1(镜像,50%)、3(位级分条)、4(块级分条)、5(分布式校验)</td>
+</tr>
+<tr>
+<td>SFT-I</td>
+<td>双份目录&#x2F;FAT；热修复重定向；写后读校验</td>
+</tr>
+<tr>
+<td>SFT-II</td>
+<td>磁盘镜像（同一控制器）；磁盘双工（独立控制器，可并行 I&#x2F;O）</td>
+</tr>
+<tr>
+<td>集群容错三种模式</td>
+<td>双机热备（效率50%）；双机互为备份（效率高）；公用磁盘（无复制开销）</td>
+</tr>
+<tr>
+<td>后备系统设备</td>
+<td>磁带机（顺序、慢）；移动硬盘（快、保存时间长）；光盘刻录机</td>
+</tr>
+<tr>
+<td>传统存储系统</td>
+<td>DAS（信息孤岛）；NAS（文件级、以太网）；SAN（块级、专用网）</td>
+</tr>
+<tr>
+<td>新型存储系统</td>
+<td>分布式存储（C&#x2F;S或P2P架构）；云存储（按需分配、按量计费）</td>
+</tr>
+<tr>
+<td>HDD 新技术</td>
+<td>CMR→SMR（叠瓦式，密度高）→HAMR（热辅助，容量更大）；双磁头驱动臂</td>
+</tr>
+<tr>
+<td>SSD 分类</td>
+<td>基于闪存（主流）；基于 DRAM（需电源保护）；基于 XPoint（低延迟、高寿命）</td>
+</tr>
+<tr>
+<td>事务</td>
+<td>原子性；事务记录表（事务名&#x2F;数据项名&#x2F;旧值&#x2F;新值）；undo&#x2F;redo 恢复</td>
+</tr>
+<tr>
+<td>检查点</td>
+<td>周期性将事务记录和脏页写稳定存储器；恢复时只需处理最后一个检查点之后的记录</td>
+</tr>
+<tr>
+<td>并发控制</td>
+<td>互斥锁（效率低）；互斥锁+共享锁（类似读者-写者问题）</td>
+</tr>
+<tr>
+<td>重复文件一致性</td>
+<td>方法一：查找目录同步修改；方法二：建立新副本并替换</td>
+</tr>
+<tr>
+<td>链接数一致性</td>
+<td>从根目录开始统计引用次数；与索引节点中的 count 值比较</td>
+</tr>
+</tbody></table>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://chaichai438.github.io">Chaichai</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://chaichai438.github.io/2026/06/08/OS/%E7%AC%AC%E4%B9%9D%E7%AB%A0%20%E7%A3%81%E7%9B%98%E5%AD%98%E5%82%A8%E5%99%A8%E7%AE%A1%E7%90%86/">https://chaichai438.github.io/2026/06/08/OS/%E7%AC%AC%E4%B9%9D%E7%AB%A0%20%E7%A3%81%E7%9B%98%E5%AD%98%E5%82%A8%E5%99%A8%E7%AE%A1%E7%90%86/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://chaichai438.github.io" target="_blank">Click Start!</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/06/05/%E7%AE%97%E6%B3%95/%E9%98%B6%E4%B9%98%E6%B1%82%E5%92%8C/" title="高精度计算"><img class="cover" src="https://chaichai438.github.io/assets/Pictures/cover/算法.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">高精度计算</div></div><div class="info-2"><div class="info-item-1"> 有点意思🫠    题目描述用高精度计算出 S&#x3D;1!+2!+3!+⋯+n!（对于 100% 的数据，1≤n≤50）。 其中 ! 表示阶乘，定义为 n!&#x3D;n×(n−1)×(n−2)×⋯×1。例如，5!&#x3D;5×4×3×2×1&#x3D;120。 输入格式一个正整数 n。 输出格式一个正整数 S，表示计算结果。  题目来源:洛谷 阶乘求和  我的解题思路首先看到这个题我直接狂喜，这就不是一道”简简单单”的题目吗？(对于还没学习算法的人来说)。所以最开始我的思路就是直接用循环计算阶乘不就好了吗？ 123456789101112131415161718192021222324252627#include &lt;iostream&gt;using namespace std;void method2()&#123;    long long n, ans = 0;    cin &gt;&gt; n;    long long factor = 1;    for (int i = 1; i &lt;= n; ++i) // 循环n次    &#123;   ...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Chaichai</div><div class="author-info-description">Well begun is half-down</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">31</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">48</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Chaichai438"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Chaichai438" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="/1939327800@qq.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%AD%A6%E5%AE%8C%E6%9C%AC%E7%AB%A0-%E4%BD%A0%E4%BC%9A%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">0 学完本章 你会：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-%E5%A4%96%E5%AD%98%E7%9A%84%E7%BB%84%E7%BB%87%E6%96%B9%E5%BC%8F"><span class="toc-number">2.</span> <span class="toc-text">1.1 外存的组织方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-1-%E8%BF%9E%E7%BB%AD%E7%BB%84%E7%BB%87%E6%96%B9%E5%BC%8F"><span class="toc-number">2.1.</span> <span class="toc-text">1.1.1 连续组织方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-2-%E9%93%BE%E6%8E%A5%E7%BB%84%E7%BB%87%E6%96%B9%E5%BC%8F"><span class="toc-number">2.2.</span> <span class="toc-text">1.1.2 链接组织方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-3-%E7%B4%A2%E5%BC%95%E7%BB%84%E7%BB%87%E6%96%B9%E5%BC%8F"><span class="toc-number">2.3.</span> <span class="toc-text">1.1.3 索引组织方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E7%A9%BA%E9%97%B4%E7%9A%84%E7%AE%A1%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">1.2 文件存储空间的管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-1-%E7%A9%BA%E9%97%B2%E5%8C%BA%E8%A1%A8%E6%B3%95%E5%92%8C%E7%A9%BA%E9%97%B2%E9%93%BE%E8%A1%A8%E6%B3%95"><span class="toc-number">3.1.</span> <span class="toc-text">1.2.1 空闲区表法和空闲链表法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%A9%BA%E9%97%B2%E5%8C%BA%E8%A1%A8%E6%B3%95"><span class="toc-number">3.1.1.</span> <span class="toc-text">1. 空闲区表法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E7%A9%BA%E9%97%B2%E9%93%BE%E8%A1%A8%E6%B3%95"><span class="toc-number">3.1.2.</span> <span class="toc-text">2. 空闲链表法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-2-%E4%BD%8D%E7%A4%BA%E5%9B%BE%E6%B3%95"><span class="toc-number">3.2.</span> <span class="toc-text">1.2.2 位示图法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-3-%E6%88%90%E7%BB%84%E9%93%BE%E6%8E%A5%E6%B3%95"><span class="toc-number">3.3.</span> <span class="toc-text">1.2.3 成组链接法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-%E6%8F%90%E9%AB%98%E7%A3%81%E7%9B%98-I-O-%E9%80%9F%E5%BA%A6%E7%9A%84%E9%80%94%E5%BE%84"><span class="toc-number">4.</span> <span class="toc-text">1.3 提高磁盘 I&#x2F;O 速度的途径</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-1-%E7%A3%81%E7%9B%98%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%EF%BC%88Disk-Cache%EF%BC%89"><span class="toc-number">4.1.</span> <span class="toc-text">1.3.1 磁盘高速缓存（Disk Cache）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%95%B0%E6%8D%AE%E4%BA%A4%E4%BB%98%E6%96%B9%E5%BC%8F"><span class="toc-number">4.1.1.</span> <span class="toc-text">1. 数据交付方式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E7%BD%AE%E6%8D%A2%E7%AE%97%E6%B3%95"><span class="toc-number">4.1.2.</span> <span class="toc-text">2. 置换算法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%91%A8%E6%9C%9F%E6%80%A7%E5%9C%B0%E5%86%99%E5%9B%9E%E7%A3%81%E7%9B%98"><span class="toc-number">4.1.3.</span> <span class="toc-text">3. 周期性地写回磁盘</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-2-%E6%8F%90%E9%AB%98%E7%A3%81%E7%9B%98-I-O-%E9%80%9F%E5%BA%A6%E7%9A%84%E5%85%B6%E4%BB%96%E6%96%B9%E6%B3%95"><span class="toc-number">4.2.</span> <span class="toc-text">1.3.2 提高磁盘 I&#x2F;O 速度的其他方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%8F%90%E5%89%8D%E8%AF%BB%EF%BC%88Read-Ahead%EF%BC%89"><span class="toc-number">4.2.1.</span> <span class="toc-text">1. 提前读（Read-Ahead）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%BB%B6%E8%BF%9F%E5%86%99%EF%BC%88Deferred-Write%EF%BC%89"><span class="toc-number">4.2.2.</span> <span class="toc-text">2. 延迟写（Deferred Write）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E4%BC%98%E5%8C%96%E7%89%A9%E7%90%86%E5%9D%97%E7%9A%84%E5%88%86%E5%B8%83"><span class="toc-number">4.2.3.</span> <span class="toc-text">3. 优化物理块的分布</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E8%99%9A%E6%8B%9F%E7%9B%98%EF%BC%88RAM-Disk%EF%BC%89"><span class="toc-number">4.2.4.</span> <span class="toc-text">4. 虚拟盘（RAM Disk）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-3-%E5%BB%89%E4%BB%B7%E7%A3%81%E7%9B%98%E5%86%97%E4%BD%99%E9%98%B5%E5%88%97%EF%BC%88RAID%EF%BC%89"><span class="toc-number">4.3.</span> <span class="toc-text">1.3.3 廉价磁盘冗余阵列（RAID）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B9%B6%E8%A1%8C%E4%BA%A4%E5%8F%89%E5%AD%98%E5%8F%96"><span class="toc-number">4.3.1.</span> <span class="toc-text">并行交叉存取</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#RAID-%E5%88%86%E7%BA%A7"><span class="toc-number">4.3.2.</span> <span class="toc-text">RAID 分级</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#RAID-%E7%9A%84%E4%BC%98%E7%82%B9"><span class="toc-number">4.3.3.</span> <span class="toc-text">RAID 的优点</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-4-%E6%8F%90%E9%AB%98%E7%A3%81%E7%9B%98%E5%8F%AF%E9%9D%A0%E6%80%A7%E7%9A%84%E6%8A%80%E6%9C%AF"><span class="toc-number">5.</span> <span class="toc-text">1.4 提高磁盘可靠性的技术</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-1-%E7%AC%AC%E4%B8%80%E7%BA%A7%E5%AE%B9%E9%94%99%E6%8A%80%E6%9C%AF%EF%BC%88SFT-I%EF%BC%89"><span class="toc-number">5.1.</span> <span class="toc-text">1.4.1 第一级容错技术（SFT-I）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%8F%8C%E4%BB%BD%E7%9B%AE%E5%BD%95%E5%92%8C%E5%8F%8C%E4%BB%BD-FAT"><span class="toc-number">5.1.1.</span> <span class="toc-text">1. 双份目录和双份 FAT</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E7%83%AD%E4%BF%AE%E5%A4%8D%E9%87%8D%E5%AE%9A%E5%90%91%E5%92%8C%E5%86%99%E5%90%8E%E8%AF%BB%E6%A0%A1%E9%AA%8C"><span class="toc-number">5.1.2.</span> <span class="toc-text">2. 热修复重定向和写后读校验</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-2-%E7%AC%AC%E4%BA%8C%E7%BA%A7%E5%AE%B9%E9%94%99%E6%8A%80%E6%9C%AF%EF%BC%88SFT-II%EF%BC%89"><span class="toc-number">5.2.</span> <span class="toc-text">1.4.2 第二级容错技术（SFT-II）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%A3%81%E7%9B%98%E9%95%9C%E5%83%8F%EF%BC%88Disk-Mirroring%EF%BC%89"><span class="toc-number">5.2.1.</span> <span class="toc-text">1. 磁盘镜像（Disk Mirroring）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E7%A3%81%E7%9B%98%E5%8F%8C%E5%B7%A5%EF%BC%88Disk-Duplexing%EF%BC%89"><span class="toc-number">5.2.2.</span> <span class="toc-text">2. 磁盘双工（Disk Duplexing）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-3-%E5%9F%BA%E4%BA%8E%E9%9B%86%E7%BE%A4%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%AE%B9%E9%94%99%E6%8A%80%E6%9C%AF%EF%BC%88SFT-III%EF%BC%89"><span class="toc-number">5.3.</span> <span class="toc-text">1.4.3 基于集群系统的容错技术（SFT-III）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%8F%8C%E6%9C%BA%E7%83%AD%E5%A4%87%E4%BB%BD%E6%A8%A1%E5%BC%8F"><span class="toc-number">5.3.1.</span> <span class="toc-text">1. 双机热备份模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%8F%8C%E6%9C%BA%E4%BA%92%E4%B8%BA%E5%A4%87%E4%BB%BD%E6%A8%A1%E5%BC%8F"><span class="toc-number">5.3.2.</span> <span class="toc-text">2. 双机互为备份模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%85%AC%E7%94%A8%E7%A3%81%E7%9B%98%E6%A8%A1%E5%BC%8F"><span class="toc-number">5.3.3.</span> <span class="toc-text">3. 公用磁盘模式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-4-%E5%90%8E%E5%A4%87%E7%B3%BB%E7%BB%9F"><span class="toc-number">5.4.</span> <span class="toc-text">1.4.4 后备系统</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%A3%81%E5%B8%A6%E6%9C%BA"><span class="toc-number">5.4.1.</span> <span class="toc-text">1. 磁带机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E7%A1%AC%E7%9B%98"><span class="toc-number">5.4.2.</span> <span class="toc-text">2. 硬盘</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%85%89%E7%9B%98%E9%A9%B1%E5%8A%A8%E5%99%A8"><span class="toc-number">5.4.3.</span> <span class="toc-text">3. 光盘驱动器</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-5-%E5%AD%98%E5%82%A8%E6%96%B0%E6%8A%80%E6%9C%AF"><span class="toc-number">6.</span> <span class="toc-text">1.5 存储新技术</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-5-1-%E4%BC%A0%E7%BB%9F%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F"><span class="toc-number">6.1.</span> <span class="toc-text">1.5.1 传统存储系统</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%9B%B4%E8%BF%9E%E5%BC%8F%E5%AD%98%E5%82%A8%EF%BC%88DAS%EF%BC%8CDirect-Attached-Storage%EF%BC%89"><span class="toc-number">6.1.1.</span> <span class="toc-text">1. 直连式存储（DAS，Direct-Attached Storage）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E7%BD%91%E7%BB%9C%E9%99%84%E5%8A%A0%E5%AD%98%E5%82%A8%EF%BC%88NAS%EF%BC%8CNetwork-Attached-Storage%EF%BC%89"><span class="toc-number">6.1.2.</span> <span class="toc-text">2. 网络附加存储（NAS，Network-Attached Storage）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%AD%98%E5%82%A8%E5%8C%BA%E5%9F%9F%E7%BD%91%E7%BB%9C%EF%BC%88SAN%EF%BC%8CStorage-Area-Network%EF%BC%89"><span class="toc-number">6.1.3.</span> <span class="toc-text">3. 存储区域网络（SAN，Storage Area Network）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-5-2-%E6%96%B0%E5%9E%8B%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F"><span class="toc-number">6.2.</span> <span class="toc-text">1.5.2 新型存储系统</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F"><span class="toc-number">6.2.1.</span> <span class="toc-text">1. 分布式存储系统</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E4%BA%91%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F"><span class="toc-number">6.2.2.</span> <span class="toc-text">2. 云存储系统</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-5-3-%E7%A1%AC%E7%9B%98%E6%96%B0%E6%8A%80%E6%9C%AF"><span class="toc-number">6.3.</span> <span class="toc-text">1.5.3 硬盘新技术</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%9C%BA%E6%A2%B0%E7%A1%AC%E7%9B%98%EF%BC%88HDD%EF%BC%89%E6%8A%80%E6%9C%AF%E9%9D%A9%E6%96%B0"><span class="toc-number">6.3.1.</span> <span class="toc-text">1. 机械硬盘（HDD）技术革新</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98%EF%BC%88SSD%EF%BC%89"><span class="toc-number">6.3.2.</span> <span class="toc-text">2. 固态硬盘（SSD）</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-6-%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7%E6%8E%A7%E5%88%B6"><span class="toc-number">7.</span> <span class="toc-text">1.6 数据一致性控制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-6-1-%E4%BA%8B%E5%8A%A1%EF%BC%88Transaction%EF%BC%89"><span class="toc-number">7.1.</span> <span class="toc-text">1.6.1 事务（Transaction）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E4%BA%8B%E5%8A%A1%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-number">7.1.1.</span> <span class="toc-text">1. 事务的定义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E4%BA%8B%E5%8A%A1%E8%AE%B0%E5%BD%95"><span class="toc-number">7.1.2.</span> <span class="toc-text">2. 事务记录</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E6%81%A2%E5%A4%8D%E7%AE%97%E6%B3%95"><span class="toc-number">7.1.3.</span> <span class="toc-text">3. 恢复算法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-6-2-%E6%A3%80%E6%9F%A5%E7%82%B9%EF%BC%88Checkpoint%EF%BC%89"><span class="toc-number">7.2.</span> <span class="toc-text">1.6.2 检查点（Checkpoint）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%A3%80%E6%9F%A5%E7%82%B9%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-number">7.2.1.</span> <span class="toc-text">1. 检查点的作用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%96%B0%E7%9A%84%E6%81%A2%E5%A4%8D%E7%AE%97%E6%B3%95"><span class="toc-number">7.2.2.</span> <span class="toc-text">2. 新的恢复算法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-6-3-%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6%EF%BC%88Concurrent-Control%EF%BC%89"><span class="toc-number">7.3.</span> <span class="toc-text">1.6.3 并发控制（Concurrent Control）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%88%A9%E7%94%A8%E4%BA%92%E6%96%A5%E9%94%81%E5%AE%9E%E7%8E%B0%E9%A1%BA%E5%BA%8F%E6%80%A7"><span class="toc-number">7.3.1.</span> <span class="toc-text">1. 利用互斥锁实现顺序性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%88%A9%E7%94%A8%E4%BA%92%E6%96%A5%E9%94%81%E5%92%8C%E5%85%B1%E4%BA%AB%E9%94%81%E5%AE%9E%E7%8E%B0%E9%A1%BA%E5%BA%8F%E6%80%A7"><span class="toc-number">7.3.2.</span> <span class="toc-text">2. 利用互斥锁和共享锁实现顺序性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-6-4-%E9%87%8D%E5%A4%8D%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98"><span class="toc-number">7.4.</span> <span class="toc-text">1.6.4 重复数据的一致性问题</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%87%8D%E5%A4%8D%E6%96%87%E4%BB%B6%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7"><span class="toc-number">7.4.1.</span> <span class="toc-text">1. 重复文件的一致性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E9%93%BE%E6%8E%A5%E6%95%B0%E4%B8%80%E8%87%B4%E6%80%A7%E6%A3%80%E6%9F%A5"><span class="toc-number">7.4.2.</span> <span class="toc-text">2. 链接数一致性检查</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-7-%E6%80%BB%E7%BB%93"><span class="toc-number">8.</span> <span class="toc-text">1.7 总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AC%E7%AB%A0%E7%9F%A5%E8%AF%86%E6%A1%86%E6%9E%B6%E6%A2%B3%E7%90%86"><span class="toc-number">8.1.</span> <span class="toc-text">本章知识框架梳理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E8%80%83%E7%82%B9%E9%80%9F%E8%AE%B0"><span class="toc-number">8.2.</span> <span class="toc-text">核心考点速记</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/08/OS/%E7%AC%AC%E4%B9%9D%E7%AB%A0%20%E7%A3%81%E7%9B%98%E5%AD%98%E5%82%A8%E5%99%A8%E7%AE%A1%E7%90%86/" title="第9章：磁盘存储器管理">第9章：磁盘存储器管理</a><time datetime="2026-06-07T16:00:00.000Z" title="发表于 2026-06-08 00:00:00">2026-06-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/06/05/%E7%AE%97%E6%B3%95/%E9%98%B6%E4%B9%98%E6%B1%82%E5%92%8C/" title="高精度计算"><img src="https://chaichai438.github.io/assets/Pictures/cover/算法.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="高精度计算"/></a><div class="content"><a class="title" href="/2026/06/05/%E7%AE%97%E6%B3%95/%E9%98%B6%E4%B9%98%E6%B1%82%E5%92%8C/" title="高精度计算">高精度计算</a><time datetime="2026-06-04T18:00:10.465Z" title="发表于 2026-06-05 02:00:10">2026-06-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/06/05/%E7%AE%97%E6%B3%95/%E5%9B%9E%E6%96%87%E8%B4%A8%E6%95%B0/" title="回文质数"><img src="https://chaichai438.github.io/assets/Pictures/cover/算法.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="回文质数"/></a><div class="content"><a class="title" href="/2026/06/05/%E7%AE%97%E6%B3%95/%E5%9B%9E%E6%96%87%E8%B4%A8%E6%95%B0/" title="回文质数">回文质数</a><time datetime="2026-06-04T18:00:10.463Z" title="发表于 2026-06-05 02:00:10">2026-06-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/06/05/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%84%9F%E7%9F%A5%E6%9C%BA%E5%92%8C%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" title="感知机"><img src="https://chaichai438.github.io/assets/Pictures/cover/Neural_Network.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="感知机"/></a><div class="content"><a class="title" href="/2026/06/05/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%84%9F%E7%9F%A5%E6%9C%BA%E5%92%8C%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" title="感知机">感知机</a><time datetime="2026-06-04T18:00:10.458Z" title="发表于 2026-06-05 02:00:10">2026-06-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/06/05/RM%E5%AD%A6%E4%B9%A0/%E7%94%B5%E6%8E%A7%E8%80%83%E6%A0%B8/" title="电控组考核"><img src="/assets/Pictures/cover/RMer.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="电控组考核"/></a><div class="content"><a class="title" href="/2026/06/05/RM%E5%AD%A6%E4%B9%A0/%E7%94%B5%E6%8E%A7%E8%80%83%E6%A0%B8/" title="电控组考核">电控组考核</a><time datetime="2026-06-04T18:00:10.449Z" title="发表于 2026-06-05 02:00:10">2026-06-05</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/neko.png);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Chaichai</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.3</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(async () => {
+  const showKatex = () => {
+    document.querySelectorAll('#article-container .katex').forEach(el => el.classList.add('katex-show'))
+  }
+
+  if (!window.katex_js_css) {
+    window.katex_js_css = true
+    await btf.getCSS('https://cdn.jsdelivr.net/npm/katex@0.16.27/dist/katex.min.css')
+    if (false) {
+      await btf.getScript('https://cdn.jsdelivr.net/npm/katex@0.16.27/dist/contrib/copy-tex.min.js')
+    }
+  }
+
+  showKatex()
+})()</script></div><span id="busuanzi_site_uv" style="display:none"></span>
+<span id="busuanzi_site_pv" style="display:none"></span>
+<script>
+(function(){
+  var iv=setInterval(function(){
+    var u=document.getElementById('busuanzi_site_uv'),
+        p=document.getElementById('busuanzi_site_pv'),
+        ou=document.getElementById('busuanzi_value_site_uv'),
+        op=document.getElementById('busuanzi_value_site_pv');
+    if(u&&ou&&u.textContent)ou.textContent=u.textContent;
+    if(p&&op&&p.textContent)op.textContent=p.textContent;
+  },500);
+  setTimeout(function(){clearInterval(iv);},15000);
+})();
+</script>
+<span id="busuanzi_site_uv" style="display:none"></span>
+<span id="busuanzi_site_pv" style="display:none"></span>
+<span id="busuanzi_page_pv" style="display:none"></span>
+<script>
+(function(){
+  var map={'busuanzi_site_uv':'busuanzi_value_site_uv','busuanzi_site_pv':'busuanzi_value_site_pv','busuanzi_page_pv':'busuanzi_value_page_pv'};
+  var iv=setInterval(function(){
+    for(var k in map){
+      var s=document.getElementById(k),t=document.getElementById(map[k]);
+      if(s&&t&&s.textContent&&t.textContent!==s.textContent) t.textContent=s.textContent;
+    }
+  },500);
+  setTimeout(function(){clearInterval(iv);},15000);
+})();
+</script>
+<script async data-pjax src="https://cdn.busuanzi.cc/busuanzi/3.6.9/busuanzi.min.js"></script></div></body></html>
