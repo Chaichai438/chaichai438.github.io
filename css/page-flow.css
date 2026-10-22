@@ -1,0 +1,143 @@
+/* Click Start! page transition, adapted from transition-demo.html. */
+#cc-page-flow {
+  --cc-flow-bg: #edf5fb;
+  --cc-flow-blue: #4166ed;
+  --cc-flow-cyan: #58c8e6;
+  --cc-flow-ink: #17263f;
+  --cc-flow-line: rgba(61, 104, 151, .14);
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+  font-family: Inter, "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+  box-sizing: border-box;
+}
+
+html[data-theme="dark"] #cc-page-flow {
+  --cc-flow-bg: #101b2e;
+  --cc-flow-blue: #7897ff;
+  --cc-flow-cyan: #70d5e5;
+  --cc-flow-ink: #e9f3ff;
+  --cc-flow-line: rgba(147, 188, 235, .13);
+}
+
+#cc-page-flow *, #cc-page-flow *::before, #cc-page-flow *::after { box-sizing: border-box; }
+#cc-page-flow.is-running { visibility: visible; pointer-events: auto; }
+#cc-page-flow .cc-flow-echo,
+#cc-page-flow .cc-flow-panel {
+  position: absolute;
+  inset: -2px;
+  transform: translate3d(0, 105vh, 0);
+  border-radius: 45% 45% 0 0 / 8% 8% 0 0;
+}
+#cc-page-flow .cc-flow-echo {
+  background: color-mix(in srgb, var(--cc-flow-cyan) 34%, var(--cc-flow-bg));
+  opacity: .52;
+}
+#cc-page-flow .cc-flow-panel {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: var(--cc-flow-ink);
+  background: linear-gradient(125deg,
+    color-mix(in srgb, var(--cc-flow-bg) 85%, var(--cc-flow-blue) 15%),
+    color-mix(in srgb, var(--cc-flow-bg) 83%, var(--cc-flow-cyan) 17%));
+  box-shadow: 0 -16px 46px rgba(49, 100, 186, .12);
+}
+#cc-page-flow .cc-flow-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, var(--cc-flow-line) 1px, transparent 1px),
+              linear-gradient(to bottom, var(--cc-flow-line) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(110deg, transparent, #000, transparent);
+  opacity: .42;
+}
+#cc-page-flow .cc-flow-panel::after {
+  content: "";
+  position: absolute;
+  width: 60vw;
+  height: 60vw;
+  right: -14vw;
+  top: -28vw;
+  border: 1px solid color-mix(in srgb, var(--cc-flow-blue) 23%, transparent);
+  border-radius: 50%;
+  box-shadow: 0 0 0 70px color-mix(in srgb, var(--cc-flow-blue) 4%, transparent),
+              0 0 0 140px color-mix(in srgb, var(--cc-flow-cyan) 3%, transparent);
+}
+#cc-page-flow .cc-flow-inner { position: relative; z-index: 1; width: min(760px, 78vw); opacity: 0; }
+#cc-page-flow .cc-flow-count {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .19em;
+  opacity: .7;
+}
+#cc-page-flow .cc-flow-count::after { content: ""; height: 1px; flex: 1; background: var(--cc-flow-line); }
+#cc-page-flow .cc-flow-name {
+  margin-top: 18px;
+  color: var(--cc-flow-blue);
+  font-size: clamp(46px, 7vw, 100px);
+  line-height: 1.08;
+  font-weight: 900;
+  letter-spacing: -.09em;
+}
+#cc-page-flow .cc-flow-sub {
+  margin-top: 12px;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: .24em;
+  opacity: .65;
+}
+#cc-page-flow .cc-flow-bubbles { position: absolute; inset: 0; z-index: 3; overflow: hidden; pointer-events: none; }
+#cc-page-flow .cc-flow-column { position: absolute; inset: 0; }
+#cc-page-flow .cc-flow-bubble {
+  position: absolute;
+  bottom: var(--base);
+  width: var(--size);
+  height: var(--size);
+  border: 1px solid rgba(114, 185, 230, .58);
+  border-radius: 50%;
+  opacity: 0;
+  transform: translate3d(0, 0, 0);
+  background: radial-gradient(circle at 29% 25%, rgba(255, 255, 255, .85) 0 9%, rgba(255, 255, 255, .2) 10% 26%, rgba(255, 255, 255, .05) 68%), rgba(120, 220, 251, .17);
+  box-shadow: inset -4px -5px 11px rgba(32, 92, 173, .18), 0 5px 16px rgba(20, 58, 127, .13);
+}
+html[data-theme="dark"] #cc-page-flow .cc-flow-bubble { border-color: rgba(165, 226, 255, .68); }
+#cc-page-flow .cc-flow-bubble::after {
+  content: "";
+  position: absolute;
+  width: 22%;
+  height: 10%;
+  top: 18%;
+  left: 25%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .85);
+  transform: rotate(-28deg);
+}
+#cc-page-flow .cc-flow-bubble.left { left: calc(clamp(34px, 4.5vw, 64px) + var(--offset)); translate: -50% 0; }
+#cc-page-flow .cc-flow-bubble.right { right: calc(clamp(34px, 4.5vw, 64px) + var(--offset)); translate: 50% 0; }
+#cc-page-flow.is-running .cc-flow-echo,
+#cc-page-flow.is-running .cc-flow-panel,
+#cc-page-flow.is-running .cc-flow-bubble { will-change: transform, opacity; }
+
+#body-wrap.cc-flow-outgoing { animation: cc-flow-old .42s ease both; }
+@keyframes cc-flow-old { to { opacity: .45; transform: translateY(-15px) scale(.985); filter: blur(4px); } }
+#body-wrap.cc-flow-entering {
+  opacity: var(--cc-flow-content-opacity, 1);
+  transform: translateY(var(--cc-flow-content-y, 0px));
+  filter: blur(var(--cc-flow-content-blur, 0px));
+  will-change: transform, opacity, filter;
+}
+
+@media (max-width: 700px) { #cc-page-flow .cc-flow-bubbles { opacity: .72; } }
+@media (prefers-reduced-motion: reduce) {
+  #cc-page-flow .cc-flow-bubbles { display: none; }
+  #body-wrap.cc-flow-outgoing { animation: none; }
+  #body-wrap.cc-flow-entering { transform: none; filter: none; opacity: 1; }
+}
