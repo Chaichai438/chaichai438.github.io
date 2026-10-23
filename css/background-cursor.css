@@ -1,0 +1,155 @@
+/* Blue ambient background and cursor, adapted from the approved standalone demo. */
+body.cc-ambient-enabled:not(.read-mode) { background: transparent !important; }
+body.cc-ambient-enabled #body-wrap { position: relative; z-index: 1; }
+
+#cc-ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  contain: paint;
+  background: linear-gradient(155deg, #f8fbff 4%, #edf6ff 55%, #f5faff);
+  --cc-ambient-line: rgba(49, 105, 170, .16);
+}
+#cc-ambient *, #cc-cursor * { box-sizing: border-box; }
+#cc-ambient .cc-ambient-wash { position: absolute; inset: -14%; will-change: transform; }
+#cc-ambient .cc-ambient-wash i { position: absolute; display: block; border-radius: 50%; will-change: transform; }
+#cc-ambient .cc-ambient-wash i:nth-child(1) {
+  width: 65vw; aspect-ratio: 1; left: -19vw; top: -34vh;
+  background: radial-gradient(circle, rgba(77, 121, 244, .30), rgba(118, 177, 255, .12) 44%, transparent 70%);
+  animation: cc-wash-a 27s ease-in-out infinite alternate;
+}
+#cc-ambient .cc-ambient-wash i:nth-child(2) {
+  width: 59vw; aspect-ratio: 1; right: -18vw; top: 6vh;
+  background: radial-gradient(circle, rgba(61, 186, 234, .25), rgba(64, 146, 239, .09) 48%, transparent 72%);
+  animation: cc-wash-b 31s ease-in-out infinite alternate;
+}
+#cc-ambient .cc-ambient-wash i:nth-child(3) {
+  width: 57vw; aspect-ratio: 1; left: 28vw; bottom: -55vh;
+  background: radial-gradient(circle, rgba(95, 151, 242, .20), rgba(138, 211, 251, .07) 46%, transparent 72%);
+  animation: cc-wash-c 35s ease-in-out infinite alternate;
+}
+@keyframes cc-wash-a { to { transform: translate(7vw, 5vh) scale(1.13); } }
+@keyframes cc-wash-b { to { transform: translate(-8vw, 8vh) scale(.91); } }
+@keyframes cc-wash-c { to { transform: translate(5vw, -9vh) scale(1.12); } }
+
+#cc-ambient .cc-ambient-grid {
+  position: absolute; inset: -100px;
+  background: linear-gradient(var(--cc-ambient-line) 1px, transparent 1px),
+              linear-gradient(90deg, var(--cc-ambient-line) 1px, transparent 1px);
+  background-size: 82px 82px;
+  opacity: .36;
+  will-change: transform;
+}
+#cc-ambient .cc-ambient-dots { position: absolute; inset: 0; opacity: .84; }
+#cc-ambient .cc-ambient-words { position: absolute; inset: 0; overflow: hidden; will-change: transform; }
+#cc-ambient .cc-ambient-words span {
+  position: absolute; font-size: clamp(100px, 21vw, 320px); line-height: .85;
+  font-weight: 900; letter-spacing: -.1em; white-space: nowrap;
+  color: transparent; -webkit-text-stroke: 1px rgba(47, 102, 190, .085);
+}
+#cc-ambient .cc-ambient-words span:first-child { top: 8vh; left: -4vw; }
+#cc-ambient .cc-ambient-words span:last-child {
+  top: 62vh; right: -5vw; -webkit-text-stroke-color: rgba(58, 152, 214, .10);
+}
+#cc-ambient .cc-ambient-rings {
+  position: absolute; width: min(85vw, 960px); aspect-ratio: 1;
+  right: -28vw; top: 6vh; opacity: .56;
+  animation: cc-ring-turn 140s linear infinite;
+}
+#cc-ambient .cc-ambient-rings i {
+  position: absolute; inset: 0; border: 1px solid rgba(42, 105, 190, .15); border-radius: 50%;
+}
+#cc-ambient .cc-ambient-rings i:nth-child(2) { inset: 15%; }
+#cc-ambient .cc-ambient-rings i:nth-child(3) { inset: 31%; }
+#cc-ambient .cc-ambient-rings::after {
+  content: ""; position: absolute; left: 17%; top: 13%; width: 8px; height: 8px;
+  border-radius: 50%; background: #65b9ee; box-shadow: 0 0 22px 8px rgba(101, 185, 238, .28);
+}
+@keyframes cc-ring-turn { to { transform: rotate(360deg); } }
+#cc-ambient .cc-ambient-geom { position: absolute; inset: 0; }
+#cc-ambient .cc-ambient-geom i {
+  position: absolute; display: block; width: 13px; height: 13px;
+  border: 1px solid rgba(56, 117, 200, .35); border-radius: 50%;
+  animation: cc-geom-float 16s ease-in-out infinite alternate;
+}
+#cc-ambient .cc-ambient-geom i:nth-child(1) { left: 9%; top: 28%; width: 10px; height: 10px; }
+#cc-ambient .cc-ambient-geom i:nth-child(2) { left: 16%; top: 77%; border-radius: 3px; animation-delay: -6s; }
+#cc-ambient .cc-ambient-geom i:nth-child(3) { right: 15%; top: 18%; width: 7px; height: 7px; background: rgba(54, 132, 229, .28); animation-delay: -11s; }
+#cc-ambient .cc-ambient-geom i:nth-child(4) { right: 7%; top: 68%; width: 19px; height: 19px; animation-delay: -3s; }
+#cc-ambient .cc-ambient-geom i:nth-child(5) { left: 53%; top: 11%; width: 8px; height: 8px; animation-delay: -8s; }
+@keyframes cc-geom-float { to { transform: translate(38px, -58px) rotate(22deg); } }
+#cc-ambient .cc-ambient-edge {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(247, 251, 255, .52), transparent 15% 80%, rgba(246, 250, 255, .72));
+}
+
+#cc-cursor {
+  position: fixed; inset: 0 auto auto 0; z-index: 1000000;
+  pointer-events: none; opacity: 0; transition: opacity .2s;
+}
+#cc-cursor .cc-cursor-dot, #cc-cursor .cc-cursor-ring, #cc-cursor .cc-cursor-label {
+  position: absolute; left: 0; top: 0; transform: translate(-50%, -50%);
+}
+#cc-cursor .cc-cursor-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: #2566ec;
+  box-shadow: 0 0 12px rgba(45, 110, 235, .34);
+}
+#cc-cursor .cc-cursor-ring {
+  width: 35px; height: 35px; border: 1.5px solid rgba(39, 110, 225, .54);
+  border-radius: 50%; background: rgba(120, 183, 255, .035);
+  transition: width .25s, height .25s, background .25s, border-color .25s;
+}
+#cc-cursor .cc-cursor-label {
+  color: #fff; font-size: 9px; font-weight: 900; letter-spacing: .08em;
+  white-space: nowrap; opacity: 0;
+}
+#cc-cursor.cc-hot .cc-cursor-ring {
+  width: 62px; height: 62px; border-color: rgba(36, 99, 215, .82); background: #3169ed;
+}
+#cc-cursor.cc-hot .cc-cursor-dot { opacity: 0; }
+#cc-cursor.cc-hot .cc-cursor-label { opacity: 1; }
+#cc-cursor.cc-pressed .cc-cursor-ring { width: 23px; height: 23px; }
+.cc-cursor-ripple {
+  position: fixed; z-index: 999998; width: 14px; height: 14px;
+  border: 1.5px solid rgba(44, 110, 235, .55); border-radius: 50%;
+  pointer-events: none; animation: cc-cursor-ripple .65s ease-out forwards;
+}
+@keyframes cc-cursor-ripple { to { transform: translate(-50%, -50%) scale(5); opacity: 0; } }
+@media (hover: hover) and (pointer: fine) {
+  body.cc-cursor-enabled:not(.read-mode),
+  body.cc-cursor-enabled:not(.read-mode) * { cursor: none !important; }
+  body.cc-cursor-enabled:not(.read-mode) :is(input, textarea, [contenteditable], [contenteditable] *, [role="textbox"]) {
+    cursor: text !important;
+  }
+  body.cc-cursor-enabled:not(.read-mode) select { cursor: auto !important; }
+}
+body.read-mode #cc-ambient, body.read-mode #cc-cursor { display: none; }
+html[data-theme="dark"] #cc-ambient {
+  --cc-ambient-line: rgba(120, 171, 232, .14);
+  background: linear-gradient(155deg, #0b1529 4%, #102440 55%, #0a192e);
+}
+html[data-theme="dark"] #cc-ambient .cc-ambient-wash i { opacity: .58; }
+html[data-theme="dark"] #cc-ambient .cc-ambient-words span { -webkit-text-stroke-color: rgba(138, 189, 246, .13); }
+html[data-theme="dark"] #cc-ambient .cc-ambient-rings i { border-color: rgba(132, 188, 244, .17); }
+html[data-theme="dark"] #cc-ambient .cc-ambient-edge {
+  background: linear-gradient(180deg, rgba(9, 20, 40, .25), transparent 15% 80%, rgba(8, 17, 34, .45));
+}
+html[data-theme="dark"] #cc-cursor .cc-cursor-dot { background: #74baff; }
+html[data-theme="dark"] #cc-cursor .cc-cursor-ring { border-color: rgba(127, 195, 255, .72); }
+@media (max-width: 700px) {
+  #cc-ambient .cc-ambient-words span { font-size: 27vw; }
+  #cc-ambient .cc-ambient-rings { opacity: .35; }
+}
+@media (hover: none), (pointer: coarse) { #cc-cursor { display: none !important; } }
+@media (prefers-reduced-motion: reduce) {
+  #cc-ambient .cc-ambient-wash i, #cc-ambient .cc-ambient-rings,
+  #cc-ambient .cc-ambient-geom i { animation: none !important; }
+  #cc-ambient .cc-ambient-dots { opacity: .5; }
+  #cc-cursor { display: none !important; }
+  body.cc-cursor-enabled:not(.read-mode), body.cc-cursor-enabled:not(.read-mode) * { cursor: auto !important; }
+  body.cc-cursor-enabled:not(.read-mode) :is(input, textarea, [contenteditable], [contenteditable] *, [role="textbox"]) {
+    cursor: text !important;
+  }
+}
