@@ -1,0 +1,54 @@
+/* Keep the active TOC colour and add a brief, layout-stable hover response. */
+#aside-content #card-toc .toc-content .toc-link {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transition: transform .26s cubic-bezier(.22, 1, .36, 1),
+              box-shadow .26s ease, background-color .2s ease, color .2s ease;
+}
+
+#aside-content #card-toc .toc-content .toc-link.active::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  z-index: -1;
+  width: 42%;
+  pointer-events: none;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .28), transparent);
+  opacity: 0;
+  transform: translateX(-160%) skewX(-14deg);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #aside-content #card-toc .toc-content .toc-link.active:hover {
+    transform: translate3d(3px, -1px, 0);
+    box-shadow: 0 4px 12px rgba(0, 150, 140, .22), inset 0 0 0 1px rgba(255, 255, 255, .22);
+    color: #fff;
+  }
+
+  #aside-content #card-toc .toc-content .toc-link.active:hover::after {
+    animation: cc-toc-sheen .65s ease-out both;
+  }
+}
+
+#aside-content #card-toc .toc-content .toc-link:focus-visible {
+  outline: 2px solid #00a99d;
+  outline-offset: 2px;
+}
+
+#aside-content #card-toc .toc-content .toc-link.active:focus-visible::after {
+  animation: cc-toc-sheen .65s ease-out both;
+}
+
+@keyframes cc-toc-sheen {
+  0% { transform: translateX(-160%) skewX(-14deg); opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translateX(340%) skewX(-14deg); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #aside-content #card-toc .toc-content .toc-link { transition: none; }
+  #aside-content #card-toc .toc-content .toc-link.active:hover { transform: none; }
+  #aside-content #card-toc .toc-content .toc-link.active::after { animation: none !important; }
+}
