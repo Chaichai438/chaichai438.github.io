@@ -89,7 +89,7 @@ body.cc-ambient-enabled #body-wrap { position: relative; z-index: 1; }
   position: fixed; inset: 0 auto auto 0; z-index: 1000000;
   pointer-events: none; opacity: 0; transition: opacity .2s;
 }
-#cc-cursor .cc-cursor-dot, #cc-cursor .cc-cursor-ring, #cc-cursor .cc-cursor-label {
+#cc-cursor .cc-cursor-dot, #cc-cursor .cc-cursor-ring {
   position: absolute; left: 0; top: 0; transform: translate(-50%, -50%);
 }
 #cc-cursor .cc-cursor-dot {
@@ -101,15 +101,6 @@ body.cc-ambient-enabled #body-wrap { position: relative; z-index: 1; }
   border-radius: 50%; background: rgba(120, 183, 255, .035);
   transition: width .25s, height .25s, background .25s, border-color .25s;
 }
-#cc-cursor .cc-cursor-label {
-  color: #fff; font-size: 9px; font-weight: 900; letter-spacing: .08em;
-  white-space: nowrap; opacity: 0;
-}
-#cc-cursor.cc-hot .cc-cursor-ring {
-  width: 62px; height: 62px; border-color: rgba(36, 99, 215, .82); background: #3169ed;
-}
-#cc-cursor.cc-hot .cc-cursor-dot { opacity: 0; }
-#cc-cursor.cc-hot .cc-cursor-label { opacity: 1; }
 #cc-cursor.cc-pressed .cc-cursor-ring { width: 23px; height: 23px; }
 .cc-cursor-ripple {
   position: fixed; z-index: 999998; width: 14px; height: 14px;

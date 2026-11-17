@@ -21,7 +21,7 @@
   const cursor = document.createElement('div');
   cursor.id = 'cc-cursor';
   cursor.setAttribute('aria-hidden', 'true');
-  cursor.innerHTML = '<span class="cc-cursor-ring"></span><span class="cc-cursor-dot"></span><span class="cc-cursor-label"></span>';
+  cursor.innerHTML = '<span class="cc-cursor-ring"></span><span class="cc-cursor-dot"></span>';
   document.body.appendChild(cursor);
   document.body.classList.add('cc-ambient-enabled');
 
@@ -32,7 +32,6 @@
   const ctx = canvas.getContext('2d');
   const dot = cursor.querySelector('.cc-cursor-dot');
   const ring = cursor.querySelector('.cc-cursor-ring');
-  const label = cursor.querySelector('.cc-cursor-label');
   const pointer = { x: -1000, y: -1000 };
   const flowTarget = { x: -1000, y: -1000 };
   const parallax = { scroll: scrollY, targetScroll: scrollY, x: 0, y: 0, targetX: 0, targetY: 0 };
@@ -159,7 +158,6 @@
       ringY += (targetY - ringY) * ringEase;
       dot.style.transform = `translate3d(${dotX}px,${dotY}px,0) translate(-50%,-50%)`;
       ring.style.transform = `translate3d(${ringX}px,${ringY}px,0) translate(-50%,-50%)`;
-      label.style.transform = ring.style.transform;
     }
     if (backgroundOn || cursorOn) ensureFrame();
   }
@@ -203,10 +201,6 @@
   document.addEventListener('pointerover', event => {
     const target = event.target;
     editing = !!target.closest?.('input, textarea, select, [contenteditable], [role="textbox"]');
-    const hot = !editing && target.closest?.('a, button, [role="button"]');
-    const titled = !editing && target.closest?.('[data-cursor]');
-    cursor.classList.toggle('cc-hot', !!hot);
-    label.textContent = titled?.dataset.cursor || (hot ? 'OPEN' : '');
     cursor.style.opacity = active && !editing && !reduced.matches && !document.body.classList.contains('read-mode') ? '1' : '0';
     ensureFrame();
   });
