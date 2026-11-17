@@ -1,4 +1,4 @@
-/* Keep the active TOC colour and add a brief, layout-stable hover response. */
+/* Two soft ripples loop while the active TOC link is hovered or keyboard-focused. */
 #aside-content #card-toc .toc-content .toc-link {
   position: relative;
   isolation: isolate;
@@ -7,16 +7,30 @@
               box-shadow .26s ease, background-color .2s ease, color .2s ease;
 }
 
+#aside-content #card-toc .toc-content .toc-link.active::before,
 #aside-content #card-toc .toc-content .toc-link.active::after {
   content: "";
   position: absolute;
-  inset: 0 auto 0 0;
+  top: 50%;
+  left: 50%;
   z-index: -1;
-  width: 42%;
+  box-sizing: border-box;
+  width: 105%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(255, 255, 255, .5);
+  border-radius: 50%;
+  box-shadow: 0 0 0 5px rgba(255, 255, 255, .05),
+              inset 0 0 12px rgba(255, 255, 255, .14);
   pointer-events: none;
-  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .28), transparent);
+  /* Opacity gates the whole effect independently of each ripple's fade. */
   opacity: 0;
-  transform: translateX(-160%) skewX(-14deg);
+  transition: opacity .24s ease;
+  animation: cc-toc-ripple 2.3s linear infinite;
+  animation-play-state: paused;
+}
+
+#aside-content #card-toc .toc-content .toc-link.active::after {
+  animation-delay: -1.15s;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -26,8 +40,10 @@
     color: #fff;
   }
 
+  #aside-content #card-toc .toc-content .toc-link.active:hover::before,
   #aside-content #card-toc .toc-content .toc-link.active:hover::after {
-    animation: cc-toc-sheen .65s ease-out both;
+    opacity: 1;
+    animation-play-state: running;
   }
 }
 
@@ -36,19 +52,26 @@
   outline-offset: 2px;
 }
 
+#aside-content #card-toc .toc-content .toc-link.active:focus-visible::before,
 #aside-content #card-toc .toc-content .toc-link.active:focus-visible::after {
-  animation: cc-toc-sheen .65s ease-out both;
+  opacity: 1;
+  animation-play-state: running;
 }
 
-@keyframes cc-toc-sheen {
-  0% { transform: translateX(-160%) skewX(-14deg); opacity: 0; }
-  20% { opacity: 1; }
-  80% { opacity: 1; }
-  100% { transform: translateX(340%) skewX(-14deg); opacity: 0; }
+@keyframes cc-toc-ripple {
+  0% { transform: translate(-50%, -50%) scale(.06); filter: opacity(0); }
+  15% { filter: opacity(1); }
+  70% { filter: opacity(.55); }
+  100% { transform: translate(-50%, -50%) scale(1.12); filter: opacity(0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   #aside-content #card-toc .toc-content .toc-link { transition: none; }
   #aside-content #card-toc .toc-content .toc-link.active:hover { transform: none; }
-  #aside-content #card-toc .toc-content .toc-link.active::after { animation: none !important; }
+  #aside-content #card-toc .toc-content .toc-link.active::before,
+  #aside-content #card-toc .toc-content .toc-link.active::after {
+    animation: none !important;
+    opacity: 0 !important;
+    transition: none;
+  }
 }
