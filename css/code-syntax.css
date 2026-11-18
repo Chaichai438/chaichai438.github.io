@@ -1,0 +1,59 @@
+/* Hexo emits hljs-* classes inside fenced code blocks. */
+figure.highlight {
+  --hl-color: #303e50;
+  --syntax-keyword: #7639a2;
+  --syntax-type: #185780;
+  --syntax-title: #294caf;
+  --syntax-string: #176341;
+  --syntax-literal: #934207;
+  --syntax-name: #913750;
+  --syntax-comment: #526578;
+}
+
+[data-theme="dark"] figure.highlight {
+  --hl-color: #d2dce8;
+  --syntax-keyword: #d5adff;
+  --syntax-type: #80d3e8;
+  --syntax-title: #99baff;
+  --syntax-string: #91d5a5;
+  --syntax-literal: #ffbc85;
+  --syntax-name: #ffa3b8;
+  --syntax-comment: #9aabbd;
+}
+
+figure.highlight .hljs :is(.hljs-keyword, .hljs-meta, .hljs-selector-pseudo) {
+  color: var(--syntax-keyword);
+}
+
+figure.highlight .hljs :is(.hljs-type, .hljs-built_in, .hljs-selector-class) {
+  color: var(--syntax-type);
+}
+
+figure.highlight .hljs :is(.hljs-title, .hljs-section, .hljs-property, .hljs-attribute) {
+  color: var(--syntax-title);
+}
+
+figure.highlight .hljs :is(.hljs-string, .hljs-regexp, .hljs-addition, .hljs-template-tag) {
+  color: var(--syntax-string);
+}
+
+figure.highlight .hljs :is(.hljs-number, .hljs-literal, .hljs-symbol, .hljs-bullet) {
+  color: var(--syntax-literal);
+}
+
+figure.highlight .hljs :is(.hljs-name, .hljs-attr, .hljs-variable, .hljs-template-variable,
+                          .hljs-selector-tag, .hljs-selector-id, .hljs-deletion) {
+  color: var(--syntax-name);
+}
+
+figure.highlight .hljs :is(.hljs-comment, .hljs-quote, .hljs-doctag) {
+  color: var(--syntax-comment);
+}
+
+figure.highlight .hljs .hljs-title.class_ {
+  color: var(--syntax-type);
+}
+
+figure.highlight .hljs .hljs-subst {
+  color: var(--hl-color);
+}
